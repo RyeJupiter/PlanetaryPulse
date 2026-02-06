@@ -4,13 +4,7 @@
   const el = document.getElementById("globe");
   if (!el) return;
 
-  // Use OSM tiles so this works without a Cesium ion token.
-  const imageryProvider = new Cesium.UrlTemplateImageryProvider({
-    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    credit: "© OpenStreetMap contributors",
-    maximumLevel: 19,
-  });
-
+  // Build the viewer with minimal defaults (we will explicitly set imagery)
   const viewer = new Cesium.Viewer("globe", {
     animation: false,
     timeline: false,
@@ -21,23 +15,33 @@
     geocoder: false,
     baseLayerPicker: false,
 
-    imageryProvider,
+    // Avoid ion terrain
     terrainProvider: new Cesium.EllipsoidTerrainProvider(),
   });
 
-  // Make it feel cleaner / more “product”.
+  // IMPORTANT: remove whatever default imagery Cesium attached
+  viewer.imageryLayers.removeAll(true);
+
+  // Add OpenStreetMap imagery explicitly
+  const osmProvider = new Cesium.UrlTemplateImageryProvider({
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    credit: "© OpenStreetMap contributors",
+    maximumLevel: 19,
+  });
+
+  viewer.imageryLayers.addImageryProvider(osmProvider);
+
+  // Visual cleanup
   viewer.scene.skyBox = undefined;
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
+  viewer.scene.globe.enableLighting = true;
 
-  // Ensure globe is interactive and not “spinning into space”.
-  viewer.scene.screenSpaceCameraController.enableCollisionDetection = true;
-
-  // Start on a global-ish view (tweak later).
+  // Start position
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
   });
 
-  // Resize safety (especially with responsive layouts).
+  // Responsive resize
   const ro = new ResizeObserver(() => viewer.resize());
   ro.observe(el);
 
