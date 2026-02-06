@@ -58,49 +58,54 @@
     return c.toDataURL("image/png");
 }
 
-let tintLayer = null;
+// --- Post-process tint stage (global) ---
+const tintStage = new Cesium.PostProcessStage({
+  name: "PP_Tint",
+  fragmentShader: `
+    uniform sampler2D colorTexture;
+    uniform vec3 u_tint;
+    uniform float u_strength; // 0..1
+    varying vec2 v_textureCoordinates;
 
-function rebuildTintLayer(r, g, b, alpha) {
-    // Remove old tint layer if it exists
-    console.log("[PP:CESIUM] rebuildTintLayer()", { r, g, b, alpha });
-    if (tintLayer) {
-        viewer.imageryLayers.remove(tintLayer, true);
-        tintLayer = null;
+    void main() {
+      vec4 color = texture2D(colorTexture, v_textureCoordinates);
+
+      // Multiply tint (keeps blacks black; brightens by tint color)
+      vec3 tinted = color.rgb * u_tint;
+
+      // Blend between original and tinted
+      vec3 outRgb = mix(color.rgb, tinted, u_strength);
+
+      gl_FragColor = vec4(outRgb, color.a);
     }
+  `,
+  uniforms: {
+    u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0), // default no tint
+    u_strength: 0.0,
+  },
+});
 
-    // If alpha is 0, don't add anything
-    if (!alpha || alpha <= 0) {
-        return;
-    }
+viewer.scene.postProcessStages.add(tintStage);
 
-    const provider = new Cesium.SingleTileImageryProvider({
-        url: makeSolidTileDataUrl(r, g, b) + `#${r},${g},${b},${alpha},${Date.now()}`, // Cache-busting query param
-        rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
-    });
-    console.log("tint ready?", provider.ready, "layer count", viewer.imageryLayers.length);
-
-
-    tintLayer = viewer.imageryLayers.addImageryProvider(provider);
-    tintLayer.alpha = alpha;
-    tintLayer.show = true;
-
-    // Ensure tint is on top
-    viewer.imageryLayers.raiseToTop(tintLayer);
-    viewer.scene.requestRender();
-}
 
 function setSignalTint(signalKey) {
-    console.log("[PP:CESIUM] setSignalTint()", signalKey);
-    const tints = {
-        water: { r: 80, g: 140, b: 255, a: 0.6 },       // blue
-        energy: { r: 255, g: 90, b: 90, a: 0.5 },       // red
-        vegetation: { r: 120, g: 255, b: 170, a: 0.5 }, // green
-        none: { r: 0, g: 0, b: 0, a: 0.0 },
-    };
+  const tints = {
+    water:      { r: 80,  g: 140, b: 255, a: 0.22 },
+    energy:     { r: 255, g: 90,  b: 90,  a: 0.18 },
+    vegetation: { r: 120, g: 255, b: 170, a: 0.18 },
+    none:       { r: 255, g: 255, b: 255, a: 0.0 }, // identity tint
+  };
 
-    const t = tints[signalKey] || tints.none;
-    rebuildTintLayer(t.r, t.g, t.b, t.a);
+  const t = tints[signalKey] || tints.none;
+
+  // Convert 0..255 -> 0..1. Use 1,1,1 as "no tint".
+  tintStage.uniforms.u_tint = new Cesium.Cartesian3(t.r / 255, t.g / 255, t.b / 255);
+  tintStage.uniforms.u_strength = t.a;
+
+  // If you're in requestRenderMode, force a frame
+  viewer.scene.requestRender();
 }
+
 
 // Expose to UI script
 window.PP_setSignalTint = setSignalTint;
