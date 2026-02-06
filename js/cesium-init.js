@@ -90,9 +90,9 @@ function rebuildTintLayer(r, g, b, alpha) {
 function setSignalTint(signalKey) {
     console.log("[PP:CESIUM] setSignalTint()", signalKey);
     const tints = {
-        water: { r: 80, g: 140, b: 255, a: 0.22 },       // blue
-        energy: { r: 255, g: 90, b: 90, a: 0.18 },       // red
-        vegetation: { r: 120, g: 255, b: 170, a: 0.18 }, // green
+        water: { r: 80, g: 140, b: 255, a: 0.6 },       // blue
+        energy: { r: 255, g: 90, b: 90, a: 0.5 },       // red
+        vegetation: { r: 120, g: 255, b: 170, a: 0.5 }, // green
         none: { r: 0, g: 0, b: 0, a: 0.0 },
     };
 
