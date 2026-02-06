@@ -41,8 +41,8 @@
 
   window.__pp_viewer = viewer;
 
-  // --- Post-process: Tint + Contrast + Saturation ---
-  const ppTintStage = new Cesium.PostProcessStage({
+// --- Post-process: Tint + Contrast + Saturation ---
+const ppTintStage = new Cesium.PostProcessStage({
   name: "PP_Tint",
   fragmentShader: `
     precision highp float;
@@ -65,6 +65,7 @@
     u_strength: 0.0,
   },
 });
+window.__ppTintStage = ppTintStage;
 
 viewer.scene.postProcessStages.enabled = true;
 viewer.scene.postProcessStages.add(ppTintStage);
@@ -89,8 +90,8 @@ viewer.scene.postProcessStages.add(ppTintStage);
     viewer.scene.requestRender();
   }
 
-  window.PP_setSignalTint = setSignalTint;
+  window.ppTintStage= setSignalTint;
 
   // Default tint
-  window.PP_setSignalTint("water");
+  window.ppTintStage("water");
 })();
