@@ -86,11 +86,6 @@ viewer.scene.postProcessStages.add(ppTintStage);
       t.b / 255
     );
     ppGradeStage.uniforms.u_strength = t.a;
-
-    // Optional: flatten grade when "none"
-    ppGradeStage.uniforms.u_contrast = (signalKey === "none") ? 1.0 : 1.08;
-    ppGradeStage.uniforms.u_saturation = (signalKey === "none") ? 1.0 : 1.05;
-
     viewer.scene.requestRender();
   }
 
