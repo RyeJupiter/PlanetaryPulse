@@ -49,41 +49,58 @@
     window.__pp_viewer = viewer;
 
     function makeSolidTileDataUrl(r, g, b) {
-        const c = document.createElement("canvas");
-        c.width = 1;
-        c.height = 1;
-        const ctx = c.getContext("2d");
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        ctx.fillRect(0, 0, 1, 1);
-        return c.toDataURL("image/png");
+    const c = document.createElement("canvas");
+    c.width = 1;
+    c.height = 1;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    ctx.fillRect(0, 0, 1, 1);
+    return c.toDataURL("image/png");
+}
+
+let tintLayer = null;
+
+function rebuildTintLayer(r, g, b, alpha) {
+    // Remove old tint layer if it exists
+    if (tintLayer) {
+        viewer.imageryLayers.remove(tintLayer, true);
+        tintLayer = null;
     }
 
-    // Create the tint layer (initially transparent)
-    const tintProvider = new Cesium.SingleTileImageryProvider({
-        url: makeSolidTileDataUrl(0, 0, 0),
+    // If alpha is 0, don't add anything
+    if (!alpha || alpha <= 0) {
+        return;
+    }
+
+    const provider = new Cesium.SingleTileImageryProvider({
+        url: makeSolidTileDataUrl(r, g, b),
         rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
     });
 
-    const tintLayer = viewer.imageryLayers.addImageryProvider(tintProvider);
-    tintLayer.alpha = 0.0; // start off
+    tintLayer = viewer.imageryLayers.addImageryProvider(provider);
+    tintLayer.alpha = alpha;
 
-    function setSignalTint(signalKey) {
-        // Pick your hues (tweak anytime)
-        const tints = {
-            water: { r: 80, g: 140, b: 255, a: 0.22 },       // blue
-            energy: { r: 255, g: 90, b: 90, a: 0.18 },       // red
-            vegetation: { r: 120, g: 255, b: 170, a: 0.18 }, // green
-            none: { r: 0, g: 0, b: 0, a: 0.0 },
-        };
+    // Ensure tint is on top
+    viewer.imageryLayers.raiseToTop(tintLayer);
+}
 
-        const t = tints[signalKey] || tints.none;
+function setSignalTint(signalKey) {
+    const tints = {
+        water: { r: 80, g: 140, b: 255, a: 0.22 },       // blue
+        energy: { r: 255, g: 90, b: 90, a: 0.18 },       // red
+        vegetation: { r: 120, g: 255, b: 170, a: 0.18 }, // green
+        none: { r: 0, g: 0, b: 0, a: 0.0 },
+    };
 
-        // Update tile color by swapping provider URL
-        tintLayer.imageryProvider.url = makeSolidTileDataUrl(t.r, t.g, t.b);
-        tintLayer.alpha = t.a;
-    }
+    const t = tints[signalKey] || tints.none;
+    rebuildTintLayer(t.r, t.g, t.b, t.a);
+}
 
-    // Expose to UI script
-    window.PP_setSignalTint = setSignalTint;
+// Expose to UI script
+window.PP_setSignalTint = setSignalTint;
+
+// Optional: set a default tint right away so you can visually confirm it works
+window.PP_setSignalTint("water");
+
 
 })();

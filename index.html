@@ -471,8 +471,12 @@
     <script src="/js/globe-ui.js"></script>
 
     <script>
-        document.getElementById("y")?.textContent = new Date().getFullYear();
+        const y = document.getElementById("y");
+        if (y) {
+            y.textContent = new Date().getFullYear();
+        }
     </script>
+
 </body>
 </html>
 
