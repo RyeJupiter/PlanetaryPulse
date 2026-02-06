@@ -236,7 +236,6 @@
             color: rgba(230, 237, 243, 0.70);
         }
         .metricBar{
-            max-width: var(--max);
             margin: 12px auto 0;
             padding: 10px 14px;
             border-radius: 14px;
@@ -278,7 +277,6 @@
         }
 
         .legendBar{
-            max-width: var(--max);
             margin: 10px auto 12px;
             padding: 10px 14px 12px;
             border-radius: 14px;
@@ -358,19 +356,16 @@
             white-space: nowrap;
         }
 
-        @media (max-width: 880px){
-            .metricBar,
-            .legendBar{
-                margin-left: 18px;
-                margin-right: 18px;
-            }
+        .metricBar,
+        .legendBar{
+            margin-left: 18px;
+            margin-right: 18px;
         }
-
 
         #globe {
             width: 100%;
-            height: min(70vh, 720px);
-            min-height: 440px;
+            height: clamp(520px, 80vw, 900px);
+            display: block;
         }
     </style>
 </head>
@@ -413,53 +408,55 @@
                 </div>
             </div>
 
-            <div class="metricBar" aria-label="Active metric information">
-                <div class="metricLeft">
-                    <div class="metricName" id="metricName">Runoff</div>
-                    <div class="metricMeta" id="metricMeta">
-                        Units: <span class="mono" id="metricUnits">mm/day</span>
-                        <span class="dotSep">•</span>
-                        Baseline: <span class="mono" id="metricBaseline">2001–2020</span>
-                        <span class="dotSep">•</span>
-                        Source: <span class="mono" id="metricSource">TBD</span>
-                    </div>
-                </div>
-
-                <div class="metricRight">
-                    <div class="metricCompare" id="metricCompare">
-                        Mode: <span class="mono">Δ vs baseline</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="legendBar" aria-label="Legend">
-                <div class="legendHeader">
-                    <div class="legendLabel" id="legendLabel">Degraded → Stable → Regenerating</div>
-                    <div class="legendRange" id="legendRange">
-                        <span class="mono" id="legendMin">-20</span>
-                        <span class="mono" id="legendMid">0</span>
-                        <span class="mono" id="legendMax">+20</span>
-                    </div>
-                </div>
-
-                <div class="legendScale">
-                    <div class="legendGradient" id="legendGradient"></div>
-
-                    <div class="legendTicks">
-                        <span class="tick" style="left: 0%"></span>
-                        <span class="tick" style="left: 50%"></span>
-                        <span class="tick" style="left: 100%"></span>
-                    </div>
-
-                    <div class="legendTickLabels">
-                        <span class="tickLabel" style="left: 0%" id="legendMinLabel">Low</span>
-                        <span class="tickLabel" style="left: 50%" id="legendMidLabel">Typical</span>
-                        <span class="tickLabel" style="left: 100%" id="legendMaxLabel">High</span>
-                    </div>
-                </div>
-            </div>
-
             <div id="globe"></div>
+
+            <div class="globeBottom" aria-label="Legend and metric information">
+                <div class="legendBar legendBarWide" aria-label="Legend">
+                    <div class="legendHeader">
+                        <div class="legendLabel" id="legendLabel">Drier → Typical → Wetter</div>
+                        <div class="legendRange" id="legendRange">
+                            <span class="mono" id="legendMin">-20</span>
+                            <span class="mono" id="legendMid">0</span>
+                            <span class="mono" id="legendMax">+20</span>
+                        </div>
+                    </div>
+
+                    <div class="legendScale">
+                        <div class="legendGradient" id="legendGradient"></div>
+
+                        <div class="legendTicks">
+                            <span class="tick" style="left: 0%"></span>
+                            <span class="tick" style="left: 50%"></span>
+                            <span class="tick" style="left: 100%"></span>
+                        </div>
+
+                        <div class="legendTickLabels">
+                            <span class="tickLabel" style="left: 0%" id="legendMinLabel">Low</span>
+                            <span class="tickLabel" style="left: 50%" id="legendMidLabel">Typical</span>
+                            <span class="tickLabel" style="left: 100%" id="legendMaxLabel">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metricBar metricBarWide" aria-label="Active metric information">
+                    <div class="metricLeft">
+                        <div class="metricName" id="metricName">Runoff</div>
+                        <div class="metricMeta" id="metricMeta">
+                            Units: <span class="mono" id="metricUnits">mm/day</span>
+                            <span class="dotSep">•</span>
+                            Baseline: <span class="mono" id="metricBaseline">2001–2020</span>
+                            <span class="dotSep">•</span>
+                            Source: <span class="mono" id="metricSource">TBD</span>
+                        </div>
+                    </div>
+
+                    <div class="metricRight">
+                        <div class="metricCompare" id="metricCompare">
+                            Mode: <span class="mono">Δ vs baseline</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
