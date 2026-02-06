@@ -42,53 +42,33 @@
   window.__pp_viewer = viewer;
 
   // --- Post-process: Tint + Contrast + Saturation ---
-  const ppGradeStage = new Cesium.PostProcessStage({
-    name: "PP_Grade",
-    fragmentShader: `
-      uniform sampler2D colorTexture;
+  const ppTintStage = new Cesium.PostProcessStage({
+  name: "PP_Tint",
+  fragmentShader: `
+    precision highp float;
 
-      uniform vec3  u_tint;       // 0..1, (1,1,1)=no tint
-      uniform float u_strength;   // 0..1
-      uniform float u_contrast;   // 1=no change
-      uniform float u_saturation; // 1=no change
+    uniform sampler2D colorTexture;
+    uniform vec3 u_tint;        // (1,1,1)=no tint
+    uniform float u_strength;   // 0..1
 
-      varying vec2 v_textureCoordinates;
+    in vec2 v_textureCoordinates; // injected by Cesium
 
-      vec3 applyContrast(vec3 c, float contrast) {
-        return (c - 0.5) * contrast + 0.5;
-      }
+    void main() {
+      vec4 src = texture(colorTexture, v_textureCoordinates);
+      vec3 tinted = src.rgb * u_tint;
+      vec3 outRgb = mix(src.rgb, tinted, clamp(u_strength, 0.0, 1.0));
+      out_FragColor = vec4(outRgb, src.a); // injected by Cesium
+    }
+  `,
+  uniforms: {
+    u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
+    u_strength: 0.0,
+  },
+});
 
-      vec3 applySaturation(vec3 c, float sat) {
-        float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
-        return mix(vec3(l), c, sat);
-      }
+viewer.scene.postProcessStages.enabled = true;
+viewer.scene.postProcessStages.add(ppTintStage);
 
-      void main() {
-        vec4 src = texture2D(colorTexture, v_textureCoordinates);
-        vec3 rgb = src.rgb;
-
-        // "colored glass" tint: multiply then blend
-        vec3 tinted = rgb * u_tint;
-        rgb = mix(rgb, tinted, clamp(u_strength, 0.0, 1.0));
-
-        // grade
-        rgb = applyContrast(rgb, u_contrast);
-        rgb = applySaturation(rgb, u_saturation);
-        rgb = clamp(rgb, 0.0, 1.0);
-
-        gl_FragColor = vec4(rgb, src.a);
-      }
-    `,
-    uniforms: {
-      u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
-      u_strength: 0.0,
-      u_contrast: 1.08,
-      u_saturation: 1.05,
-    },
-  });
-
-  viewer.scene.postProcessStages.enabled = true;
-  viewer.scene.postProcessStages.add(ppGradeStage);
 
   function setSignalTint(signalKey) {
     const tints = {
