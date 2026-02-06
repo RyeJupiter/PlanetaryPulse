@@ -103,11 +103,11 @@
         if (defaultMetricId) {
             setMetricUI(signalKey, defaultMetricId);
         }
-        if (typeof window.PP_setSignalTint === "function") {
-            console.log("[PP:UI] calling PP_setSignalTint()", signalKey);
-            window.PP_setSignalTint(signalKey);
+        if (typeof window.ppTintStage === "function") {
+            console.log("[PP:UI] calling ppTintStage()", signalKey);
+            window.ppTintStage(signalKey);
         } else {
-            console.warn("[PP:UI] PP_setSignalTint missing (cesium-init.js not loaded or errored)");
+            console.warn("[PP:UI] ppTintStage missing (cesium-init.js not loaded or errored)");
         }
 
         
