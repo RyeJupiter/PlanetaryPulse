@@ -74,18 +74,17 @@ function rebuildTintLayer(r, g, b, alpha) {
     }
 
     const provider = new Cesium.SingleTileImageryProvider({
-        url: makeSolidTileDataUrl(r, g, b),
+        url: makeSolidTileDataUrl(r, g, b) + `#${r},${g},${b},${alpha},${Date.now()}`, // Cache-busting query param
         rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
     });
 
     tintLayer = viewer.imageryLayers.addImageryProvider(provider);
-    tintLayer.alpha = alpha; // Cesium uses alpha for transparency, so invert it
+    tintLayer.alpha = alpha;
     tintLayer.show = true;
 
     // Ensure tint is on top
     viewer.imageryLayers.raiseToTop(tintLayer);
     viewer.scene.requestRender();
-
 }
 
 function setSignalTint(signalKey) {
