@@ -4,31 +4,387 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Planetary Pulse</title>
-  <meta name="description" content="Quantifying and communicating Earth's living systems" />
+  <meta name="description" content="Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems." />
+
   <style>
-    body {
+    :root{
+      --bg: #070B12;
+      --panel: rgba(255,255,255,0.04);
+      --panel2: rgba(255,255,255,0.06);
+      --text: #E6EDF3;
+      --muted: rgba(230,237,243,0.72);
+      --line: rgba(255,255,255,0.10);
+      --accent: rgba(122, 189, 255, 0.95);
+      --max: 1060px;
+      --radius: 18px;
+      --shadow: 0 12px 45px rgba(0,0,0,0.45);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
       margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0b0f14;
-      color: #e6edf3;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 70% -10%, rgba(122,189,255,0.14), transparent 60%),
+                  radial-gradient(900px 700px at 10% 10%, rgba(155,255,204,0.08), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a{ color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(230,237,243,0.25); }
+    a:hover{ border-bottom-color: rgba(230,237,243,0.6); }
+
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(7,11,18,0.65);
+      border-bottom: 1px solid var(--line);
+      z-index: 10;
+    }
+
+    .nav{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+      justify-content: space-between;
+      gap: 16px;
     }
-    h1 { font-size: 3rem; margin-bottom: 0.5rem; }
-    p { opacity: 0.8; max-width: 520px; }
+
+    .brand{
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 99px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(122,189,255,0.10);
+    }
+
+    .navlinks{
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .navlinks a{ color: var(--muted); border-bottom: none; padding: 6px 8px; border-radius: 10px; }
+    .navlinks a:hover{ color: var(--text); background: rgba(255,255,255,0.05); }
+
+    main{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 46px 18px 80px;
+    }
+
+    .hero{
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 70ch;
+    }
+
+    .pillrow{
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-top: 16px;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .pill b{ color: var(--text); font-weight: 650; }
+
+    .heroVisual{
+      display: grid;
+      place-items: center;
+      min-height: 240px;
+      background: linear-gradient(145deg, rgba(122,189,255,0.14), rgba(255,255,255,0.02));
+      border: 1px dashed rgba(230,237,243,0.18);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .heroVisual span{
+      color: var(--muted);
+      text-align: center;
+      max-width: 34ch;
+      font-size: 14px;
+    }
+
+    section{
+      margin-top: 22px;
+    }
+    h2{
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+    }
+    .prose{
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .grid2{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .callout{
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .callout h3{
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+    .callout p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .list{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+    .list li{ margin: 6px 0; }
+
+    .mediaGrid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .media{
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+    .media .frame{
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(0,0,0,0.0));
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+    .media .caption{
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer{
+      margin-top: 38px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: rgba(230,237,243,0.55);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    @media (max-width: 880px){
+      .hero{ grid-template-columns: 1fr; }
+      .grid2{ grid-template-columns: 1fr; }
+      .mediaGrid{ grid-template-columns: 1fr; }
+      .navlinks{ display: none; }
+    }
   </style>
 </head>
+
 <body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>Planetary Pulse</span>
+      </div>
+      <nav class="navlinks" aria-label="Primary navigation">
+        <a href="#product">Product</a>
+        <a href="#mvp">MVP</a>
+        <a href="#why">Why it matters</a>
+        <a href="#platform">Platform</a>
+        <a href="#media">Media</a>
+      </nav>
+    </div>
+  </header>
+
   <main>
-    <h1>Planetary Pulse</h1>
-    <p>
-      Visualizing Earth's hydrology, vegetation, thermal regulation,
-      and regenerative change.
-    </p>
-    <p><em>Interactive globe coming soon.</em></p>
+    <div class="hero">
+      <div class="card">
+        <h1>Planetary Pulse</h1>
+        <p class="subtitle">
+          Shared planetary intelligence: making Earth’s living systems legible through satellite data,
+          trends, and comparative baselines.
+        </p>
+
+        <div class="pillrow" aria-label="Key signals">
+          <span class="pill"><b>Water</b> hydrology, retention, flow</span>
+          <span class="pill"><b>Energy</b> thermal regulation</span>
+          <span class="pill"><b>Carbon</b> productivity, respiration</span>
+          <span class="pill"><b>Structure</b> vegetation, land cover</span>
+        </div>
+      </div>
+
+      <div class="heroVisual" aria-label="Future software preview">
+        <span>
+          <b>Software preview coming soon.</b><br/>
+          This panel will become the interactive globe / dashboard.
+        </span>
+      </div>
+    </div>
+
+    <section id="product" class="card">
+      <h2>Full product</h2>
+      <p class="prose">
+        Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems by tracking how water, energy, carbon, and biological structure move and regulate across the planet over time. Using satellite observations and publicly available Earth-system data, Planetary Pulse translates complex signals—across land, coasts, and oceans—into clear, trend-based indicators that show whether ecosystems are stabilizing, degrading, or regenerating relative to historical baselines and matched controls. The platform is designed to make planetary-scale processes legible to both experts and the public, supporting informed action, investment, and stewardship aimed at restoring ecological function and advancing planetary regeneration.
+      </p>
+    </section>
+
+    <section id="mvp" class="grid2">
+      <div class="card">
+        <h2>MVP</h2>
+        <p class="prose">
+          Planetary Pulse (MVP) is a web-based visualization tool that aggregates a small set of publicly available satellite and Earth-system datasets to display time-series trends in ecosystem function for selected regions. The MVP focuses on a limited number of core signals—such as surface temperature, vegetation productivity, and hydrologic patterns—and presents them through simple, comparative graphics that show how conditions are changing relative to historical baselines and nearby reference areas. Its purpose is to demonstrate that complex planetary processes can be translated into clear, interpretable indicators that make ecological change—and early signs of regeneration—visible and understandable.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Initial MVP focus</h2>
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence Layer</h3>
+          <p>Open, accessible regional dashboards with baselines, trends, and clear signals of degradation → stabilization → regeneration.</p>
+        </div>
+        <ul class="list">
+          <li>Regional dashboards (selected geographies)</li>
+          <li>Historical baselines + trend visualization</li>
+          <li>Matched controls / reference comparisons</li>
+          <li>Educational narrative elements</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="why" class="card">
+      <h2>Planetary Pulse — Why it matters</h2>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Ideological / mission value</h3>
+      <p class="prose">
+        Today, countless people and organizations are working to regenerate land, water, and ecosystems. Yet almost no one can see how these efforts alter planetary function over time, because the complexity of those impacts is immense and distributed across scales. Planetary Pulse makes this complexity visible. By translating satellite and Earth-system data into clear, longitudinal signals, the platform reveals how local actions ripple through hydrologic, thermal, carbon, and biological systems. When progress becomes visible at scale, cynicism declines and participation increases. Rather than enforcing compliance through rules or guilt, Planetary Pulse encourages learning systems—supporting understanding of Earth’s regulatory processes and reframing ecology as cooperative tuning rather than sacrifice.
+      </p>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Market / practical value</h3>
+      <p class="prose">
+        A market for regeneration and environmental impact already exists, but it remains fragmented and inefficient. Carbon credits, ESG reporting, consulting assessments, and bespoke dashboards attempt to fill the gap, yet many rely on self-reporting, short-term studies, or expensive consultants. Planetary Pulse provides an integrated alternative: cross-project comparison, longitudinal performance tracking, and independent verification using publicly available data—reducing reliance on one-off studies while increasing transparency. For governments, NGOs, restoration orgs, and high-end regenerative agriculture or forestry operations, it offers persistent monitoring and communicable, third-party evidence of ecological impact over years and decades.
+      </p>
+    </section>
+
+    <section id="platform" class="card">
+      <h2>Platform structure</h2>
+      <p class="prose">
+        Planetary Pulse is designed as a tiered platform: Tier 1 builds trust and cultural legitimacy through a high-quality public interface; Tier 2 adds professional analytics and reporting tools; Tier 3 supports verification and custom analysis for major projects and institutions.
+      </p>
+
+      <div class="grid2" style="margin-top:14px;">
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence (MVP)</h3>
+          <p>Open dashboards, baselines, trend signals, and narrative tools.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 2 — Professional Analytics</h3>
+          <p>Subscriptions for NGOs, funds, developers, and agencies; advanced comparisons and reporting.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 3 — Verification & Custom Analysis</h3>
+          <p>Bespoke modeling, validation, and institutional-grade analyses.</p>
+        </div>
+        <div class="callout">
+          <h3>Core value proposition</h3>
+          <p>Transforms fragmented environmental data into shared planetary intelligence—so society can see, learn, and coordinate around living systems.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="card">
+      <h2>Media</h2>
+      <p class="prose" style="margin-bottom:12px;">
+        Add a “what it might look like” mock and the posters here. For now these are placeholders—drop images into <code style="color:rgba(230,237,243,0.75)">/public/assets/</code> and update the file names below.
+      </p>
+
+      <div class="mediaGrid">
+        <div class="media">
+          <div class="frame">
+            Mock UI image placeholder<br/>
+            (future: dashboard/globe screenshot)
+          </div>
+          <div class="caption">
+            <b>What the software might look like.</b> Replace this with an image in <code>/public/assets/mock.png</code>.
+          </div>
+        </div>
+
+        <div class="media">
+          <div class="frame">
+            Posters placeholder<br/>
+            (your previous poster assets)
+          </div>
+          <div class="caption">
+            <b>Posters.</b> Replace this with images in <code>/public/assets/poster-1.png</code>, <code>poster-2.png</code>, etc.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="y"></span> Planetary Pulse</div>
+      <div><a href="#product">Back to top</a></div>
+    </footer>
   </main>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
