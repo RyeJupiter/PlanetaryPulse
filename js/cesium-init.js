@@ -1,118 +1,121 @@
 /* global Cesium */
 
 (function initCesiumGlobe() {
-    const el = document.getElementById("globe");
-    if (!el) return;
+  const el = document.getElementById("globe");
+  if (!el) return;
 
-    const viewer = new Cesium.Viewer("globe", {
-        animation: false,
-        timeline: false,
-        fullscreenButton: false,
-        homeButton: false,
-        sceneModePicker: false,
-        navigationHelpButton: false,
-        geocoder: false,
-        baseLayerPicker: false,
-        terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-    });
+  const viewer = new Cesium.Viewer("globe", {
+    animation: false,
+    timeline: false,
+    fullscreenButton: false,
+    homeButton: false,
+    sceneModePicker: false,
+    navigationHelpButton: false,
+    geocoder: false,
+    baseLayerPicker: false,
+    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+  });
 
-    // Remove default imagery
-    viewer.imageryLayers.removeAll(true);
+  // Remove default imagery
+  viewer.imageryLayers.removeAll(true);
 
-    // Satellite imagery (Esri World Imagery)
-    const esriWorldImagery = new Cesium.UrlTemplateImageryProvider({
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        credit: "Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
-        maximumLevel: 19,
-    });
+  // Satellite imagery (Esri World Imagery)
+  const esriWorldImagery = new Cesium.UrlTemplateImageryProvider({
+    url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    credit: "Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+    maximumLevel: 19,
+  });
+  viewer.imageryLayers.addImageryProvider(esriWorldImagery);
 
-    viewer.imageryLayers.addImageryProvider(esriWorldImagery);
+  // Visual cleanup
+  viewer.scene.skyBox = undefined;
+  viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
+  viewer.scene.globe.enableLighting = false;
 
-    // Visual cleanup
-    viewer.scene.skyBox = undefined;
-    viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
+  viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
+  });
 
-    // Kill night-side shading
-    viewer.scene.globe.enableLighting = false;
+  const ro = new ResizeObserver(() => viewer.resize());
+  ro.observe(el);
 
-    // Optional: cleaner “product” look
-    // viewer.scene.skyAtmosphere.show = false;
-    // viewer.scene.globe.showGroundAtmosphere = false;
+  window.__pp_viewer = viewer;
 
-    viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
-    });
+  // --- Post-process: Tint + Contrast + Saturation ---
+  const ppGradeStage = new Cesium.PostProcessStage({
+    name: "PP_Grade",
+    fragmentShader: `
+      uniform sampler2D colorTexture;
 
-    const ro = new ResizeObserver(() => viewer.resize());
-    ro.observe(el);
+      uniform vec3  u_tint;       // 0..1, (1,1,1)=no tint
+      uniform float u_strength;   // 0..1
+      uniform float u_contrast;   // 1=no change
+      uniform float u_saturation; // 1=no change
 
-    window.__pp_viewer = viewer;
+      varying vec2 v_textureCoordinates;
 
-    function makeSolidTileDataUrl(r, g, b) {
-    const c = document.createElement("canvas");
-    c.width = 1;
-    c.height = 1;
-    const ctx = c.getContext("2d");
-    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-    ctx.fillRect(0, 0, 1, 1);
-    return c.toDataURL("image/png");
-}
+      vec3 applyContrast(vec3 c, float contrast) {
+        return (c - 0.5) * contrast + 0.5;
+      }
 
-// --- Post-process tint stage (global) ---
-const tintStage = new Cesium.PostProcessStage({
-  name: "PP_Tint",
-  fragmentShader: `
-    precision highp float;
+      vec3 applySaturation(vec3 c, float sat) {
+        float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+        return mix(vec3(l), c, sat);
+      }
 
-    uniform sampler2D colorTexture;
-    uniform vec3 u_tint;
-    uniform float u_strength; // 0..1
+      void main() {
+        vec4 src = texture2D(colorTexture, v_textureCoordinates);
+        vec3 rgb = src.rgb;
 
-    in vec2 v_textureCoordinates;
-    out vec4 out_FragColor;
+        // "colored glass" tint: multiply then blend
+        vec3 tinted = rgb * u_tint;
+        rgb = mix(rgb, tinted, clamp(u_strength, 0.0, 1.0));
 
-    void main() {
-      vec4 color = texture(colorTexture, v_textureCoordinates);
+        // grade
+        rgb = applyContrast(rgb, u_contrast);
+        rgb = applySaturation(rgb, u_saturation);
+        rgb = clamp(rgb, 0.0, 1.0);
 
-      vec3 tinted = color.rgb * u_tint; // multiply tint
-      vec3 outRgb = mix(color.rgb, tinted, clamp(u_strength, 0.0, 1.0));
+        gl_FragColor = vec4(rgb, src.a);
+      }
+    `,
+    uniforms: {
+      u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
+      u_strength: 0.0,
+      u_contrast: 1.08,
+      u_saturation: 1.05,
+    },
+  });
 
-      out_FragColor = vec4(outRgb, color.a);
-    }
-  `,
-  uniforms: {
-    u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
-    u_strength: 0.0,
-  },
-});
+  viewer.scene.postProcessStages.enabled = true;
+  viewer.scene.postProcessStages.add(ppGradeStage);
 
-viewer.scene.postProcessStages.add(tintStage);
+  function setSignalTint(signalKey) {
+    const tints = {
+      water:      { r:  80, g: 140, b: 255, a: 0.22 },
+      energy:     { r: 255, g:  90, b:  90, a: 0.18 },
+      vegetation: { r: 120, g: 255, b: 170, a: 0.18 },
+      none:       { r: 255, g: 255, b: 255, a: 0.0  },
+    };
 
+    const t = tints[signalKey] || tints.none;
 
-function setSignalTint(signalKey) {
-  const tints = {
-    water:      { r: 80,  g: 140, b: 255, a: 0.22 },
-    energy:     { r: 255, g: 90,  b: 90,  a: 0.18 },
-    vegetation: { r: 120, g: 255, b: 170, a: 0.18 },
-    none:       { r: 255, g: 255, b: 255, a: 0.0 }, // identity tint
-  };
+    ppGradeStage.uniforms.u_tint = new Cesium.Cartesian3(
+      t.r / 255,
+      t.g / 255,
+      t.b / 255
+    );
+    ppGradeStage.uniforms.u_strength = t.a;
 
-  const t = tints[signalKey] || tints.none;
+    // Optional: flatten grade when "none"
+    ppGradeStage.uniforms.u_contrast = (signalKey === "none") ? 1.0 : 1.08;
+    ppGradeStage.uniforms.u_saturation = (signalKey === "none") ? 1.0 : 1.05;
 
-  // Convert 0..255 -> 0..1. Use 1,1,1 as "no tint".
-  tintStage.uniforms.u_tint = new Cesium.Cartesian3(t.r / 255, t.g / 255, t.b / 255);
-  tintStage.uniforms.u_strength = t.a;
+    viewer.scene.requestRender();
+  }
 
-  // If you're in requestRenderMode, force a frame
-  viewer.scene.requestRender();
-}
+  window.PP_setSignalTint = setSignalTint;
 
-
-// Expose to UI script
-window.PP_setSignalTint = setSignalTint;
-
-// Optional: set a default tint right away so you can visually confirm it works
-window.PP_setSignalTint("water");
-
-
+  // Default tint
+  window.PP_setSignalTint("water");
 })();
