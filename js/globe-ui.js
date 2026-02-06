@@ -93,7 +93,7 @@
         console.log("[PP:UI] setSignalUI()", {
             signalKey,
             hasMetrics: !!window.PP_METRICS,
-            hasTintFn: typeof window.PP_setSignalTint === "function",
+            hasTintFn: typeof window.ppTintStage === "function",
         });
         
         setActiveChip(signalKey);
