@@ -153,48 +153,41 @@
             margin: 0;
         }
 
-        .pillrow {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .pill {
-            padding: 8px 10px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            background: rgba(255, 255, 255, 0.03);
-            font-size: 13px;
-            color: var(--muted);
-        }
 
         .pill b {
             color: var(--text);
         }
 
         .globeWrap {
-            max-width: var(--max);
-            margin: 18px auto 0;
-            padding: 0 18px;
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            margin-top: 18px;
+            padding: 0;
         }
 
-        .globeCard {
-            border-radius: var(--radius);
-            border: 1px solid var(--line);
-            box-shadow: var(--shadow);
+        .globeCard{
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            box-shadow: none;
             overflow: hidden;
-            background: linear-gradient(
-                145deg,
-                rgba(122, 189, 255, 0.10),
-                rgba(255, 255, 255, 0.02)
-            );
+            background: linear-gradient(145deg, rgba(122,189,255,0.10), rgba(255,255,255,0.02));
         }
 
         .globeHeader {
             padding: 18px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(0, 0, 0, 0.10);
+            max-width: var(--max);
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            padding-right: 12px;
         }
 
         .globeHUD {
@@ -204,6 +197,8 @@
             background: rgba(7, 11, 18, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.14);
             backdrop-filter: blur(10px);
+            padding-left: 18px;
+            padding-right: 18px;
         }
 
         .hudTitle {
@@ -269,16 +264,10 @@
         <div class="globeCard">
             <div class="globeHeader">
                 <h1>Planetary Pulse</h1>
+                <h3>A platform for shared planetary systems intelligence. </h3>
                 <p class="prose">
-                    Shared planetary intelligence: making Earth’s living systems legible through satellite data,
-                    trends, and comparative baselines.
+                    Making Earth’s complex climate systems legible through satellite data visualization—so we can see, learn, and coordinate around living systems. Learning how to read planetary signals is the first step toward tuning our actions in harmony with Earth’s regulatory processes that sustain life's endless renewal.
                 </p>
-
-                <div class="pillrow">
-                    <span class="pill"><b>Water</b> hydrology, flow</span>
-                    <span class="pill"><b>Energy</b> thermal regulation</span>
-                    <span class="pill"><b>Vegetation</b> land cover</span>
-                </div>
             </div>
 
             <div class="globeHUD">
@@ -307,5 +296,139 @@
     <script>
         document.getElementById("y")?.textContent = new Date().getFullYear();
     </script>
+</body>
+</html>
+
+  <!-- Narrative content stays below -->
+  <main>
+    <section id="product" class="card">
+      <h2>Full product</h2>
+      <p class="prose">
+        Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems by tracking how water, energy, carbon, and biological structure move and regulate across the planet over time. Using satellite observations and publicly available Earth-system data, Planetary Pulse translates complex signals—across land, coasts, and oceans—into clear, trend-based indicators that show whether ecosystems are stabilizing, degrading, or regenerating relative to historical baselines and matched controls. The platform is designed to make planetary-scale processes legible to both experts and the public, supporting informed action, investment, and stewardship aimed at restoring ecological function and advancing planetary regeneration.
+      </p>
+    </section>
+
+    <section id="mvp" class="grid2">
+      <div class="card">
+        <h2>MVP</h2>
+        <p class="prose">
+          Planetary Pulse (MVP) is a web-based visualization tool that aggregates a small set of publicly available satellite and Earth-system datasets to display time-series trends in ecosystem function for selected regions. The MVP focuses on a limited number of core signals—such as surface temperature, vegetation productivity, and hydrologic patterns—and presents them through simple, comparative graphics that show how conditions are changing relative to historical baselines and nearby reference areas. Its purpose is to demonstrate that complex planetary processes can be translated into clear, interpretable indicators that make ecological change—and early signs of regeneration—visible and understandable.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Initial MVP focus</h2>
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence Layer</h3>
+          <p>Open, accessible regional dashboards with baselines, trends, and clear signals of degradation → stabilization → regeneration.</p>
+        </div>
+        <ul class="list">
+          <li>Regional dashboards (selected geographies)</li>
+          <li>Historical baselines + trend visualization</li>
+          <li>Matched controls / reference comparisons</li>
+          <li>Educational narrative elements</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="why" class="card">
+      <h2>Planetary Pulse — Why it matters</h2>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Ideological / mission value</h3>
+      <p class="prose">
+        Today, countless people and organizations are working to regenerate land, water, and ecosystems. Yet almost no one can see how these efforts alter planetary function over time, because the complexity of those impacts is immense and distributed across scales. Planetary Pulse makes this complexity visible. By translating satellite and Earth-system data into clear, longitudinal signals, the platform reveals how local actions ripple through hydrologic, thermal, carbon, and biological systems. When progress becomes visible at scale, cynicism declines and participation increases. Rather than enforcing compliance through rules or guilt, Planetary Pulse encourages learning systems—supporting understanding of Earth’s regulatory processes and reframing ecology as cooperative tuning rather than sacrifice.
+      </p>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Market / practical value</h3>
+      <p class="prose">
+        A market for regeneration and environmental impact already exists, but it remains fragmented and inefficient. Carbon credits, ESG reporting, consulting assessments, and bespoke dashboards attempt to fill the gap, yet many rely on self-reporting, short-term studies, or expensive consultants. Planetary Pulse provides an integrated alternative: cross-project comparison, longitudinal performance tracking, and independent verification using publicly available Earth-system data—reducing reliance on one-off studies while increasing transparency. For governments, NGOs, restoration orgs, and high-end regenerative agriculture or forestry operations, it offers persistent monitoring and communicable, third-party evidence of ecological impact over years and decades.
+      </p>
+    </section>
+
+    <section id="platform" class="card">
+      <h2>Platform structure</h2>
+      <p class="prose">
+        Planetary Pulse is designed as a tiered platform: Tier 1 builds trust and cultural legitimacy through a high-quality public interface; Tier 2 adds professional analytics and reporting tools; Tier 3 supports verification and custom analysis for major projects and institutions.
+      </p>
+
+      <div class="grid2" style="margin-top:14px;">
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence (MVP)</h3>
+          <p>Open dashboards, baselines, trend signals, and narrative tools.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 2 — Professional Analytics</h3>
+          <p>Subscriptions for NGOs, funds, developers, and agencies; advanced comparisons and reporting.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 3 — Verification & Custom Analysis</h3>
+          <p>Bespoke modeling, validation, and institutional-grade analyses.</p>
+        </div>
+        <div class="callout">
+          <h3>Core value proposition</h3>
+          <p>Transforms fragmented environmental data into shared planetary intelligence—so society can see, learn, and coordinate around living systems.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="card">
+      <h2>Media</h2>
+      <p class="prose" style="margin-bottom:12px;">
+        Add a “what it might look like” mock and the posters here. For now these are placeholders—drop images into <code style="color:rgba(230,237,243,0.75)">/public/assets/</code> and update the file names below.
+      </p>
+
+      <div class="mediaGrid">
+        <div class="media">
+          <img
+            src="/public/assets/mock.png"
+            alt="Planetary Pulse software concept visualization"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Conceptual software interface.</b>
+            Early visualization of how planetary-scale signals and trends may be presented.
+          </div>
+        </div>
+
+        <div class="media">
+          <img
+            src="/public/assets/poster-2.png"
+            alt="Planetary Pulse Purpose poster"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Planetary Pulse poster.</b>
+            Visual narrative communicating the platform’s purpose and scope.
+          </div>
+        </div>
+
+        <div class="media">
+          <img
+            src="/public/assets/poster-1.png"
+            alt="Planetary Pulse Regeneration poster"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Planetary Pulse poster.</b>
+            Framing planetary regeneration as a measurable, participatory process.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="y"></span> Planetary Pulse</div>
+      <div><a href="#product">Back to top</a></div>
+    </footer>
+  </main>
+
+  <!-- JS calls -->
+    <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
+    <script src="/js/cesium-init.js"></script>
+    <script src="/js/globe-ui.js"></script>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
