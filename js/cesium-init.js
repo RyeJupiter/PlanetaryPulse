@@ -1,57 +1,89 @@
 /* global Cesium */
 
 (function initCesiumGlobe() {
-  const el = document.getElementById("globe");
-  if (!el) return;
+    const el = document.getElementById("globe");
+    if (!el) return;
 
-  // Build the viewer with minimal defaults (we will explicitly set imagery)
-  const viewer = new Cesium.Viewer("globe", {
-    animation: false,
-    timeline: false,
-    fullscreenButton: false,
-    homeButton: false,
-    sceneModePicker: false,
-    navigationHelpButton: false,
-    geocoder: false,
-    baseLayerPicker: false,
+    const viewer = new Cesium.Viewer("globe", {
+        animation: false,
+        timeline: false,
+        fullscreenButton: false,
+        homeButton: false,
+        sceneModePicker: false,
+        navigationHelpButton: false,
+        geocoder: false,
+        baseLayerPicker: false,
+        terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+    });
 
-    // Avoid ion terrain
-    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-  });
+    // Remove default imagery
+    viewer.imageryLayers.removeAll(true);
 
-  // IMPORTANT: remove whatever default imagery Cesium attached
-  viewer.imageryLayers.removeAll(true);
+    // Satellite imagery (Esri World Imagery)
+    const esriWorldImagery = new Cesium.UrlTemplateImageryProvider({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        credit: "Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+        maximumLevel: 19,
+    });
 
-  // Add OpenStreetMap imagery explicitly
-  const osmProvider = new Cesium.UrlTemplateImageryProvider({
-    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    credit: "© OpenStreetMap contributors",
-    maximumLevel: 19,
-  });
+    viewer.imageryLayers.addImageryProvider(esriWorldImagery);
 
-  viewer.imageryLayers.addImageryProvider(osmProvider);
+    // Visual cleanup
+    viewer.scene.skyBox = undefined;
+    viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
 
-  // Visual cleanup
-  viewer.scene.skyBox = undefined;
-  viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
-  viewer.scene.globe.enableLighting = false; // avoid dark shadows on the globe surface
-  // Reduce visual noise
-    viewer.scene.sun.show = false;               // removes the bright star glint
-    viewer.scene.moon.show = false;
-    viewer.scene.skyAtmosphere.show = true;      // keep nice limb glow
+    // Kill night-side shading
+    viewer.scene.globe.enableLighting = false;
 
-  // Optional: remove some default UI elements that still show up sometimes
+    // Optional: cleaner “product” look
+    // viewer.scene.skyAtmosphere.show = false;
+    // viewer.scene.globe.showGroundAtmosphere = false;
 
+    viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
+    });
 
+    const ro = new ResizeObserver(() => viewer.resize());
+    ro.observe(el);
 
-  // Start position
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
-  });
+    window.__pp_viewer = viewer;
 
-  // Responsive resize
-  const ro = new ResizeObserver(() => viewer.resize());
-  ro.observe(el);
+    function makeSolidTileDataUrl(r, g, b) {
+        const c = document.createElement("canvas");
+        c.width = 1;
+        c.height = 1;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        ctx.fillRect(0, 0, 1, 1);
+        return c.toDataURL("image/png");
+    }
 
-  window.__pp_viewer = viewer;
+    // Create the tint layer (initially transparent)
+    const tintProvider = new Cesium.SingleTileImageryProvider({
+        url: makeSolidTileDataUrl(0, 0, 0),
+        rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
+    });
+
+    const tintLayer = viewer.imageryLayers.addImageryProvider(tintProvider);
+    tintLayer.alpha = 0.0; // start off
+
+    function setSignalTint(signalKey) {
+        // Pick your hues (tweak anytime)
+        const tints = {
+            water: { r: 80, g: 140, b: 255, a: 0.22 },       // blue
+            energy: { r: 255, g: 90, b: 90, a: 0.18 },       // red
+            vegetation: { r: 120, g: 255, b: 170, a: 0.18 }, // green
+            none: { r: 0, g: 0, b: 0, a: 0.0 },
+        };
+
+        const t = tints[signalKey] || tints.none;
+
+        // Update tile color by swapping provider URL
+        tintLayer.imageryProvider.url = makeSolidTileDataUrl(t.r, t.g, t.b);
+        tintLayer.alpha = t.a;
+    }
+
+    // Expose to UI script
+    window.PP_setSignalTint = setSignalTint;
+
 })();

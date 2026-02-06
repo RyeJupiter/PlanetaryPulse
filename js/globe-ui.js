@@ -98,6 +98,10 @@
         if (defaultMetricId) {
             setMetricUI(signalKey, defaultMetricId);
         }
+        if (typeof window.PP_setSignalTint === "function") {
+            window.PP_setSignalTint(signalKey);
+        }
+
     }
 
     function wireSignalChips() {
