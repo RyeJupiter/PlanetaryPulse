@@ -62,6 +62,7 @@ let tintLayer = null;
 
 function rebuildTintLayer(r, g, b, alpha) {
     // Remove old tint layer if it exists
+    console.log("[PP:CESIUM] rebuildTintLayer()", { r, g, b, alpha });
     if (tintLayer) {
         viewer.imageryLayers.remove(tintLayer, true);
         tintLayer = null;
@@ -85,6 +86,7 @@ function rebuildTintLayer(r, g, b, alpha) {
 }
 
 function setSignalTint(signalKey) {
+    console.log("[PP:CESIUM] setSignalTint()", signalKey);
     const tints = {
         water: { r: 80, g: 140, b: 255, a: 0.22 },       // blue
         energy: { r: 255, g: 90, b: 90, a: 0.18 },       // red

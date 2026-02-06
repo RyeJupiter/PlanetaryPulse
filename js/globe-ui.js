@@ -90,7 +90,12 @@
 
     function setSignalUI(signalKey) {
         if (!signalKey || !METRICS[signalKey]) return;
-
+        console.log("[PP:UI] setSignalUI()", {
+            signalKey,
+            hasMetrics: !!window.PP_METRICS,
+            hasTintFn: typeof window.PP_setSignalTint === "function",
+        });
+        
         setActiveChip(signalKey);
         setHudSubtitle(signalKey);
 
@@ -99,8 +104,13 @@
             setMetricUI(signalKey, defaultMetricId);
         }
         if (typeof window.PP_setSignalTint === "function") {
+            console.log("[PP:UI] calling PP_setSignalTint()", signalKey);
             window.PP_setSignalTint(signalKey);
+        } else {
+            console.warn("[PP:UI] PP_setSignalTint missing (cesium-init.js not loaded or errored)");
         }
+
+        
 
     }
 
