@@ -90,7 +90,7 @@ viewer.scene.postProcessStages.add(ppTintStage);
     viewer.scene.requestRender();
   }
 
-  window.ppTintStage= setSignalTint;
+  window.setSignalTint= setSignalTint;
 
   // Default tint
   window.ppTintStage("water");
