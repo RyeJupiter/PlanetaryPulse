@@ -79,7 +79,8 @@ function rebuildTintLayer(r, g, b, alpha) {
     });
 
     tintLayer = viewer.imageryLayers.addImageryProvider(provider);
-    tintLayer.alpha = alpha;
+    tintLayer.alpha = 1 - alpha; // Cesium uses alpha for transparency, so invert it
+    tintLayer.show = true;
 
     // Ensure tint is on top
     viewer.imageryLayers.raiseToTop(tintLayer);
