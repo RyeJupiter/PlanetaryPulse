@@ -77,6 +77,9 @@ function rebuildTintLayer(r, g, b, alpha) {
         url: makeSolidTileDataUrl(r, g, b) + `#${r},${g},${b},${alpha},${Date.now()}`, // Cache-busting query param
         rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
     });
+    console.log("tint ready?", provider.ready, "layer count", viewer.imageryLayers.length);
+    provider.readyPromise.then(() => console.log("tint became ready"));
+
 
     tintLayer = viewer.imageryLayers.addImageryProvider(provider);
     tintLayer.alpha = alpha;
