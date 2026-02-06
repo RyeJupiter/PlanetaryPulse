@@ -78,7 +78,6 @@ function rebuildTintLayer(r, g, b, alpha) {
         rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
     });
     console.log("tint ready?", provider.ready, "layer count", viewer.imageryLayers.length);
-    provider.readyPromise.then(() => console.log("tint became ready"));
 
 
     tintLayer = viewer.imageryLayers.addImageryProvider(provider);
