@@ -235,6 +235,137 @@
             font-size: 13px;
             color: rgba(230, 237, 243, 0.70);
         }
+        .metricBar{
+            max-width: var(--max);
+            margin: 12px auto 0;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(7,11,18,0.35);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .metricName{
+            font-size: 14px;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+        }
+
+        .metricMeta{
+            margin-top: 4px;
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .metricCompare{
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .dotSep{
+            margin: 0 8px;
+            opacity: 0.55;
+        }
+
+        .mono{
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.95em;
+            color: rgba(230,237,243,0.85);
+        }
+
+        .legendBar{
+            max-width: var(--max);
+            margin: 10px auto 12px;
+            padding: 10px 14px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(7,11,18,0.35);
+            backdrop-filter: blur(10px);
+        }
+
+        .legendHeader{
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .legendLabel{
+            font-size: 12px;
+            color: rgba(230,237,243,0.75);
+        }
+
+        .legendRange{
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .legendScale{
+            position: relative;
+            height: 34px;
+        }
+
+        .legendGradient{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 6px;
+            height: 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.55));
+        }
+
+        .legendTicks{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 4px;
+            height: 14px;
+            pointer-events: none;
+        }
+
+        .tick{
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 14px;
+            background: rgba(255,255,255,0.30);
+        }
+
+        .legendTickLabels{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 18px;
+            height: 16px;
+            pointer-events: none;
+        }
+
+        .tickLabel{
+            position: absolute;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(230,237,243,0.65);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 880px){
+            .metricBar,
+            .legendBar{
+                margin-left: 18px;
+                margin-right: 18px;
+            }
+        }
+
 
         #globe {
             width: 100%;
@@ -279,6 +410,52 @@
                 </div>
                 <div class="hudSubTitle" id="hudSubTitle">
                     Hydrologic Function
+                </div>
+            </div>
+
+            <div class="metricBar" aria-label="Active metric information">
+                <div class="metricLeft">
+                    <div class="metricName" id="metricName">Runoff</div>
+                    <div class="metricMeta" id="metricMeta">
+                        Units: <span class="mono" id="metricUnits">mm/day</span>
+                        <span class="dotSep">•</span>
+                        Baseline: <span class="mono" id="metricBaseline">2001–2020</span>
+                        <span class="dotSep">•</span>
+                        Source: <span class="mono" id="metricSource">TBD</span>
+                    </div>
+                </div>
+
+                <div class="metricRight">
+                    <div class="metricCompare" id="metricCompare">
+                        Mode: <span class="mono">Δ vs baseline</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legendBar" aria-label="Legend">
+                <div class="legendHeader">
+                    <div class="legendLabel" id="legendLabel">Degraded → Stable → Regenerating</div>
+                    <div class="legendRange" id="legendRange">
+                        <span class="mono" id="legendMin">-20</span>
+                        <span class="mono" id="legendMid">0</span>
+                        <span class="mono" id="legendMax">+20</span>
+                    </div>
+                </div>
+
+                <div class="legendScale">
+                    <div class="legendGradient" id="legendGradient"></div>
+
+                    <div class="legendTicks">
+                        <span class="tick" style="left: 0%"></span>
+                        <span class="tick" style="left: 50%"></span>
+                        <span class="tick" style="left: 100%"></span>
+                    </div>
+
+                    <div class="legendTickLabels">
+                        <span class="tickLabel" style="left: 0%" id="legendMinLabel">Low</span>
+                        <span class="tickLabel" style="left: 50%" id="legendMidLabel">Typical</span>
+                        <span class="tickLabel" style="left: 100%" id="legendMaxLabel">High</span>
+                    </div>
                 </div>
             </div>
 
