@@ -62,25 +62,26 @@
 const tintStage = new Cesium.PostProcessStage({
   name: "PP_Tint",
   fragmentShader: `
+    precision highp float;
+
     uniform sampler2D colorTexture;
     uniform vec3 u_tint;
     uniform float u_strength; // 0..1
-    varying vec2 v_textureCoordinates;
+
+    in vec2 v_textureCoordinates;
+    out vec4 out_FragColor;
 
     void main() {
-      vec4 color = texture2D(colorTexture, v_textureCoordinates);
+      vec4 color = texture(colorTexture, v_textureCoordinates);
 
-      // Multiply tint (keeps blacks black; brightens by tint color)
-      vec3 tinted = color.rgb * u_tint;
+      vec3 tinted = color.rgb * u_tint; // multiply tint
+      vec3 outRgb = mix(color.rgb, tinted, clamp(u_strength, 0.0, 1.0));
 
-      // Blend between original and tinted
-      vec3 outRgb = mix(color.rgb, tinted, u_strength);
-
-      gl_FragColor = vec4(outRgb, color.a);
+      out_FragColor = vec4(outRgb, color.a);
     }
   `,
   uniforms: {
-    u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0), // default no tint
+    u_tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
     u_strength: 0.0,
   },
 });
