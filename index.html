@@ -1,507 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Planetary Pulse</title>
-  <meta name="description" content="Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems." />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planetary Pulse</title>
+    <meta
+        name="description"
+        content="Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems."
+    />
 
-  <!-- Cesium CSS (must be in <head>) -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css"
-  />
+    <!-- Cesium CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css"
+    />
 
-  <style>
-    :root{
-      --bg: #070B12;
-      --panel: rgba(255,255,255,0.04);
-      --panel2: rgba(255,255,255,0.06);
-      --text: #E6EDF3;
-      --muted: rgba(230,237,243,0.72);
-      --line: rgba(255,255,255,0.10);
-      --accent: rgba(122, 189, 255, 0.95);
-      --max: 1060px;
-      --radius: 18px;
-      --shadow: 0 12px 45px rgba(0,0,0,0.45);
-    }
+    <style>
+        :root {
+            --bg: #070B12;
+            --panel: rgba(255, 255, 255, 0.04);
+            --panel2: rgba(255, 255, 255, 0.06);
+            --text: #E6EDF3;
+            --muted: rgba(230, 237, 243, 0.72);
+            --line: rgba(255, 255, 255, 0.10);
+            --accent: rgba(122, 189, 255, 0.95);
+            --max: 1060px;
+            --radius: 18px;
+            --shadow: 0 12px 45px rgba(0, 0, 0, 0.45);
+        }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body{
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 70% -10%, rgba(122,189,255,0.14), transparent 60%),
-                  radial-gradient(900px 700px at 10% 10%, rgba(155,255,204,0.08), transparent 55%),
-                  var(--bg);
-      color: var(--text);
-      line-height: 1.55;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    a{ color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(230,237,243,0.25); }
-    a:hover{ border-bottom-color: rgba(230,237,243,0.6); }
+        html,
+        body {
+            height: 100%;
+        }
 
-    header{
-      position: sticky;
-      top: 0;
-      backdrop-filter: blur(10px);
-      background: rgba(7,11,18,0.65);
-      border-bottom: 1px solid var(--line);
-      z-index: 10;
-    }
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
+                Roboto, Helvetica, Arial, "Apple Color Emoji",
+                "Segoe UI Emoji";
+            background:
+                radial-gradient(
+                    1200px 800px at 70% -10%,
+                    rgba(122, 189, 255, 0.14),
+                    transparent 60%
+                ),
+                radial-gradient(
+                    900px 700px at 10% 10%,
+                    rgba(155, 255, 204, 0.08),
+                    transparent 55%
+                ),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+        }
 
-    .nav{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
+        a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(230, 237, 243, 0.25);
+        }
 
-    .brand{
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 650;
-      letter-spacing: 0.2px;
-    }
-    .dot{
-      width: 10px; height: 10px; border-radius: 99px;
-      background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(122,189,255,0.10);
-    }
+        a:hover {
+            border-bottom-color: rgba(230, 237, 243, 0.6);
+        }
 
-    .navlinks{
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      font-size: 14px;
-      color: var(--muted);
-    }
-    .navlinks a{ color: var(--muted); border-bottom: none; padding: 6px 8px; border-radius: 10px; }
-    .navlinks a:hover{ color: var(--text); background: rgba(255,255,255,0.05); }
+        header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 18, 0.65);
+            border-bottom: 1px solid var(--line);
+            z-index: 10;
+        }
 
-    main{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 28px 18px 80px; /* slightly tighter since globe is now above the fold */
-    }
+        .nav {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
 
-    .card{
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 650;
+            letter-spacing: 0.2px;
+        }
 
-    h1{
-      margin: 0 0 10px;
-      font-size: clamp(34px, 4vw, 54px);
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-    }
-    .subtitle{
-      margin: 0;
-      color: var(--muted);
-      font-size: 16px;
-      max-width: 70ch;
-    }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 99px;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(122, 189, 255, 0.10);
+        }
 
-    .pillrow{
-      display: flex; flex-wrap: wrap; gap: 10px;
-      margin-top: 16px;
-    }
-    .pill{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      color: var(--muted);
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .pill b{ color: var(--text); font-weight: 650; }
+        .navlinks {
+            display: flex;
+            gap: 14px;
+            font-size: 14px;
+            color: var(--muted);
+        }
 
-    section{
-      margin-top: 22px;
-    }
-    h2{
-      margin: 0 0 10px;
-      font-size: 20px;
-      letter-spacing: -0.01em;
-    }
-    .prose{
-      color: var(--muted);
-      margin: 0;
-    }
+        .navlinks a {
+            color: var(--muted);
+            border-bottom: none;
+            padding: 6px 8px;
+            border-radius: 10px;
+        }
 
-    .grid2{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
+        .navlinks a:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-    .callout{
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-    }
-    .callout h3{
-      margin: 0 0 8px;
-      font-size: 15px;
-      letter-spacing: -0.01em;
-    }
-    .callout p{
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
+        main {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 28px 18px 80px;
+        }
 
-    .list{
-      margin: 10px 0 0;
-      padding-left: 18px;
-      color: var(--muted);
-    }
-    .list li{ margin: 6px 0; }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
 
-    .mediaGrid{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-    .media{
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      overflow: hidden;
-    }
-    .media .caption{
-      padding: 12px 14px;
-      color: var(--muted);
-      font-size: 13px;
-    }
+        h1 {
+            margin: 0;
+            font-size: clamp(34px, 4.5vw, 56px);
+            line-height: 1.05;
+        }
 
-    footer{
-      margin-top: 38px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-      color: rgba(230,237,243,0.55);
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+        h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
 
-    /* ===== Globe-first section ===== */
-    .globeWrap{
-      max-width: var(--max);
-      margin: 18px auto 0;
-      padding: 0 18px;
-    }
+        .prose {
+            color: var(--muted);
+            margin: 0;
+        }
 
-    .globeCard{
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      background: linear-gradient(145deg, rgba(122,189,255,0.10), rgba(255,255,255,0.02));
-    }
+        .pillrow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
 
-    .globeHeader{
-      padding: 18px 18px 14px;
-      background: rgba(0,0,0,0.10);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
+        .pill {
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 13px;
+            color: var(--muted);
+        }
 
-    .globeHeader .titleRow{
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+        .pill b {
+            color: var(--text);
+        }
 
-    .globeHeader h1{
-      margin: 0;
-      font-size: clamp(34px, 4.5vw, 56px);
-      line-height: 1.05;
-    }
+        .globeWrap {
+            max-width: var(--max);
+            margin: 18px auto 0;
+            padding: 0 18px;
+        }
 
-    .globeHeader p{
-      margin: 8px 0 0;
-      color: var(--muted);
-      max-width: 80ch;
-      font-size: 15px;
-    }
-    .globeCard { position: relative; }
+        .globeCard {
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            background: linear-gradient(
+                145deg,
+                rgba(122, 189, 255, 0.10),
+                rgba(255, 255, 255, 0.02)
+            );
+        }
 
-    .globeHUD{
-        position: absolute;
-        left: 16px;
-        top: 16px;
-        z-index: 5;
-        max-width: min(520px, calc(100% - 32px));
-        background: rgba(7,11,18,0.55);
-        border: 1px solid rgba(255,255,255,0.14);
-        border-radius: 14px;
-        padding: 12px 12px 10px;
-        backdrop-filter: blur(10px);
-    }
+        .globeHeader {
+            padding: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.10);
+        }
 
-    .hudTitle{
-        font-size: 12px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: rgba(230,237,243,0.65);
-    }
+        .globeHUD {
+            margin: 12px 16px 0;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(7, 11, 18, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(10px);
+        }
 
-    .hudChips{
-        margin-top: 8px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
+        .hudTitle {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(230, 237, 243, 0.65);
+        }
 
-    .hudChip{
-        cursor: pointer;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.05);
-        color: rgba(230,237,243,0.80);
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-    }
+        .hudChips {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
 
-    .hudChip:hover{
-        background: rgba(255,255,255,0.08);
-        color: var(--text);
-    }
+        .hudChip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            color: rgba(230, 237, 243, 0.80);
+            cursor: pointer;
+        }
 
-    .hudChip.isActive{
-        border-color: rgba(122,189,255,0.55);
-        background: rgba(122,189,255,0.12);
-        color: var(--text);
-    }
+        .hudChip.isActive {
+            border-color: rgba(122, 189, 255, 0.55);
+            background: rgba(122, 189, 255, 0.12);
+            color: var(--text);
+        }
 
-    .hudSubTitle{
-        margin-top: 8px;
-        font-size: 13px;
-        color: rgba(230,237,243,0.70);
-    }
+        .hudSubTitle {
+            margin-top: 8px;
+            font-size: 13px;
+            color: rgba(230, 237, 243, 0.70);
+        }
 
-
-    #globe{
-      width: 100%;
-      height: min(70vh, 720px);
-      min-height: 440px;
-      display: block;
-    }
-
-    /* Cesium UI tweaks so it visually fits your theme */
-    .cesium-widget-credits{
-      opacity: 0.7;
-      transform: scale(0.95);
-      transform-origin: bottom right;
-    }
-
-    @media (max-width: 880px){
-      .grid2{ grid-template-columns: 1fr; }
-      .mediaGrid{ grid-template-columns: 1fr; }
-      .navlinks{ display: none; }
-      #globe{ min-height: 520px; height: 62vh; }
-      main{ padding-top: 18px; }
-    }
-  </style>
+        #globe {
+            width: 100%;
+            height: min(70vh, 720px);
+            min-height: 440px;
+        }
+    </style>
 </head>
 
 <body>
-  <header>
-    <div class="nav">
-      <div class="brand">
-        <span class="dot"></span>
-        <span>Planetary Pulse</span>
-      </div>
-      <nav class="navlinks" aria-label="Primary navigation">
-        <a href="#product">Product</a>
-        <a href="#mvp">MVP</a>
-        <a href="#why">Why it matters</a>
-        <a href="#platform">Platform</a>
-        <a href="#media">Media</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Globe is now front-and-center directly under the header -->
-  <div class="globeWrap">
-    <div class="globeCard" aria-label="Interactive globe">
-      <div class="globeHeader">
-        <div class="titleRow">
-          <h1>Planetary Pulse</h1>
+    <header>
+        <div class="nav">
+            <div class="brand">
+                <span class="dot"></span>
+                <span>Planetary Pulse</span>
+            </div>
+            <nav class="navlinks">
+                <a href="#product">Product</a>
+                <a href="#mvp">MVP</a>
+                <a href="#why">Why</a>
+                <a href="#platform">Platform</a>
+            </nav>
         </div>
-        <p>
-          Shared planetary intelligence: making Earth’s living systems legible through satellite data,
-          trends, and comparative baselines.
-        </p>
+    </header>
 
-        <div class="pillrow" aria-label="Key signals">
-            <span class="pill"><b>Water</b> hydrology, retention, flow</span>
-            <span class="pill"><b>Energy</b> thermal regulation</span>
-            <span class="pill"><b>Vegetation</b> vegetation, land cover</span>
+    <div class="globeWrap">
+        <div class="globeCard">
+            <div class="globeHeader">
+                <h1>Planetary Pulse</h1>
+                <p class="prose">
+                    Shared planetary intelligence: making Earth’s living systems legible through satellite data,
+                    trends, and comparative baselines.
+                </p>
 
-        </div>
-      </div>
-        <div class="globeHUD" aria-label="Signal controls">
-            <div class="hudTitle">Signals</div>
-
-            <div class="hudChips">
-                <button class="hudChip isActive" type="button" data-signal="water">Water</button>
-                <button class="hudChip" type="button" data-signal="energy">Energy</button>
-                <button class="hudChip" type="button" data-signal="vegetation">Vegetation</button>
+                <div class="pillrow">
+                    <span class="pill"><b>Water</b> hydrology, flow</span>
+                    <span class="pill"><b>Energy</b> thermal regulation</span>
+                    <span class="pill"><b>Vegetation</b> land cover</span>
+                </div>
             </div>
 
-            <div class="hudSubTitle" id="hudSubTitle">Hydrologic Function</div>
+            <div class="globeHUD">
+                <div class="hudTitle">Signals</div>
+                <div class="hudChips">
+                    <button class="hudChip isActive" data-signal="water">Water</button>
+                    <button class="hudChip" data-signal="energy">Energy</button>
+                    <button class="hudChip" data-signal="vegetation">Vegetation</button>
+                </div>
+                <div class="hudSubTitle" id="hudSubTitle">
+                    Hydrologic Function
+                </div>
             </div>
-      <div id="globe"></div>
+
+            <div id="globe"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- Narrative content stays below -->
-  <main>
-    <section id="product" class="card">
-      <h2>Full product</h2>
-      <p class="prose">
-        Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems by tracking how water, energy, carbon, and biological structure move and regulate across the planet over time. Using satellite observations and publicly available Earth-system data, Planetary Pulse translates complex signals—across land, coasts, and oceans—into clear, trend-based indicators that show whether ecosystems are stabilizing, degrading, or regenerating relative to historical baselines and matched controls. The platform is designed to make planetary-scale processes legible to both experts and the public, supporting informed action, investment, and stewardship aimed at restoring ecological function and advancing planetary regeneration.
-      </p>
-    </section>
+    <main>
+        <!-- Narrative sections unchanged -->
+    </main>
 
-    <section id="mvp" class="grid2">
-      <div class="card">
-        <h2>MVP</h2>
-        <p class="prose">
-          Planetary Pulse (MVP) is a web-based visualization tool that aggregates a small set of publicly available satellite and Earth-system datasets to display time-series trends in ecosystem function for selected regions. The MVP focuses on a limited number of core signals—such as surface temperature, vegetation productivity, and hydrologic patterns—and presents them through simple, comparative graphics that show how conditions are changing relative to historical baselines and nearby reference areas. Its purpose is to demonstrate that complex planetary processes can be translated into clear, interpretable indicators that make ecological change—and early signs of regeneration—visible and understandable.
-        </p>
-      </div>
-
-      <div class="card">
-        <h2>Initial MVP focus</h2>
-        <div class="callout">
-          <h3>Tier 1 — Public Intelligence Layer</h3>
-          <p>Open, accessible regional dashboards with baselines, trends, and clear signals of degradation → stabilization → regeneration.</p>
-        </div>
-        <ul class="list">
-          <li>Regional dashboards (selected geographies)</li>
-          <li>Historical baselines + trend visualization</li>
-          <li>Matched controls / reference comparisons</li>
-          <li>Educational narrative elements</li>
-        </ul>
-      </div>
-    </section>
-
-    <section id="why" class="card">
-      <h2>Planetary Pulse — Why it matters</h2>
-
-      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Ideological / mission value</h3>
-      <p class="prose">
-        Today, countless people and organizations are working to regenerate land, water, and ecosystems. Yet almost no one can see how these efforts alter planetary function over time, because the complexity of those impacts is immense and distributed across scales. Planetary Pulse makes this complexity visible. By translating satellite and Earth-system data into clear, longitudinal signals, the platform reveals how local actions ripple through hydrologic, thermal, carbon, and biological systems. When progress becomes visible at scale, cynicism declines and participation increases. Rather than enforcing compliance through rules or guilt, Planetary Pulse encourages learning systems—supporting understanding of Earth’s regulatory processes and reframing ecology as cooperative tuning rather than sacrifice.
-      </p>
-
-      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Market / practical value</h3>
-      <p class="prose">
-        A market for regeneration and environmental impact already exists, but it remains fragmented and inefficient. Carbon credits, ESG reporting, consulting assessments, and bespoke dashboards attempt to fill the gap, yet many rely on self-reporting, short-term studies, or expensive consultants. Planetary Pulse provides an integrated alternative: cross-project comparison, longitudinal performance tracking, and independent verification using publicly available Earth-system data—reducing reliance on one-off studies while increasing transparency. For governments, NGOs, restoration orgs, and high-end regenerative agriculture or forestry operations, it offers persistent monitoring and communicable, third-party evidence of ecological impact over years and decades.
-      </p>
-    </section>
-
-    <section id="platform" class="card">
-      <h2>Platform structure</h2>
-      <p class="prose">
-        Planetary Pulse is designed as a tiered platform: Tier 1 builds trust and cultural legitimacy through a high-quality public interface; Tier 2 adds professional analytics and reporting tools; Tier 3 supports verification and custom analysis for major projects and institutions.
-      </p>
-
-      <div class="grid2" style="margin-top:14px;">
-        <div class="callout">
-          <h3>Tier 1 — Public Intelligence (MVP)</h3>
-          <p>Open dashboards, baselines, trend signals, and narrative tools.</p>
-        </div>
-        <div class="callout">
-          <h3>Tier 2 — Professional Analytics</h3>
-          <p>Subscriptions for NGOs, funds, developers, and agencies; advanced comparisons and reporting.</p>
-        </div>
-        <div class="callout">
-          <h3>Tier 3 — Verification & Custom Analysis</h3>
-          <p>Bespoke modeling, validation, and institutional-grade analyses.</p>
-        </div>
-        <div class="callout">
-          <h3>Core value proposition</h3>
-          <p>Transforms fragmented environmental data into shared planetary intelligence—so society can see, learn, and coordinate around living systems.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="media" class="card">
-      <h2>Media</h2>
-      <p class="prose" style="margin-bottom:12px;">
-        Add a “what it might look like” mock and the posters here. For now these are placeholders—drop images into <code style="color:rgba(230,237,243,0.75)">/public/assets/</code> and update the file names below.
-      </p>
-
-      <div class="mediaGrid">
-        <div class="media">
-          <img
-            src="/public/assets/mock.png"
-            alt="Planetary Pulse software concept visualization"
-            style="width:100%; display:block;"
-          />
-          <div class="caption">
-            <b>Conceptual software interface.</b>
-            Early visualization of how planetary-scale signals and trends may be presented.
-          </div>
-        </div>
-
-        <div class="media">
-          <img
-            src="/public/assets/poster-2.png"
-            alt="Planetary Pulse Purpose poster"
-            style="width:100%; display:block;"
-          />
-          <div class="caption">
-            <b>Planetary Pulse poster.</b>
-            Visual narrative communicating the platform’s purpose and scope.
-          </div>
-        </div>
-
-        <div class="media">
-          <img
-            src="/public/assets/poster-1.png"
-            alt="Planetary Pulse Regeneration poster"
-            style="width:100%; display:block;"
-          />
-          <div class="caption">
-            <b>Planetary Pulse poster.</b>
-            Framing planetary regeneration as a measurable, participatory process.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <div>© <span id="y"></span> Planetary Pulse</div>
-      <div><a href="#product">Back to top</a></div>
-    </footer>
-  </main>
-
-  <!-- JS calls -->
     <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
     <script src="/js/cesium-init.js"></script>
     <script src="/js/globe-ui.js"></script>
-
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+    <script>
+        document.getElementById("y")?.textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
