@@ -80,12 +80,12 @@ viewer.scene.postProcessStages.add(ppTintStage);
 
     const t = tints[signalKey] || tints.none;
 
-    ppGradeStage.uniforms.u_tint = new Cesium.Cartesian3(
+    ppTintStage.uniforms.u_tint = new Cesium.Cartesian3(
       t.r / 255,
       t.g / 255,
       t.b / 255
     );
-    ppGradeStage.uniforms.u_strength = t.a;
+    ppTintStage.uniforms.u_strength = t.a;
     viewer.scene.requestRender();
   }
 
