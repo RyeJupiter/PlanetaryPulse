@@ -35,6 +35,17 @@
   viewer.scene.skyBox = undefined;
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
   viewer.scene.globe.enableLighting = true;
+  // Reduce visual noise
+    viewer.scene.sun.show = false;               // removes the bright star glint
+    viewer.scene.moon.show = false;
+    viewer.scene.skyAtmosphere.show = true;      // keep nice limb glow
+
+  // Optional: remove some default UI elements that still show up sometimes
+    viewer.cesiumWidget.creditContainer.style.opacity = "0.75";
+    viewer.cesiumWidget.creditContainer.style.transform = "scale(0.6)";
+    viewer.cesiumWidget.creditContainer.style.transformOrigin = "bottom right";
+
+
 
   // Start position
   viewer.camera.setView({

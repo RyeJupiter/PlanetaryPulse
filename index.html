@@ -240,6 +240,62 @@
       max-width: 80ch;
       font-size: 15px;
     }
+    .globeCard { position: relative; }
+
+    .globeHUD{
+        position: absolute;
+        left: 16px;
+        top: 16px;
+        z-index: 5;
+        max-width: min(520px, calc(100% - 32px));
+        background: rgba(7,11,18,0.55);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 14px;
+        padding: 12px 12px 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hudTitle{
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(230,237,243,0.65);
+    }
+
+    .hudChips{
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .hudChip{
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.05);
+        color: rgba(230,237,243,0.80);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+    }
+
+    .hudChip:hover{
+        background: rgba(255,255,255,0.08);
+        color: var(--text);
+    }
+
+    .hudChip.isActive{
+        border-color: rgba(122,189,255,0.55);
+        background: rgba(122,189,255,0.12);
+        color: var(--text);
+    }
+
+    .hudSubTitle{
+        margin-top: 8px;
+        font-size: 13px;
+        color: rgba(230,237,243,0.70);
+    }
+
 
     #globe{
       width: 100%;
@@ -301,7 +357,17 @@
           <span class="pill"><b>Structure</b> vegetation, land cover</span>
         </div>
       </div>
+        <div class="globeHUD" aria-label="Signal controls">
+            <div class="hudTitle">Signals</div>
 
+            <div class="hudChips">
+                <button class="hudChip isActive" type="button" data-signal="water">Water</button>
+                <button class="hudChip" type="button" data-signal="energy">Energy</button>
+                <button class="hudChip" type="button" data-signal="vegetation">Vegetation</button>
+            </div>
+
+            <div class="hudSubTitle" id="hudSubTitle">Hydrologic Function</div>
+            </div>
       <div id="globe"></div>
     </div>
   </div>
@@ -429,9 +495,11 @@
     </footer>
   </main>
 
-  <!-- Cesium JS + init (best at end of body) -->
-  <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
-  <script src="/js/cesium-init.js"></script>
+  <!-- JS calls -->
+    <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
+    <script src="/js/cesium-init.js"></script>
+    <script src="/js/globe-ui.js"></script>
+</body>
 
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
