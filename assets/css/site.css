@@ -48,25 +48,8 @@ body > * {
   z-index: 1;
 }
 body::before,
-body::after,
-.signalOrbits {
-  will-change: transform, opacity;
-}
-body::before,
 body::after {
-  animation: nebulaFloat 40s linear infinite;
-}
-
-@keyframes nebulaFloat {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  25% { transform: translate3d(1%, -0.6%, 0) scale(1.01); }
-  50% { transform: translate3d(0.4%, 0.4%, 0) scale(1.015); }
-  75% { transform: translate3d(-0.6%, 1%, 0) scale(1.01); }
-  100% { transform: translate3d(0, 0, 0) scale(1); }
-}
-
-.signalOrbits {
-  display: none;
+  content: none;
 }
 
 .satelliteRail {
@@ -107,11 +90,6 @@ body::after {
   margin-top: 6px;
 }
 
-@keyframes orbitPulse {
-  0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
-  50% { transform: scale(1.02) rotate(2deg); opacity: 0.38; }
-  100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
-}
 
 .nav {
   display: flex;
