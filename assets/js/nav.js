@@ -31,6 +31,18 @@
     </header>
   `;
 
+  if (!document.querySelector(".pageBg")) {
+    const bg = document.createElement("div");
+    bg.className = "pageBg";
+    document.body.prepend(bg);
+  }
+  const backgroundChoices = [1, 2, 3, 4];
+  const pick = backgroundChoices[Math.floor(Math.random() * backgroundChoices.length)];
+  document.body.style.setProperty(
+    "--page-bg",
+    `url("public/media/backgrounds/background-${pick}.png")`
+  );
+
   if (!document.querySelector(".satelliteRail")) {
     const railRight = document.createElement("div");
     railRight.className = "satelliteRail right";

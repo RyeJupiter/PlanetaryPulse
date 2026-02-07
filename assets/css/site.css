@@ -43,6 +43,23 @@ body::before {
   pointer-events: none;
   z-index: -2;
 }
+body .pageBg {
+  position: fixed;
+  inset: -6%;
+  background-image: var(--page-bg);
+  background-size: cover;
+  background-position: center;
+  filter: blur(26px) brightness(0.45) saturate(0.8);
+  transform: scale(1.06);
+  z-index: -4;
+  pointer-events: none;
+}
+body .pageBg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.55);
+}
 body::after {
   content: "";
   position: fixed;
