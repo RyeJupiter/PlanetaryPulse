@@ -40,7 +40,7 @@
   const pick = backgroundChoices[Math.floor(Math.random() * backgroundChoices.length)];
   document.body.style.setProperty(
     "--page-bg",
-    `url("public/media/backgrounds/background-${pick}.png")`
+    `url("public/media/backgrounds/background-${pick}.png"), url("media/backgrounds/background-${pick}.png")`
   );
 
   if (!document.querySelector(".satelliteRail")) {
