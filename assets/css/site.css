@@ -429,6 +429,9 @@ h2 {
   border: 1px solid rgba(130, 170, 210, 0.25);
   margin: 8px 0 12px;
 }
+.blogLightbox {
+  cursor: zoom-in;
+}
 .galleryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
