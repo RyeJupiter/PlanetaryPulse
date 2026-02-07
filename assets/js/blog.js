@@ -3,7 +3,8 @@
   const search = document.getElementById("blog-search");
   const count = document.getElementById("blog-results-count");
   const emptyTip = document.getElementById("blog-empty-tip");
-  if (!list || !search || !count || !emptyTip) return;
+  const index = document.getElementById("blog-index");
+  if (!list || !search || !count || !emptyTip || !index) return;
 
   function toDateLabel(dateStr) {
     const d = new Date(dateStr + "T00:00:00");
@@ -92,12 +93,20 @@
 
   function render(posts, query) {
     list.innerHTML = "";
+    index.innerHTML = "";
     const normalized = query.trim().toLowerCase();
     const visible = !normalized
       ? posts
       : posts.filter((post) => asSearchText(post).includes(normalized));
 
-    visible.forEach((post) => list.appendChild(cardFor(post)));
+    visible.forEach((post) => {
+      list.appendChild(cardFor(post));
+      const link = document.createElement("a");
+      link.className = "blogIndexLink";
+      link.href = "#" + post.slug;
+      link.textContent = post.title;
+      index.appendChild(link);
+    });
     count.textContent = visible.length + " post" + (visible.length === 1 ? "" : "s") + " found";
     emptyTip.style.display = normalized ? "none" : "block";
   }
