@@ -289,6 +289,24 @@ h2 {
 .detailTitle {
   font-weight: 600;
 }
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.imageCard img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(120, 160, 200, 0.25);
+}
+.imageCaption {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
 
 .footer {
   padding: 18px 28px;

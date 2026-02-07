@@ -45,6 +45,43 @@
       wrapper.appendChild(tagLine);
     }
 
+    if (entity._pp_images && entity._pp_images.length) {
+      const grid = document.createElement("div");
+      grid.className = "imageGrid";
+      entity._pp_images.slice(0, 3).forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "imageCard";
+
+        const img = document.createElement("img");
+        img.src = item.url;
+        img.alt = item.alt || `${entity.name} landscape`;
+        img.loading = "lazy";
+        card.appendChild(img);
+
+        if (item.credit || item.source) {
+          const caption = document.createElement("div");
+          caption.className = "imageCaption";
+          if (item.credit) {
+            caption.appendChild(document.createTextNode(item.credit));
+            if (item.source) caption.appendChild(document.createTextNode(" • "));
+          }
+          if (item.source) {
+            const link = document.createElement("a");
+            link.className = "link";
+            link.href = item.source;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.textContent = "Source";
+            caption.appendChild(link);
+          }
+          card.appendChild(caption);
+        }
+
+        grid.appendChild(card);
+      });
+      wrapper.appendChild(grid);
+    }
+
     if (entity._pp_links && entity._pp_links.length) {
       const linkWrap = document.createElement("div");
       entity._pp_links.forEach((url) => {
@@ -100,6 +137,20 @@
         const entities = dataSource.entities.values;
         const tagCounts = new Map();
 
+        function normalizeImages(value) {
+          if (!value) return [];
+          if (Array.isArray(value)) return value;
+          if (typeof value === "string") {
+            try {
+              const parsed = JSON.parse(value);
+              return Array.isArray(parsed) ? parsed : [];
+            } catch (error) {
+              return [];
+            }
+          }
+          return [];
+        }
+
         entities.forEach((entity) => {
           const props = entity.properties || {};
           const name = props.name && props.name.getValue ? props.name.getValue() : entity.name;
@@ -109,11 +160,13 @@
           const size = props.size && props.size.getValue ? props.size.getValue() : "";
           const tags = props.tags && props.tags.getValue ? props.tags.getValue() : "";
           const links = props.links && props.links.getValue ? props.links.getValue() : "";
+          const images = props.images && props.images.getValue ? props.images.getValue() : [];
 
           entity._pp_summary = summary;
           entity._pp_size = size;
           entity._pp_tags = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
           entity._pp_links = links ? links.split(",").map((t) => t.trim()).filter(Boolean) : [];
+          entity._pp_images = normalizeImages(images);
 
           entity._pp_tags.forEach((tag) => {
             tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);

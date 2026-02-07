@@ -8,6 +8,18 @@
         "name": "Al Baydha Project",
         "summary": "Desert regreening with low-tech water harvesting and native species.",
         "size": "2,400 ha",
+        "images": [
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Al_Baydha_terraces_before.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_before.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Al_Baydha_terraces_after.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_after.jpg"
+          }
+        ],
         "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",
         "links": "https://aridagriculture.org,https://www.youtube.com/watch?v=T39QHprz-x8"
       },
@@ -23,6 +35,23 @@
         "name": "Knepp Estate Rewilding",
         "summary": "Large-scale rewilding on former farmland with biodiversity recovery.",
         "size": "1,400 ha",
+        "images": [
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Tamworth_sow_at_Knepp_Wildland.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Tamworth_sow_at_Knepp_Wildland.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Knepp_Castle.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Knepp_Castle.jpg"
+          }
+        ],
         "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
         "links": "https://knepp.co.uk"
       },
@@ -46,6 +75,23 @@
         "name": "Apricot Lane Farms",
         "summary": "Regenerative mixed farm system documented in a feature film.",
         "size": "214 ha",
+        "images": [
+          {
+            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1704003199?download=1",
+            "credit": "Disney Press",
+            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+          },
+          {
+            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1704003196?download=1",
+            "credit": "Disney Press",
+            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+          },
+          {
+            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1732421457?download=1",
+            "credit": "Disney Press",
+            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+          }
+        ],
         "tags": "regenerative-farm,biodiversity,california,mixed-livestock,film",
         "links": "https://www.apricotlanefarms.com"
       },
@@ -61,6 +107,18 @@
         "name": "Loess Plateau Restoration",
         "summary": "Landscape restoration and watershed recovery across degraded terrain.",
         "size": "35,000 km²",
+        "images": [
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Loess_landscape_china.jpg",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Loess_landscape_china.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Loess_Plateau_geomorphology_2012-4.JPG",
+            "credit": "Wikimedia Commons",
+            "source": "https://commons.wikimedia.org/wiki/File:Loess_Plateau_geomorphology_2012-4.JPG"
+          }
+        ],
         "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
         "links": "https://www.pbs.org"
       },
@@ -84,12 +142,93 @@
         "name": "White Oak Pastures",
         "summary": "Regenerative grazing, diversified livestock, rural community revival.",
         "size": "1,200 ha",
+        "images": [
+          {
+            "url": "https://certifiedhumane.org/uploads/images/whiteoak1.jpeg",
+            "credit": "Certified Humane",
+            "source": "https://certifiedhumane.org/white-oak-pastures/"
+          },
+          {
+            "url": "https://certifiedhumane.org/uploads/images/whiteoak2.jpeg",
+            "credit": "Certified Humane",
+            "source": "https://certifiedhumane.org/white-oak-pastures/"
+          },
+          {
+            "url": "https://certifiedhumane.org/uploads/images/whiteoak3.jpeg",
+            "credit": "Certified Humane",
+            "source": "https://certifiedhumane.org/white-oak-pastures/"
+          }
+        ],
         "tags": "regenerative-grazing,beef,georgia,grassfed,book",
         "links": "https://whiteoakpastures.com"
       },
       "geometry": {
         "type": "Point",
         "coordinates": [-84.88, 31.64]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "achm-001",
+        "name": "Africa Centre for Holistic Management",
+        "summary": "Allan Savory’s flagship landscape restoration site using holistic planned grazing.",
+        "size": "3,200 ha",
+        "images": [
+          {
+            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-2-1.jpg",
+            "credit": "Savory Institute",
+            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+          },
+          {
+            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-1-1.jpg",
+            "credit": "Savory Institute",
+            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+          },
+          {
+            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-3.jpg",
+            "credit": "Savory Institute",
+            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+          }
+        ],
+        "tags": "holistic-management,regenerative-grazing,zimbabwe,savanna,soil-restoration",
+        "links": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [29.73, -19.23]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "iwc-001",
+        "name": "India Water Cup (Paani Foundation)",
+        "summary": "Community-led watershed restoration competition across Maharashtra, India.",
+        "size": "6,000+ villages",
+        "images": [
+          {
+            "url": "https://paanifoundation.in/wp-content/uploads/2019/05/watercup-img1-1.jpg",
+            "credit": "Paani Foundation",
+            "source": "https://paanifoundation.in/"
+          },
+          {
+            "url": "https://paanifoundation.in/wp-content/uploads/2021/02/Navnath-Bhosle-1.jpg",
+            "credit": "Paani Foundation",
+            "source": "https://paanifoundation.in/"
+          },
+          {
+            "url": "https://paanifoundation.in/wp-content/uploads/2021/02/KRUSHNAPUR_03.jpg",
+            "credit": "Paani Foundation",
+            "source": "https://paanifoundation.in/"
+          }
+        ],
+        "tags": "water-harvesting,watershed,india,community,monsoon",
+        "links": "https://paanifoundation.in,https://paanifoundation.in/satyamev-jayate-water-cup/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.85, 18.52]
       }
     }
   ]
