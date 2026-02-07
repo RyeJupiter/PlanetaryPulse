@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Planetary Pulse</title>
+  <title>Project Atlas - Planetary Pulse</title>
 
   <!-- Cesium -->
   <link rel="stylesheet" href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css">
@@ -11,15 +11,16 @@
 
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/cesium-init.js" defer></script>
+  <script src="assets/js/project-atlas.js" defer></script>
 </head>
 
-<body data-page="home">
+<body data-page="atlas">
   <header class="nav">
     <div class="brand">Planetary Pulse</div>
     <nav class="links">
-      <a class="active" href="index.html">Home</a>
+      <a href="index.html">Home</a>
       <a href="explore.html">Explore</a>
-      <a href="project-atlas.html">Project Atlas</a>
+      <a class="active" href="project-atlas.html">Project Atlas</a>
       <a href="signals.html">Signals</a>
       <a href="why.html">Why</a>
       <a href="about.html">About</a>
@@ -29,24 +30,26 @@
 
   <main class="layout">
     <section class="copy">
-      <h1>Planetary Pulse</h1>
+      <h1>Project Atlas</h1>
       <p class="lede">
-        A live satellite globe foundation for Planetary Pulse.
-        Signals, project registries, and analysis tools are in active development.
+        A geotagged registry of regeneration projects. Pins and polygons open detail cards
+        and can be filtered by tags.
       </p>
 
-      <div class="callouts">
+      <div class="stack">
         <div class="card">
-          <div class="cardTitle">Current</div>
-          <div class="cardBody">Global satellite base layer</div>
+          <div class="cardTitle">Filters</div>
+          <div class="cardBody">
+            <div id="atlas-filters" class="filterList"></div>
+            <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
+          </div>
         </div>
-        <div class="card">
-          <div class="cardTitle">Next</div>
-          <div class="cardBody">Signals, overlays, and interactive exploration</div>
-        </div>
-        <div class="card">
-          <div class="cardTitle">In progress</div>
-          <div class="cardBody">Project Atlas registry with geotagged entries</div>
+
+        <div class="card" id="atlas-detail">
+          <div class="cardTitle">Project detail</div>
+          <div class="cardBody muted">
+            Select a project pin or polygon on the globe.
+          </div>
         </div>
       </div>
     </section>

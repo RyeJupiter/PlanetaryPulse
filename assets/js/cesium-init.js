@@ -2,7 +2,7 @@
 
 (function initCesiumGlobe() {
   const el = document.getElementById("globe");
-  if (!el) return; // page doesn't include globe
+  if (!el || typeof Cesium === "undefined") return; // page doesn't include globe
 
   const viewer = new Cesium.Viewer("globe", {
     animation: false,
@@ -42,6 +42,47 @@
   const ro = new ResizeObserver(() => viewer.resize());
   ro.observe(el);
 
+  const signalStage = new Cesium.PostProcessStage({
+    fragmentShader: [
+      "uniform sampler2D colorTexture;",
+      "uniform vec3 tint;",
+      "uniform float strength;",
+      "varying vec2 v_textureCoordinates;",
+      "void main() {",
+      "  vec4 color = texture2D(colorTexture, v_textureCoordinates);",
+      "  vec3 graded = mix(color.rgb, color.rgb * tint, strength);",
+      "  gl_FragColor = vec4(graded, color.a);",
+      "}",
+    ].join("\n"),
+    uniforms: {
+      tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
+      strength: 0.0,
+    },
+  });
+  viewer.scene.postProcessStages.add(signalStage);
+
+  const signalMap = {
+    none: { tint: [1.0, 1.0, 1.0], strength: 0.0 },
+    hydrology: { tint: [0.55, 0.8, 1.6], strength: 0.55 },
+    vegetation: { tint: [0.55, 1.4, 0.7], strength: 0.55 },
+    thermal: { tint: [1.4, 0.7, 0.55], strength: 0.55 },
+    albedo: { tint: [1.25, 1.25, 1.35], strength: 0.5 },
+    aerosols: { tint: [0.85, 0.8, 1.25], strength: 0.5 },
+    resilience: { tint: [0.7, 1.25, 1.15], strength: 0.55 },
+  };
+
+  function applySignal(name) {
+    const config = signalMap[name] || signalMap.none;
+    signalStage.uniforms.tint = new Cesium.Cartesian3(
+      config.tint[0],
+      config.tint[1],
+      config.tint[2]
+    );
+    signalStage.uniforms.strength = config.strength;
+    viewer.scene.requestRender();
+  }
+
   // Debug handle
   window.__pp_viewer = viewer;
+  window.__pp_applySignal = applySignal;
 })();

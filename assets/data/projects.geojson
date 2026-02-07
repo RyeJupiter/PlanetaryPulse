@@ -1,0 +1,91 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "alb-001",
+        "name": "Al Baydha Project",
+        "summary": "Desert regreening with low-tech water harvesting and native species.",
+        "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",
+        "links": "https://aridagriculture.org,https://www.youtube.com/watch?v=T39QHprz-x8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [41.02, 19.82]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "knepp-001",
+        "name": "Knepp Estate Rewilding",
+        "summary": "Large-scale rewilding on former farmland with biodiversity recovery.",
+        "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
+        "links": "https://knepp.co.uk"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-0.420, 50.950],
+            [-0.260, 50.950],
+            [-0.260, 50.800],
+            [-0.420, 50.800],
+            [-0.420, 50.950]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "alf-001",
+        "name": "Apricot Lane Farms",
+        "summary": "Regenerative mixed farm system documented in a feature film.",
+        "tags": "regenerative-farm,biodiversity,california,mixed-livestock,film",
+        "links": "https://www.apricotlanefarms.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-118.88, 34.29]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "loess-001",
+        "name": "Loess Plateau Restoration",
+        "summary": "Landscape restoration and watershed recovery across degraded terrain.",
+        "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
+        "links": "https://www.pbs.org"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [108.50, 36.60],
+            [110.00, 36.60],
+            [110.00, 35.40],
+            [108.50, 35.40],
+            [108.50, 36.60]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "wop-001",
+        "name": "White Oak Pastures",
+        "summary": "Regenerative grazing, diversified livestock, rural community revival.",
+        "tags": "regenerative-grazing,beef,georgia,grassfed,book",
+        "links": "https://whiteoakpastures.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.88, 31.64]
+      }
+    }
+  ]
+}

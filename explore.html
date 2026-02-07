@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Explore — Planetary Pulse</title>
+  <title>Explore - Planetary Pulse</title>
 
   <!-- Cesium -->
   <link rel="stylesheet" href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css">
@@ -11,6 +11,7 @@
 
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/cesium-init.js" defer></script>
+  <script src="assets/js/explore-signals.js" defer></script>
 </head>
 
 <body data-page="explore">
@@ -19,6 +20,11 @@
     <nav class="links">
       <a href="index.html">Home</a>
       <a class="active" href="explore.html">Explore</a>
+      <a href="project-atlas.html">Project Atlas</a>
+      <a href="signals.html">Signals</a>
+      <a href="why.html">Why</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
@@ -26,8 +32,30 @@
     <section class="copy">
       <h1>Explore</h1>
       <p class="lede">
-        More coming soon — under development.
+        Switch between early-stage signals to see immediate visual changes on the globe.
+        These are strong, phase-one tints to make differences obvious.
       </p>
+
+      <div class="card">
+        <div class="cardTitle">Signal selector</div>
+        <div class="cardBody">
+          <div class="muted">Selected: <span id="signal-name">None</span></div>
+          <div class="signalList">
+            <button class="signalBtn" data-signal="none" type="button">None</button>
+            <button class="signalBtn" data-signal="hydrology" type="button">Hydrology</button>
+            <button class="signalBtn" data-signal="vegetation" type="button">Vegetation Function</button>
+            <button class="signalBtn" data-signal="thermal" type="button">Thermal Regulation</button>
+            <button class="signalBtn" data-signal="albedo" type="button">Albedo and Light Absorption</button>
+            <button class="signalBtn" data-signal="aerosols" type="button">Atmospheric Dust and Aerosols</button>
+            <button class="signalBtn" data-signal="resilience" type="button">Resilience</button>
+          </div>
+          <div class="signalMeta">
+            <span class="chip">Phase 1 tint</span>
+            <span class="chip">Post-process stage</span>
+            <span class="chip">Immediate feedback</span>
+          </div>
+        </div>
+      </div>
 
       <div class="callouts">
         <div class="card">
@@ -47,7 +75,7 @@
   </main>
 
   <footer class="footer">
-    <span>© <span id="year"></span> Planetary Pulse</span>
+    <span>&copy; <span id="year"></span> Planetary Pulse</span>
   </footer>
 
   <script>
