@@ -13,6 +13,8 @@
     navigationHelpButton: false,
     geocoder: false,
     baseLayerPicker: false,
+    infoBox: false,
+    selectionIndicator: false,
     terrainProvider: new Cesium.EllipsoidTerrainProvider(),
     // If you later optimize, you can enable requestRenderMode,
     // but keep it off while you're iterating:

@@ -66,8 +66,21 @@
       </div>
     </section>
 
-    <section class="globeWrap">
-      <div id="globe" class="globe"></div>
+    <section class="globeColumn">
+      <div class="globeWrap">
+        <div id="globe" class="globe"></div>
+      </div>
+      <div class="timeSlider">
+        <div class="timeSliderHeader">
+          <span>Time window (placeholder)</span>
+          <span id="time-slider-value">2026</span>
+        </div>
+        <input id="time-slider" type="range" min="2014" max="2026" value="2026" step="1" aria-label="Time slider from 2014 to current year" />
+        <div class="timeSliderLabels">
+          <span>2014</span>
+          <span id="time-slider-max">2026</span>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -76,7 +89,20 @@
   </footer>
 
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    const nowYear = new Date().getFullYear();
+    document.getElementById("year").textContent = nowYear;
+    const slider = document.getElementById("time-slider");
+    const sliderValue = document.getElementById("time-slider-value");
+    const sliderMax = document.getElementById("time-slider-max");
+    if (slider && sliderValue && sliderMax) {
+      slider.max = nowYear;
+      slider.value = nowYear;
+      sliderValue.textContent = nowYear;
+      sliderMax.textContent = nowYear;
+      slider.addEventListener("input", () => {
+        sliderValue.textContent = slider.value;
+      });
+    }
   </script>
 </body>
 </html>

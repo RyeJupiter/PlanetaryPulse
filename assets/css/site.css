@@ -327,6 +327,35 @@ h2 {
   opacity: 0;
   transition: opacity 220ms ease;
 }
+.timeSlider {
+  background: var(--panel2);
+  border: 1px solid rgba(120, 160, 200, 0.18);
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  box-shadow: 0 16px 36px rgba(2, 6, 14, 0.45);
+}
+.timeSliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.timeSlider input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.timeSliderLabels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 6px;
+}
 
 .signalList {
   display: grid;
