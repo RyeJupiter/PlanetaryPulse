@@ -11,7 +11,7 @@
     { href: "regen-registry.html", label: "Regen Registry", key: "atlas" },
     { href: "signals.html", label: "Earth Metrics", key: "signals" },
     { href: "blog.html", label: "Blog", key: "blog" },
-    { href: "future-plans.html", label: "Future Plans", key: "future-plans" },
+    { href: "future-plans.html", label: "Plans & Vibes", key: "future-plans" },
     { href: "why.html", label: "Why", key: "why" },
     { href: "about.html", label: "About", key: "about" },
     { href: "contact.html", label: "Contact", key: "contact" },
