@@ -43,6 +43,15 @@
       card.appendChild(summary);
     }
 
+    if (post.image) {
+      const hero = document.createElement("img");
+      hero.className = "galleryImage";
+      hero.src = post.image;
+      hero.alt = post.imageAlt || post.title;
+      hero.loading = "lazy";
+      card.appendChild(hero);
+    }
+
     if (post.content) {
       const body = document.createElement("div");
       body.className = "cardBody";
