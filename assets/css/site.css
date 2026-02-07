@@ -32,7 +32,7 @@ body .pageBg {
   background-image: var(--page-bg);
   background-size: cover;
   background-position: center;
-  filter: blur(26px) brightness(0.75) saturate(0.9);
+  filter: blur(20px) brightness(0.75) saturate(0.9);
   transform: scale(1.06);
   z-index: 0;
   pointer-events: none;
