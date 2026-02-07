@@ -8,6 +8,38 @@
   const detail = document.getElementById("atlas-detail");
   if (!filterWrap || !detail || !searchResultsWrap) return;
 
+  const modal = document.createElement("div");
+  modal.className = "detailModal";
+  modal.innerHTML = `
+    <div class="detailModalContent">
+      <div class="detailModalHeader">
+        <div class="detailTitle"></div>
+        <button class="detailModalClose" type="button">Close</button>
+      </div>
+      <div class="detailModalBody"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  const modalTitle = modal.querySelector(".detailTitle");
+  const modalBody = modal.querySelector(".detailModalBody");
+  const modalClose = modal.querySelector(".detailModalClose");
+
+  function openModal(titleText, content) {
+    modalTitle.textContent = titleText;
+    modalBody.innerHTML = "";
+    modalBody.appendChild(content);
+    modal.classList.add("active");
+  }
+
+  function closeModal() {
+    modal.classList.remove("active");
+  }
+
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+
   function getViewer() {
     return window.__pp_viewer;
   }
@@ -39,10 +71,15 @@
     }
 
     if (entity._pp_tags && entity._pp_tags.length) {
-      const tagLine = document.createElement("div");
-      tagLine.className = "muted";
-      tagLine.textContent = "Tags: " + entity._pp_tags.join(", ");
-      wrapper.appendChild(tagLine);
+      const tagWrap = document.createElement("div");
+      tagWrap.className = "detailMeta";
+      entity._pp_tags.forEach((tag) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = tag;
+        tagWrap.appendChild(chip);
+      });
+      wrapper.appendChild(tagWrap);
     }
 
     if (entity._pp_images && entity._pp_images.length) {
@@ -84,15 +121,15 @@
 
     if (entity._pp_links && entity._pp_links.length) {
       const linkWrap = document.createElement("div");
+      linkWrap.className = "detailLinks";
       entity._pp_links.forEach((url) => {
         const link = document.createElement("a");
-        link.className = "link";
+        link.className = "btn";
         link.href = url;
         link.target = "_blank";
         link.rel = "noopener";
-        link.textContent = url.replace(/^https?:\/\//, "");
+        link.textContent = "Learn more";
         linkWrap.appendChild(link);
-        linkWrap.appendChild(document.createTextNode(" "));
       });
       wrapper.appendChild(linkWrap);
     }
@@ -314,7 +351,9 @@
             entity.polygon.outlineColor = selectedStyle.polygonOutline;
           }
 
-          setDetail(buildDetail(entity));
+          const detailCard = buildDetail(entity);
+          setDetail(detailCard.cloneNode(true));
+          openModal(entity.name || "Project", detailCard);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         updateEmptyDetail();
