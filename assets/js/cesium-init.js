@@ -39,8 +39,11 @@
     destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
   });
 
-  const ro = new ResizeObserver(() => viewer.resize());
-  ro.observe(el);
+  function handleResize() {
+    viewer.resize();
+  }
+  window.addEventListener("resize", handleResize);
+  handleResize();
 
   const signalOverlay = document.createElement("div");
   signalOverlay.className = "globeTint";
