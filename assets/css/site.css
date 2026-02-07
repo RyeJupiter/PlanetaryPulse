@@ -88,6 +88,39 @@ body::after {
   animation: orbitPulse 30s linear infinite;
 }
 
+.satelliteRail {
+  position: fixed;
+  top: 140px;
+  right: 24px;
+  width: 220px;
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 2;
+  pointer-events: none;
+}
+.satelliteCard {
+  background: rgba(8, 14, 26, 0.55);
+  border: 1px solid rgba(120, 160, 200, 0.22);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 16px 40px rgba(2, 6, 14, 0.5);
+}
+.satelliteCard img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  filter: saturate(0.7) contrast(1.05) brightness(0.95);
+  opacity: 0.75;
+}
+.satelliteLabel {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
 @keyframes orbitPulse {
   0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
   50% { transform: scale(1.02) rotate(2deg); opacity: 0.38; }
@@ -364,43 +397,6 @@ h2 {
   padding: 6px 10px;
   font-size: 12px;
 }
-.detailModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(4, 6, 12, 0.7);
-  backdrop-filter: blur(8px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 120;
-}
-.detailModal.active {
-  display: flex;
-}
-.detailModalContent {
-  background: rgba(10, 16, 26, 0.95);
-  border: 1px solid rgba(130, 170, 210, 0.25);
-  border-radius: 20px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-  width: min(900px, 92vw);
-  max-height: 85vh;
-  overflow: auto;
-  padding: 22px;
-}
-.detailModalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-.detailModalClose {
-  border: 1px solid rgba(130, 170, 210, 0.3);
-  background: rgba(8, 14, 26, 0.7);
-  color: var(--text);
-  padding: 6px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
 .imageGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -535,4 +531,10 @@ h2 {
   .links a { margin-left: 0; }
   .signalList { grid-template-columns: 1fr; }
   .globe { min-height: 420px; }
+}
+
+@media (min-width: 1400px) {
+  .satelliteRail {
+    display: flex;
+  }
 }

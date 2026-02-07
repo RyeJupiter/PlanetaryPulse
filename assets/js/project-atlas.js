@@ -8,38 +8,6 @@
   const detail = document.getElementById("atlas-detail");
   if (!filterWrap || !detail || !searchResultsWrap) return;
 
-  const modal = document.createElement("div");
-  modal.className = "detailModal";
-  modal.innerHTML = `
-    <div class="detailModalContent">
-      <div class="detailModalHeader">
-        <div class="detailTitle"></div>
-        <button class="detailModalClose" type="button">Close</button>
-      </div>
-      <div class="detailModalBody"></div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  const modalTitle = modal.querySelector(".detailTitle");
-  const modalBody = modal.querySelector(".detailModalBody");
-  const modalClose = modal.querySelector(".detailModalClose");
-
-  function openModal(titleText, content) {
-    modalTitle.textContent = titleText;
-    modalBody.innerHTML = "";
-    modalBody.appendChild(content);
-    modal.classList.add("active");
-  }
-
-  function closeModal() {
-    modal.classList.remove("active");
-  }
-
-  modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal) closeModal();
-  });
-
   function getViewer() {
     return window.__pp_viewer;
   }
@@ -351,9 +319,7 @@
             entity.polygon.outlineColor = selectedStyle.polygonOutline;
           }
 
-          const detailCard = buildDetail(entity);
-          setDetail(detailCard.cloneNode(true));
-          openModal(entity.name || "Project", detailCard);
+          setDetail(buildDetail(entity));
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         updateEmptyDetail();
