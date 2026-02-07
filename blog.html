@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blog - Planetary Pulse</title>
+  <meta name="description" content="Planetary Pulse blog: Earth Metrics, landscape function, and how land influences local climate stability." />
+  <meta name="keywords" content="Planetary Pulse, Earth Metrics, landscape impact on local climate, regeneration, climate stability" />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/blog.js" defer></script>
+</head>
+
+<body data-page="blog">
+  <header class="nav">
+    <div class="brand">Planetary Pulse</div>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="project-atlas.html">Project Atlas</a>
+      <a href="signals.html">Earth Metrics</a>
+      <a class="active" href="blog.html">Blog</a>
+      <a href="why.html">Why</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="panel">
+      <h1>Blog</h1>
+      <p class="subtitle">
+        Field notes on landscape function, climate regulation, and the metrics that make change visible.
+      </p>
+
+      <div class="card">
+        <div class="cardTitle">Search</div>
+        <div class="cardBody">
+          <input id="blog-search" class="input" type="search" placeholder="Search posts by topic or keyword" />
+          <div class="muted" id="blog-results-count">0 posts found</div>
+          <div class="muted" id="blog-empty-tip">Start typing to filter posts.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div id="blog-list" class="stack"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> Planetary Pulse</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

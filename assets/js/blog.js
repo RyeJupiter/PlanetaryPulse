@@ -19,6 +19,9 @@
     card.className = "card";
     card.setAttribute("itemscope", "");
     card.setAttribute("itemtype", "https://schema.org/BlogPosting");
+    if (post.slug) {
+      card.id = post.slug;
+    }
 
     const title = document.createElement("h2");
     title.className = "cardTitle";
@@ -32,21 +35,35 @@
     meta.setAttribute("itemprop", "datePublished");
     card.appendChild(meta);
 
-    const summary = document.createElement("p");
-    summary.className = "cardBody";
-    summary.setAttribute("itemprop", "description");
-    summary.textContent = post.summary;
-    card.appendChild(summary);
+    if (post.summary) {
+      const summary = document.createElement("p");
+      summary.className = "cardBody";
+      summary.setAttribute("itemprop", "description");
+      summary.textContent = post.summary;
+      card.appendChild(summary);
+    }
 
-    const tags = document.createElement("div");
-    tags.className = "signalMeta";
-    post.tags.forEach((tag) => {
-      const chip = document.createElement("span");
-      chip.className = "chip";
-      chip.textContent = tag;
-      tags.appendChild(chip);
-    });
-    card.appendChild(tags);
+    if (post.content) {
+      const body = document.createElement("div");
+      body.className = "cardBody";
+      body.innerHTML = post.content
+        .split("\n\n")
+        .map((para) => `<p>${para.replace(/\n/g, " ")}</p>`)
+        .join("");
+      card.appendChild(body);
+    }
+
+    if (post.tags && post.tags.length) {
+      const tags = document.createElement("div");
+      tags.className = "signalMeta";
+      post.tags.forEach((tag) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = tag;
+        tags.appendChild(chip);
+      });
+      card.appendChild(tags);
+    }
 
     return card;
   }
@@ -55,6 +72,7 @@
     return [
       post.title,
       post.summary,
+      post.content,
       (post.tags || []).join(" "),
       (post.keywords || []).join(" "),
     ]
