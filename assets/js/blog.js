@@ -16,7 +16,7 @@
 
   function cardFor(post) {
     const card = document.createElement("article");
-    card.className = "card";
+    card.className = "card blogCard";
     card.setAttribute("itemscope", "");
     card.setAttribute("itemtype", "https://schema.org/BlogPosting");
     if (post.slug) {
@@ -160,9 +160,12 @@
   fetch("assets/data/blog-posts.json")
     .then((response) => response.json())
     .then((posts) => {
-      render(posts, "");
+      const sorted = posts
+        .slice()
+        .sort((a, b) => new Date(b.datePublished) - new Date(a.datePublished));
+      render(sorted, "");
       search.addEventListener("input", () => {
-        render(posts, search.value);
+        render(sorted, search.value);
       });
 
       const images = Array.from(document.querySelectorAll(".blogLightbox"));
@@ -173,7 +176,7 @@
         "@type": "Blog",
         name: "Planetary Pulse Blog",
         description: "Field notes on Earth Metrics, regeneration, and climate stability.",
-        blogPost: posts.map((post) => ({
+        blogPost: sorted.map((post) => ({
           "@type": "BlogPosting",
           headline: post.title,
           datePublished: post.datePublished,

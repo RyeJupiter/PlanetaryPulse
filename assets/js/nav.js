@@ -36,15 +36,15 @@
     rail.className = "satelliteRail";
     rail.innerHTML = `
       <div class="satelliteCard">
-        <img src="media/satellites/aqua.png" alt="NASA Aqua satellite" />
+        <img src="public/media/satellites/aqua.png" alt="NASA Aqua satellite" />
         <div class="satelliteLabel">Aqua (NASA)</div>
       </div>
       <div class="satelliteCard">
-        <img src="media/satellites/terra.png" alt="NASA Terra satellite" />
+        <img src="public/media/satellites/terra.png" alt="NASA Terra satellite" />
         <div class="satelliteLabel">Terra (NASA)</div>
       </div>
       <div class="satelliteCard">
-        <img src="media/satellites/suomi-npp.png" alt="Suomi NPP satellite" />
+        <img src="public/media/satellites/suomi-npp.png" alt="Suomi NPP satellite" />
         <div class="satelliteLabel">Suomi NPP</div>
       </div>
     `;

@@ -250,6 +250,18 @@ h2 {
 }
 .cardTitle { font-weight: 600; margin-bottom: 6px; }
 .cardBody { color: var(--muted); }
+.blogCard .cardTitle,
+.blogCard .muted,
+.blogCard .cardBody {
+  text-align: center;
+}
+.blogCard .signalMeta {
+  justify-content: center;
+}
+.blogCard .blogHero {
+  margin-left: auto;
+  margin-right: auto;
+}
 .badge {
   display: inline-flex;
   align-items: center;
