@@ -22,7 +22,7 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   position: relative;
 }
@@ -34,7 +34,7 @@ body .pageBg {
   background-position: center;
   filter: blur(26px) brightness(0.45) saturate(0.8);
   transform: scale(1.06);
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
 }
 body .pageBg::after {
@@ -42,6 +42,10 @@ body .pageBg::after {
   position: absolute;
   inset: 0;
   background: rgba(4, 6, 10, 0.55);
+}
+body > * {
+  position: relative;
+  z-index: 1;
 }
 body::before,
 body::after,
