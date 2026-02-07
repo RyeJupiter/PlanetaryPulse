@@ -22,26 +22,9 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background:
-    radial-gradient(circle at 10% 15%, rgba(58, 120, 200, 0.22), transparent 42%),
-    radial-gradient(circle at 70% 5%, rgba(30, 200, 190, 0.18), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(255, 170, 90, 0.12), transparent 40%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+  background: var(--bg);
   color: var(--text);
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(rgba(255,255,255,0.18) 1px, transparent 0),
-    radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0),
-    radial-gradient(rgba(96, 200, 255, 0.08) 1px, transparent 0);
-  background-size: 140px 140px, 260px 260px, 360px 360px;
-  background-position: 0 0, 40px 60px, 120px 30px;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: -2;
+  position: relative;
 }
 body .pageBg {
   position: fixed;
@@ -51,7 +34,7 @@ body .pageBg {
   background-position: center;
   filter: blur(26px) brightness(0.45) saturate(0.8);
   transform: scale(1.06);
-  z-index: -4;
+  z-index: -1;
   pointer-events: none;
 }
 body .pageBg::after {
@@ -59,18 +42,6 @@ body .pageBg::after {
   position: absolute;
   inset: 0;
   background: rgba(4, 6, 10, 0.55);
-}
-body::after {
-  content: "";
-  position: fixed;
-  inset: -10%;
-  background:
-    radial-gradient(circle, transparent 30%, rgba(0,0,0,0.72) 70%),
-    radial-gradient(1200px 480px at 15% 65%, rgba(60, 200, 255, 0.18), transparent 60%),
-    radial-gradient(1000px 360px at 75% 25%, rgba(255, 180, 90, 0.14), transparent 60%),
-    radial-gradient(900px 320px at 80% 75%, rgba(110, 255, 200, 0.12), transparent 65%);
-  pointer-events: none;
-  z-index: -1;
 }
 body::before,
 body::after,
@@ -91,18 +62,7 @@ body::after {
 }
 
 .signalOrbits {
-  position: fixed;
-  inset: -10% -10%;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.35;
-  background:
-    conic-gradient(from 120deg at 35% 40%, rgba(110, 255, 200, 0.35), transparent 35%, rgba(110, 255, 200, 0.08) 55%, transparent 75%),
-    conic-gradient(from 210deg at 60% 55%, rgba(255, 180, 90, 0.3), transparent 35%, rgba(255, 180, 90, 0.08) 55%, transparent 75%),
-    conic-gradient(from 30deg at 55% 30%, rgba(80, 200, 255, 0.28), transparent 35%, rgba(80, 200, 255, 0.08) 55%, transparent 75%);
-  filter: blur(0.5px);
-  mix-blend-mode: screen;
-  animation: orbitPulse 30s linear infinite;
+  display: none;
 }
 
 .satelliteRail {
