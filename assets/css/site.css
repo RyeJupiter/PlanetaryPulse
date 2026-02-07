@@ -56,14 +56,21 @@ body::after {
   z-index: -1;
 }
 body::before,
+body::after,
+.signalOrbits {
+  will-change: transform, opacity;
+}
+body::before,
 body::after {
-  animation: nebulaFloat 22s ease-in-out infinite alternate;
+  animation: nebulaFloat 40s linear infinite;
 }
 
 @keyframes nebulaFloat {
   0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(1.5%, -1%, 0) scale(1.02); }
-  100% { transform: translate3d(-1%, 1.5%, 0) scale(1.01); }
+  25% { transform: translate3d(1%, -0.6%, 0) scale(1.01); }
+  50% { transform: translate3d(0.4%, 0.4%, 0) scale(1.015); }
+  75% { transform: translate3d(-0.6%, 1%, 0) scale(1.01); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
 .signalOrbits {
@@ -78,13 +85,13 @@ body::after {
     conic-gradient(from 30deg at 55% 30%, rgba(80, 200, 255, 0.28), transparent 35%, rgba(80, 200, 255, 0.08) 55%, transparent 75%);
   filter: blur(0.5px);
   mix-blend-mode: screen;
-  animation: orbitPulse 18s ease-in-out infinite;
+  animation: orbitPulse 30s linear infinite;
 }
 
 @keyframes orbitPulse {
-  0% { transform: scale(1) rotate(0deg); opacity: 0.28; }
-  50% { transform: scale(1.02) rotate(3deg); opacity: 0.4; }
-  100% { transform: scale(1.01) rotate(-2deg); opacity: 0.3; }
+  0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+  50% { transform: scale(1.02) rotate(2deg); opacity: 0.38; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
 }
 
 .nav {
@@ -388,6 +395,68 @@ h2 {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
+}
+.galleryGrid {
+  position: relative;
+}
+.galleryCard {
+  cursor: pointer;
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.85);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.lightbox.active {
+  display: flex;
+}
+.lightboxContent {
+  position: relative;
+  max-width: min(1000px, 90vw);
+  max-height: 80vh;
+  width: 100%;
+}
+.lightboxImage {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 16px;
+  border: 1px solid rgba(130, 170, 210, 0.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.lightboxCaption {
+  margin-top: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+.lightboxClose,
+.lightboxPrev,
+.lightboxNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 16, 26, 0.8);
+  border: 1px solid rgba(130, 170, 210, 0.3);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.lightboxClose {
+  top: 10px;
+  right: 10px;
+  transform: none;
+}
+.lightboxPrev { left: -48px; }
+.lightboxNext { right: -48px; }
+@media (max-width: 680px) {
+  .lightboxPrev { left: 10px; }
+  .lightboxNext { right: 10px; }
 }
 
 .footer {
