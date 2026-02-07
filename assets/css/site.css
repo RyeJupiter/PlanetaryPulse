@@ -91,13 +91,18 @@ body::after {
 .satelliteRail {
   position: fixed;
   top: 140px;
-  right: 24px;
   width: 220px;
   display: none;
   flex-direction: column;
   gap: 16px;
   z-index: 2;
   pointer-events: none;
+}
+.satelliteRail.left {
+  left: 24px;
+}
+.satelliteRail.right {
+  right: 24px;
 }
 .satelliteCard {
   background: rgba(8, 14, 26, 0.55);

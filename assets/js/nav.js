@@ -32,9 +32,9 @@
   `;
 
   if (!document.querySelector(".satelliteRail")) {
-    const rail = document.createElement("div");
-    rail.className = "satelliteRail";
-    rail.innerHTML = `
+    const railRight = document.createElement("div");
+    railRight.className = "satelliteRail right";
+    railRight.innerHTML = `
       <div class="satelliteCard">
         <img src="public/media/satellites/aqua.png" alt="NASA Aqua satellite" />
         <div class="satelliteLabel">Aqua (NASA)</div>
@@ -48,6 +48,23 @@
         <div class="satelliteLabel">Suomi NPP</div>
       </div>
     `;
-    document.body.appendChild(rail);
+    const railLeft = document.createElement("div");
+    railLeft.className = "satelliteRail left";
+    railLeft.innerHTML = `
+      <div class="satelliteCard">
+        <img src="public/media/satellites/terra.png" alt="NASA Terra satellite" />
+        <div class="satelliteLabel">Terra (NASA)</div>
+      </div>
+      <div class="satelliteCard">
+        <img src="public/media/satellites/aqua.png" alt="NASA Aqua satellite" />
+        <div class="satelliteLabel">Aqua (NASA)</div>
+      </div>
+      <div class="satelliteCard">
+        <img src="public/media/satellites/suomi-npp.png" alt="Suomi NPP satellite" />
+        <div class="satelliteLabel">Suomi NPP</div>
+      </div>
+    `;
+    document.body.appendChild(railLeft);
+    document.body.appendChild(railRight);
   }
 })();
