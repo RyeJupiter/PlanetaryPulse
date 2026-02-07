@@ -45,7 +45,7 @@
 
     if (post.image) {
       const hero = document.createElement("img");
-      hero.className = "galleryImage";
+      hero.className = "blogHero";
       hero.src = post.image;
       hero.alt = post.imageAlt || post.title;
       hero.loading = "lazy";

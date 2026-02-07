@@ -366,6 +366,15 @@ h2 {
   color: var(--muted);
   margin-top: 6px;
 }
+.blogHero {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: contain;
+  background: rgba(6, 10, 18, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(130, 170, 210, 0.25);
+  margin: 8px 0 12px;
+}
 .galleryGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
