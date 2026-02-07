@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planetary Pulse</title>
+    <meta
+        name="description"
+        content="Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems."
+    />
+
+    <!-- Cesium CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css"
+    />
+
+    <style>
+        :root {
+            --bg: #070B12;
+            --panel: rgba(255, 255, 255, 0.04);
+            --panel2: rgba(255, 255, 255, 0.06);
+            --text: #E6EDF3;
+            --muted: rgba(230, 237, 243, 0.72);
+            --line: rgba(255, 255, 255, 0.10);
+            --accent: rgba(122, 189, 255, 0.95);
+            --max: 1060px;
+            --radius: 18px;
+            --shadow: 0 12px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
+                Roboto, Helvetica, Arial, "Apple Color Emoji",
+                "Segoe UI Emoji";
+            background:
+                radial-gradient(
+                    1200px 800px at 70% -10%,
+                    rgba(122, 189, 255, 0.14),
+                    transparent 60%
+                ),
+                radial-gradient(
+                    900px 700px at 10% 10%,
+                    rgba(155, 255, 204, 0.08),
+                    transparent 55%
+                ),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+        }
+
+        a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(230, 237, 243, 0.25);
+        }
+
+        a:hover {
+            border-bottom-color: rgba(230, 237, 243, 0.6);
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 18, 0.65);
+            border-bottom: 1px solid var(--line);
+            z-index: 10;
+        }
+
+        .nav {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 650;
+            letter-spacing: 0.2px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 99px;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(122, 189, 255, 0.10);
+        }
+
+        .navlinks {
+            display: flex;
+            gap: 14px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .navlinks a {
+            color: var(--muted);
+            border-bottom: none;
+            padding: 6px 8px;
+            border-radius: 10px;
+        }
+
+        .navlinks a:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        main {
+            max-width: var(--max);
+            margin: 0 auto;
+            padding: 28px 18px 80px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(34px, 4.5vw, 56px);
+            line-height: 1.05;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        .prose {
+            color: var(--muted);
+            margin: 0;
+        }
+
+
+        .pill b {
+            color: var(--text);
+        }
+
+        .globeWrap {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            margin-top: 18px;
+            padding: 0;
+        }
+
+        .globeCard{
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            box-shadow: none;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(122,189,255,0.10), rgba(255,255,255,0.02));
+        }
+
+        .globeHeader {
+            padding: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.10);
+            max-width: var(--max);
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .globeHUD {
+            max-width: var(--max);
+            margin-left: auto;
+            margin-right: auto;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(7, 11, 18, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(10px);
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .hudTitle {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(230, 237, 243, 0.65);
+        }
+
+        .hudChips {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .hudChip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            color: rgba(230, 237, 243, 0.80);
+            cursor: pointer;
+        }
+
+        .hudChip.isActive {
+            border-color: rgba(122, 189, 255, 0.55);
+            background: rgba(122, 189, 255, 0.12);
+            color: var(--text);
+        }
+
+        .hudSubTitle {
+            margin-top: 8px;
+            font-size: 13px;
+            color: rgba(230, 237, 243, 0.70);
+        }
+        .metricBar{
+            max-width: var(--max);
+            margin: 12px auto 0;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(7,11,18,0.35);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .metricName{
+            font-size: 14px;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+        }
+
+        .metricMeta{
+            margin-top: 4px;
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .metricCompare{
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .dotSep{
+            margin: 0 8px;
+            opacity: 0.55;
+        }
+
+        .mono{
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.95em;
+            color: rgba(230,237,243,0.85);
+        }
+
+        .legendBar{
+            max-width: var(--max);
+            margin: 10px auto 12px;
+            padding: 10px 14px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(7,11,18,0.35);
+            backdrop-filter: blur(10px);
+        }
+
+        .legendHeader{
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .legendLabel{
+            font-size: 12px;
+            color: rgba(230,237,243,0.75);
+        }
+
+        .legendRange{
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: rgba(230,237,243,0.70);
+        }
+
+        .legendScale{
+            position: relative;
+            height: 34px;
+        }
+
+        .legendGradient{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 6px;
+            height: 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.55));
+        }
+
+        .legendTicks{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 4px;
+            height: 14px;
+            pointer-events: none;
+        }
+
+        .tick{
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 14px;
+            background: rgba(255,255,255,0.30);
+        }
+
+        .legendTickLabels{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 18px;
+            height: 16px;
+            pointer-events: none;
+        }
+
+        .tickLabel{
+            position: absolute;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(230,237,243,0.65);
+            white-space: nowrap;
+        }
+
+        #globe {
+            max-width: var(--max);
+            height: clamp(520px, 80vw, 900px);
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav">
+            <div class="brand">
+                <span class="dot"></span>
+                <span>Planetary Pulse</span>
+            </div>
+            <nav class="navlinks">
+                <a href="#product">Product</a>
+                <a href="#mvp">MVP</a>
+                <a href="#why">Why</a>
+                <a href="#platform">Platform</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="globeWrap">
+        <div class="globeCard">
+            <div class="globeHeader">
+                <h1>Planetary Pulse</h1>
+                <h3>A platform for shared planetary systems intelligence. </h3>
+                <p class="prose">
+                    Making Earth’s complex climate systems legible through satellite data visualization—so we can see, learn, and coordinate around living systems. Learning how to read planetary signals is the first step toward tuning our actions in harmony with Earth’s regulatory processes that sustain life's endless renewal.
+                    <br> This is an indevelopment prototype. For more information, please visit the <a href="#product">Product</a> section below or <a href="mailto:Rye.Seekins@gmail.com">email Rye Jupiter Seekins</a> for inquiries and feedback.
+                </p>
+            </div>
+
+            <div class="globeHUD">
+                <div class="hudTitle">Signals</div>
+                <div class="hudChips">
+                    <button class="hudChip isActive" data-signal="water">Water</button>
+                    <button class="hudChip" data-signal="energy">Energy</button>
+                    <button class="hudChip" data-signal="vegetation">Vegetation</button>
+                </div>
+                <div class="hudSubTitle" id="hudSubTitle">
+                    Hydrologic Function
+                </div>
+            </div>
+
+            <div id="globe"></div>
+
+            <div class="globeBottom" aria-label="Legend and metric information">
+                <div class="legendBar legendBarWide" aria-label="Legend">
+                    <div class="legendHeader">
+                        <div class="legendLabel" id="legendLabel">Drier → Typical → Wetter</div>
+                        <div class="legendRange" id="legendRange">
+                            <span class="mono" id="legendMin">-20</span>
+                            <span class="mono" id="legendMid">0</span>
+                            <span class="mono" id="legendMax">+20</span>
+                        </div>
+                    </div>
+
+                    <div class="legendScale">
+                        <div class="legendGradient" id="legendGradient"></div>
+
+                        <div class="legendTicks">
+                            <span class="tick" style="left: 0%"></span>
+                            <span class="tick" style="left: 50%"></span>
+                            <span class="tick" style="left: 100%"></span>
+                        </div>
+
+                        <div class="legendTickLabels">
+                            <span class="tickLabel" style="left: 0%" id="legendMinLabel">Low</span>
+                            <span class="tickLabel" style="left: 50%" id="legendMidLabel">Typical</span>
+                            <span class="tickLabel" style="left: 100%" id="legendMaxLabel">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metricBar metricBarWide" aria-label="Active metric information">
+                    <div class="metricLeft">
+                        <div class="metricName" id="metricName">Runoff</div>
+                        <div class="metricMeta" id="metricMeta">
+                            Units: <span class="mono" id="metricUnits">mm/day</span>
+                            <span class="dotSep">•</span>
+                            Baseline: <span class="mono" id="metricBaseline">2001–2020</span>
+                            <span class="dotSep">•</span>
+                            Source: <span class="mono" id="metricSource">TBD</span>
+                        </div>
+                    </div>
+
+                    <div class="metricRight">
+                        <div class="metricCompare" id="metricCompare">
+                            Mode: <span class="mono">Δ vs baseline</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <!-- Narrative sections unchanged -->
+    </main>
+
+    <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
+    <script src="/js/cesium-init.js"></script>
+    <script src="/js/metrics-config.js"></script>
+    <script src="/js/globe-ui.js"></script>
+
+    <script>
+        const y = document.getElementById("y");
+        if (y) {
+            y.textContent = new Date().getFullYear();
+        }
+    </script>
+
+</body>
+</html>
+
+  <!-- Narrative content stays below -->
+  <main>
+    <section id="product" class="card">
+      <h2>Full product</h2>
+      <p class="prose">
+        Planetary Pulse is a data aggregation and visualization platform that quantifies the functional health of Earth’s living systems by tracking how water, energy, carbon, and biological structure move and regulate across the planet over time. Using satellite observations and publicly available Earth-system data, Planetary Pulse translates complex signals—across land, coasts, and oceans—into clear, trend-based indicators that show whether ecosystems are stabilizing, degrading, or regenerating relative to historical baselines and matched controls. The platform is designed to make planetary-scale processes legible to both experts and the public, supporting informed action, investment, and stewardship aimed at restoring ecological function and advancing planetary regeneration.
+      </p>
+    </section>
+
+    <section id="mvp" class="grid2">
+      <div class="card">
+        <h2>MVP</h2>
+        <p class="prose">
+          Planetary Pulse (MVP) is a web-based visualization tool that aggregates a small set of publicly available satellite and Earth-system datasets to display time-series trends in ecosystem function for selected regions. The MVP focuses on a limited number of core signals—such as surface temperature, vegetation productivity, and hydrologic patterns—and presents them through simple, comparative graphics that show how conditions are changing relative to historical baselines and nearby reference areas. Its purpose is to demonstrate that complex planetary processes can be translated into clear, interpretable indicators that make ecological change—and early signs of regeneration—visible and understandable.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Initial MVP focus</h2>
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence Layer</h3>
+          <p>Open, accessible regional dashboards with baselines, trends, and clear signals of degradation → stabilization → regeneration.</p>
+        </div>
+        <ul class="list">
+          <li>Regional dashboards (selected geographies)</li>
+          <li>Historical baselines + trend visualization</li>
+          <li>Matched controls / reference comparisons</li>
+          <li>Educational narrative elements</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="why" class="card">
+      <h2>Planetary Pulse — Why it matters</h2>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Ideological / mission value</h3>
+      <p class="prose">
+        Today, countless people and organizations are working to regenerate land, water, and ecosystems. Yet almost no one can see how these efforts alter planetary function over time, because the complexity of those impacts is immense and distributed across scales. Planetary Pulse makes this complexity visible. By translating satellite and Earth-system data into clear, longitudinal signals, the platform reveals how local actions ripple through hydrologic, thermal, carbon, and biological systems. When progress becomes visible at scale, cynicism declines and participation increases. Rather than enforcing compliance through rules or guilt, Planetary Pulse encourages learning systems—supporting understanding of Earth’s regulatory processes and reframing ecology as cooperative tuning rather than sacrifice.
+      </p>
+
+      <h3 style="margin:14px 0 6px; font-size:15px; letter-spacing:-0.01em;">Market / practical value</h3>
+      <p class="prose">
+        A market for regeneration and environmental impact already exists, but it remains fragmented and inefficient. Carbon credits, ESG reporting, consulting assessments, and bespoke dashboards attempt to fill the gap, yet many rely on self-reporting, short-term studies, or expensive consultants. Planetary Pulse provides an integrated alternative: cross-project comparison, longitudinal performance tracking, and independent verification using publicly available Earth-system data—reducing reliance on one-off studies while increasing transparency. For governments, NGOs, restoration orgs, and high-end regenerative agriculture or forestry operations, it offers persistent monitoring and communicable, third-party evidence of ecological impact over years and decades.
+      </p>
+    </section>
+
+    <section id="platform" class="card">
+      <h2>Platform structure</h2>
+      <p class="prose">
+        Planetary Pulse is designed as a tiered platform: Tier 1 builds trust and cultural legitimacy through a high-quality public interface; Tier 2 adds professional analytics and reporting tools; Tier 3 supports verification and custom analysis for major projects and institutions.
+      </p>
+
+      <div class="grid2" style="margin-top:14px;">
+        <div class="callout">
+          <h3>Tier 1 — Public Intelligence (MVP)</h3>
+          <p>Open dashboards, baselines, trend signals, and narrative tools.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 2 — Professional Analytics</h3>
+          <p>Subscriptions for NGOs, funds, developers, and agencies; advanced comparisons and reporting.</p>
+        </div>
+        <div class="callout">
+          <h3>Tier 3 — Verification & Custom Analysis</h3>
+          <p>Bespoke modeling, validation, and institutional-grade analyses.</p>
+        </div>
+        <div class="callout">
+          <h3>Core value proposition</h3>
+          <p>Transforms fragmented environmental data into shared planetary intelligence—so society can see, learn, and coordinate around living systems.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="card">
+      <h2>Media</h2>
+      <p class="prose" style="margin-bottom:12px;">
+        Add a “what it might look like” mock and the posters here. For now these are placeholders—drop images into <code style="color:rgba(230,237,243,0.75)">/public/assets/</code> and update the file names below.
+      </p>
+
+      <div class="mediaGrid">
+        <div class="media">
+          <img
+            src="/public/assets/mock.png"
+            alt="Planetary Pulse software concept visualization"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Conceptual software interface.</b>
+            Early visualization of how planetary-scale signals and trends may be presented.
+          </div>
+        </div>
+
+        <div class="media">
+          <img
+            src="/public/assets/poster-2.png"
+            alt="Planetary Pulse Purpose poster"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Planetary Pulse poster.</b>
+            Visual narrative communicating the platform’s purpose and scope.
+          </div>
+        </div>
+
+        <div class="media">
+          <img
+            src="/public/assets/poster-1.png"
+            alt="Planetary Pulse Regeneration poster"
+            style="width:100%; display:block;"
+          />
+          <div class="caption">
+            <b>Planetary Pulse poster.</b>
+            Framing planetary regeneration as a measurable, participatory process.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="y"></span> Planetary Pulse</div>
+      <div><a href="#product">Back to top</a></div>
+    </footer>
+  </main>
+
+  <!-- JS calls -->
+    <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js"></script>
+    <script src="/js/cesium-init.js"></script>
+    <script src="/js/globe-ui.js"></script>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
