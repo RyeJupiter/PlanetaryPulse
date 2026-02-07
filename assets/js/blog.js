@@ -1,10 +1,9 @@
 (function initBlog() {
   const list = document.getElementById("blog-list");
   const search = document.getElementById("blog-search");
-  const count = document.getElementById("blog-results-count");
   const emptyTip = document.getElementById("blog-empty-tip");
   const index = document.getElementById("blog-index");
-  if (!list || !search || !count || !emptyTip || !index) return;
+  if (!list || !search || !emptyTip || !index) return;
 
   function toDateLabel(dateStr) {
     const d = new Date(dateStr + "T00:00:00");
@@ -107,7 +106,6 @@
       link.textContent = post.title;
       index.appendChild(link);
     });
-    count.textContent = visible.length + " post" + (visible.length === 1 ? "" : "s") + " found";
     emptyTip.style.display = normalized ? "none" : "block";
   }
 
@@ -201,6 +199,6 @@
       document.head.appendChild(script);
     })
     .catch(() => {
-      count.textContent = "Posts are temporarily unavailable.";
+      emptyTip.textContent = "Posts are temporarily unavailable.";
     });
 })();
