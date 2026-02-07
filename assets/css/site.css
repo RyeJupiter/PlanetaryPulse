@@ -1,20 +1,20 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Sora:wght@300;400;500;600&display=swap");
 
 :root {
-  --bg: #05070d;
-  --bg-deep: #02030a;
-  --panel: rgba(7, 12, 20, 0.72);
-  --panel2: rgba(18, 26, 40, 0.7);
-  --text: rgba(240, 248, 255, 0.92);
-  --muted: rgba(180, 196, 215, 0.72);
-  --border: rgba(120, 160, 200, 0.18);
-  --accent: #66e3ff;
-  --accent-warm: #ff9a66;
-  --accent-green: #6dffb2;
-  --accent-red: #ff6a7a;
-  --shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
-  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  --bg: #070a12;
+  --bg-deep: #04050b;
+  --panel: rgba(10, 16, 26, 0.72);
+  --panel2: rgba(16, 22, 34, 0.78);
+  --text: rgba(236, 245, 255, 0.94);
+  --muted: rgba(176, 192, 214, 0.72);
+  --border: rgba(106, 140, 180, 0.22);
+  --accent: #6be3ff;
+  --accent-warm: #ffb070;
+  --accent-green: #76ffc1;
+  --accent-red: #ff7a8e;
+  --shadow: 0 24px 60px rgba(3, 6, 14, 0.6);
+  --font-sans: "Sora", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-display: "Space Grotesk", "Sora", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -22,8 +22,10 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: radial-gradient(circle at 20% 20%, rgba(24, 46, 72, 0.55), transparent 45%),
-    radial-gradient(circle at 80% 0%, rgba(30, 20, 60, 0.45), transparent 40%),
+  background:
+    radial-gradient(circle at 10% 15%, rgba(58, 120, 200, 0.22), transparent 42%),
+    radial-gradient(circle at 70% 5%, rgba(30, 200, 190, 0.18), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255, 170, 90, 0.12), transparent 40%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
   color: var(--text);
 }
@@ -32,11 +34,12 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(rgba(255,255,255,0.15) 1px, transparent 0),
-    radial-gradient(rgba(255,255,255,0.08) 1px, transparent 0);
-  background-size: 120px 120px, 220px 220px;
-  background-position: 0 0, 40px 60px;
-  opacity: 0.35;
+    radial-gradient(rgba(255,255,255,0.18) 1px, transparent 0),
+    radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0),
+    radial-gradient(rgba(96, 200, 255, 0.08) 1px, transparent 0);
+  background-size: 140px 140px, 260px 260px, 360px 360px;
+  background-position: 0 0, 40px 60px, 120px 30px;
+  opacity: 0.4;
   pointer-events: none;
   z-index: -2;
 }
@@ -44,7 +47,7 @@ body::after {
   content: "";
   position: fixed;
   inset: -10%;
-  background: radial-gradient(circle, transparent 35%, rgba(0,0,0,0.6) 70%);
+  background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.72) 70%);
   pointer-events: none;
   z-index: -1;
 }
@@ -53,9 +56,9 @@ body::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 28px;
-  border-bottom: 1px solid rgba(120, 160, 200, 0.18);
-  background: rgba(4, 6, 12, 0.7);
+  padding: 20px 32px;
+  border-bottom: 1px solid rgba(120, 160, 200, 0.16);
+  background: rgba(6, 10, 18, 0.75);
   backdrop-filter: blur(18px);
   position: sticky;
   top: 0;
@@ -64,9 +67,9 @@ body::after {
 .brand {
   font-family: var(--font-display);
   font-weight: 600;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(230, 245, 255, 0.9);
 }
 .links a {
@@ -75,7 +78,7 @@ body::after {
   margin-left: 12px;
   padding: 6px 12px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.2px;
 }
 .links a.active {
@@ -87,14 +90,14 @@ body::after {
 .layout {
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-  gap: 24px;
-  padding: 28px;
+  gap: 28px;
+  padding: 36px 32px 40px;
   min-height: calc(100vh - 74px);
   max-width: 1200px;
   margin: 0 auto;
 }
 .page {
-  padding: 28px;
+  padding: 36px 32px 40px;
   min-height: calc(100vh - 74px);
   max-width: 1100px;
   margin: 0 auto;
@@ -103,8 +106,8 @@ body::after {
 .copy {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
+  border-radius: 22px;
+  padding: 26px;
   box-shadow: var(--shadow);
 }
 
@@ -112,7 +115,7 @@ h1 {
   margin: 0 0 12px;
   font-size: clamp(32px, 4vw, 46px);
   font-family: var(--font-display);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
 }
 h2 {
   margin: 0 0 10px;
@@ -123,10 +126,10 @@ h2 {
 .subtitle {
   font-size: 16px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0 0 18px;
 }
-.lede { margin: 0 0 14px; color: var(--muted); line-height: 1.6; }
+.lede { margin: 0 0 14px; color: var(--muted); line-height: 1.7; }
 .muted { color: var(--muted); }
 
 .callouts {
@@ -147,8 +150,8 @@ h2 {
 .card {
   background: var(--panel2);
   border: 1px solid rgba(130, 170, 210, 0.16);
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: 20px;
+  padding: 18px;
   box-shadow: 0 18px 40px rgba(2, 6, 14, 0.55);
 }
 .cardTitle { font-weight: 600; margin-bottom: 6px; }
@@ -182,21 +185,32 @@ h2 {
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 18px;
+  border-radius: 22px;
+  padding: 26px;
+  margin-bottom: 20px;
   box-shadow: var(--shadow);
 }
 
 .globeWrap {
   background: rgba(7, 14, 24, 0.75);
   border: 1px solid rgba(120, 160, 200, 0.2);
-  border-radius: 22px;
+  border-radius: 24px;
   overflow: hidden;
   min-height: 520px;
   position: relative;
   height: clamp(420px, 70vh, 720px);
   box-shadow: var(--shadow);
+}
+.globeWrap::after {
+  content: "";
+  position: absolute;
+  inset: 12% 8%;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 220, 210, 0.2);
+  box-shadow:
+    0 0 40px rgba(120, 220, 210, 0.12),
+    0 0 80px rgba(255, 160, 90, 0.08);
+  pointer-events: none;
 }
 .globe {
   width: 100%;
@@ -309,8 +323,8 @@ h2 {
 }
 
 .footer {
-  padding: 18px 28px;
-  border-top: 1px solid rgba(120, 160, 200, 0.18);
+  padding: 20px 32px;
+  border-top: 1px solid rgba(120, 160, 200, 0.16);
   color: var(--muted);
   background: rgba(4, 6, 12, 0.6);
   backdrop-filter: blur(18px);
