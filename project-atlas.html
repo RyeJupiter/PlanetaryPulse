@@ -40,10 +40,20 @@
 
       <div class="stack">
         <div class="card">
-          <div class="cardTitle">Filters</div>
+          <div class="cardTitle">Tags</div>
           <div class="cardBody">
-            <input id="atlas-search" class="input" type="search" placeholder="Search projects by name, tag, or location" />
+            <input
+              id="atlas-tag-search"
+              class="input"
+              type="search"
+              placeholder="Search the tag database"
+              data-empty-tooltip="Type to search the full tag database."
+              aria-label="Search the tag database"
+            />
+            <div class="sectionLabel">Top tags</div>
             <div id="atlas-filters" class="filterList"></div>
+            <div class="sectionLabel">Search results</div>
+            <div id="atlas-search-results" class="filterList"></div>
             <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
           </div>
         </div>

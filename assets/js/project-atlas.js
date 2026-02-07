@@ -3,9 +3,10 @@
 (function initProjectAtlas() {
   const filterWrap = document.getElementById("atlas-filters");
   const clearBtn = document.getElementById("clear-filters");
-  const searchInput = document.getElementById("atlas-search");
+  const searchInput = document.getElementById("atlas-tag-search");
+  const searchResultsWrap = document.getElementById("atlas-search-results");
   const detail = document.getElementById("atlas-detail");
-  if (!filterWrap || !detail) return;
+  if (!filterWrap || !detail || !searchResultsWrap) return;
 
   function getViewer() {
     return window.__pp_viewer;
@@ -134,62 +135,109 @@
           }
         });
 
-        const tagsSorted = Array.from(tagCounts.keys())
+        const allTagsSorted = Array.from(tagCounts.keys())
           .sort((a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0))
-          .slice(0, 3);
-        tagsSorted.forEach((tag) => {
-          const label = document.createElement("label");
-          label.className = "filterItem";
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.value = tag;
-          label.appendChild(checkbox);
-          label.appendChild(document.createTextNode(tag));
-          filterWrap.appendChild(label);
-        });
+        const topTags = allTagsSorted.slice(0, 3);
+        const selectedTags = new Set();
+
+        function renderTagList(container, tags) {
+          container.innerHTML = "";
+          tags.forEach((tag) => {
+            const label = document.createElement("label");
+            label.className = "filterItem";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = tag;
+            checkbox.checked = selectedTags.has(tag);
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(tag));
+            container.appendChild(label);
+          });
+        }
+
+        function renderTopTags() {
+          renderTagList(filterWrap, topTags);
+        }
+
+        function renderSearchResults(query) {
+          if (!query) {
+            searchResultsWrap.innerHTML = "";
+            return;
+          }
+          const matches = allTagsSorted.filter(
+            (tag) =>
+              tag.toLowerCase().includes(query) &&
+              !topTags.includes(tag)
+          );
+          renderTagList(searchResultsWrap, matches);
+        }
+
+        function syncTagSelection(target) {
+          if (!target || target.type !== "checkbox") return;
+          if (target.checked) {
+            selectedTags.add(target.value);
+          } else {
+            selectedTags.delete(target.value);
+          }
+        }
 
         function getSelectedTags() {
-          return Array.from(filterWrap.querySelectorAll("input:checked")).map((el) => el.value);
+          return Array.from(selectedTags);
+        }
+
+        function applyFilters() {
+          const selectedTags = getSelectedTags();
+          entities.forEach((entity) => {
+            const matchesTags = !selectedTags.length
+              ? true
+              : entity._pp_tags.some((tag) => selectedTags.includes(tag));
+            entity.show = matchesTags;
+          });
+        }
+
+        function updateSearchTooltip() {
+          if (!searchInput) return;
+          const tooltip = searchInput.dataset.emptyTooltip || "Search tags.";
+          if (!searchInput.value.trim()) {
+            searchInput.setAttribute("title", tooltip);
+          } else {
+            searchInput.removeAttribute("title");
+          }
         }
 
         function getSearchQuery() {
           return searchInput ? searchInput.value.trim().toLowerCase() : "";
         }
 
-        function applyFilters() {
-          const selectedTags = getSelectedTags();
-          const query = getSearchQuery();
-          entities.forEach((entity) => {
-            const matchesTags = !selectedTags.length
-              ? true
-              : entity._pp_tags.some((tag) => selectedTags.includes(tag));
-            const haystack = [
-              entity.name,
-              entity._pp_summary,
-              entity._pp_size,
-              entity._pp_tags.join(" "),
-            ]
-              .join(" ")
-              .toLowerCase();
-            const matchesQuery = !query ? true : haystack.includes(query);
-            entity.show = matchesTags && matchesQuery;
-          });
-        }
-
-        filterWrap.addEventListener("change", applyFilters);
+        filterWrap.addEventListener("change", (event) => {
+          syncTagSelection(event.target);
+          applyFilters();
+        });
+        searchResultsWrap.addEventListener("change", (event) => {
+          syncTagSelection(event.target);
+          applyFilters();
+        });
         if (searchInput) {
-          searchInput.addEventListener("input", applyFilters);
+          updateSearchTooltip();
+          searchInput.addEventListener("input", () => {
+            updateSearchTooltip();
+            renderSearchResults(getSearchQuery());
+          });
+          searchInput.addEventListener("blur", updateSearchTooltip);
         }
         if (clearBtn) {
           clearBtn.addEventListener("click", () => {
-            filterWrap.querySelectorAll("input:checked").forEach((el) => {
-              el.checked = false;
-            });
+            selectedTags.clear();
             if (searchInput) searchInput.value = "";
+            updateSearchTooltip();
+            renderTopTags();
+            renderSearchResults(getSearchQuery());
             applyFilters();
           });
         }
 
+        renderTopTags();
+        renderSearchResults(getSearchQuery());
         const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
         handler.setInputAction((movement) => {
           const picked = viewer.scene.pick(movement.position);

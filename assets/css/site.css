@@ -258,6 +258,13 @@ h2 {
   gap: 8px;
   margin-top: 10px;
 }
+.sectionLabel {
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 .input {
   width: 100%;
   padding: 10px 12px;
