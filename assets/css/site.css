@@ -171,6 +171,11 @@ body::after {
   max-width: 1200px;
   margin: 0 auto;
 }
+.globeColumn {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
 .page {
   padding: 36px 32px 40px;
   min-height: calc(100vh - 74px);
