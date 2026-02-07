@@ -42,44 +42,25 @@
   const ro = new ResizeObserver(() => viewer.resize());
   ro.observe(el);
 
-  const signalStage = new Cesium.PostProcessStage({
-    fragmentShader: [
-      "uniform sampler2D colorTexture;",
-      "uniform vec3 tint;",
-      "uniform float strength;",
-      "varying vec2 v_textureCoordinates;",
-      "void main() {",
-      "  vec4 color = texture2D(colorTexture, v_textureCoordinates);",
-      "  vec3 graded = mix(color.rgb, color.rgb * tint, strength);",
-      "  gl_FragColor = vec4(graded, color.a);",
-      "}",
-    ].join("\n"),
-    uniforms: {
-      tint: new Cesium.Cartesian3(1.0, 1.0, 1.0),
-      strength: 0.0,
-    },
-  });
-  viewer.scene.postProcessStages.add(signalStage);
+  const signalOverlay = document.createElement("div");
+  signalOverlay.className = "globeTint";
+  const globeWrap = el.closest(".globeWrap");
+  if (globeWrap) globeWrap.appendChild(signalOverlay);
 
   const signalMap = {
-    none: { tint: [1.0, 1.0, 1.0], strength: 0.0 },
-    hydrology: { tint: [0.55, 0.8, 1.6], strength: 0.55 },
-    vegetation: { tint: [0.55, 1.4, 0.7], strength: 0.55 },
-    thermal: { tint: [1.4, 0.7, 0.55], strength: 0.55 },
-    albedo: { tint: [1.25, 1.25, 1.35], strength: 0.5 },
-    aerosols: { tint: [0.85, 0.8, 1.25], strength: 0.5 },
-    resilience: { tint: [0.7, 1.25, 1.15], strength: 0.55 },
+    none: { color: "transparent", opacity: 0 },
+    hydrology: { color: "rgba(88, 156, 255, 1)", opacity: 0.45 },
+    vegetation: { color: "rgba(94, 210, 110, 1)", opacity: 0.45 },
+    thermal: { color: "rgba(255, 120, 88, 1)", opacity: 0.45 },
+    albedo: { color: "rgba(220, 220, 255, 1)", opacity: 0.35 },
+    aerosols: { color: "rgba(170, 150, 210, 1)", opacity: 0.35 },
+    resilience: { color: "rgba(120, 210, 200, 1)", opacity: 0.45 },
   };
 
   function applySignal(name) {
     const config = signalMap[name] || signalMap.none;
-    signalStage.uniforms.tint = new Cesium.Cartesian3(
-      config.tint[0],
-      config.tint[1],
-      config.tint[2]
-    );
-    signalStage.uniforms.strength = config.strength;
-    viewer.scene.requestRender();
+    signalOverlay.style.background = config.color;
+    signalOverlay.style.opacity = config.opacity;
   }
 
   // Debug handle
