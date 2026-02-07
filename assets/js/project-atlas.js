@@ -3,6 +3,7 @@
 (function initProjectAtlas() {
   const filterWrap = document.getElementById("atlas-filters");
   const clearBtn = document.getElementById("clear-filters");
+  const searchInput = document.getElementById("atlas-search");
   const detail = document.getElementById("atlas-detail");
   if (!filterWrap || !detail) return;
 
@@ -28,6 +29,13 @@
     summary.className = "muted";
     summary.textContent = entity._pp_summary || "No summary provided yet.";
     wrapper.appendChild(summary);
+
+    if (entity._pp_size) {
+      const size = document.createElement("div");
+      size.className = "muted";
+      size.textContent = "Size: " + entity._pp_size;
+      wrapper.appendChild(size);
+    }
 
     if (entity._pp_tags && entity._pp_tags.length) {
       const tagLine = document.createElement("div");
@@ -89,7 +97,7 @@
         viewer.zoomTo(dataSource);
 
         const entities = dataSource.entities.values;
-        const tagSet = new Set();
+        const tagCounts = new Map();
 
         entities.forEach((entity) => {
           const props = entity.properties || {};
@@ -97,14 +105,18 @@
           entity.name = name || entity.name;
 
           const summary = props.summary && props.summary.getValue ? props.summary.getValue() : "";
+          const size = props.size && props.size.getValue ? props.size.getValue() : "";
           const tags = props.tags && props.tags.getValue ? props.tags.getValue() : "";
           const links = props.links && props.links.getValue ? props.links.getValue() : "";
 
           entity._pp_summary = summary;
+          entity._pp_size = size;
           entity._pp_tags = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
           entity._pp_links = links ? links.split(",").map((t) => t.trim()).filter(Boolean) : [];
 
-          entity._pp_tags.forEach((tag) => tagSet.add(tag));
+          entity._pp_tags.forEach((tag) => {
+            tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+          });
 
           if (entity.position) {
             entity.point = new Cesium.PointGraphics({
@@ -122,7 +134,9 @@
           }
         });
 
-        const tagsSorted = Array.from(tagSet).sort();
+        const tagsSorted = Array.from(tagCounts.keys())
+          .sort((a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0))
+          .slice(0, 3);
         tagsSorted.forEach((tag) => {
           const label = document.createElement("label");
           label.className = "filterItem";
@@ -138,24 +152,40 @@
           return Array.from(filterWrap.querySelectorAll("input:checked")).map((el) => el.value);
         }
 
+        function getSearchQuery() {
+          return searchInput ? searchInput.value.trim().toLowerCase() : "";
+        }
+
         function applyFilters() {
           const selectedTags = getSelectedTags();
+          const query = getSearchQuery();
           entities.forEach((entity) => {
-            if (!selectedTags.length) {
-              entity.show = true;
-              return;
-            }
-            const hasTag = entity._pp_tags.some((tag) => selectedTags.includes(tag));
-            entity.show = hasTag;
+            const matchesTags = !selectedTags.length
+              ? true
+              : entity._pp_tags.some((tag) => selectedTags.includes(tag));
+            const haystack = [
+              entity.name,
+              entity._pp_summary,
+              entity._pp_size,
+              entity._pp_tags.join(" "),
+            ]
+              .join(" ")
+              .toLowerCase();
+            const matchesQuery = !query ? true : haystack.includes(query);
+            entity.show = matchesTags && matchesQuery;
           });
         }
 
         filterWrap.addEventListener("change", applyFilters);
+        if (searchInput) {
+          searchInput.addEventListener("input", applyFilters);
+        }
         if (clearBtn) {
           clearBtn.addEventListener("click", () => {
             filterWrap.querySelectorAll("input:checked").forEach((el) => {
               el.checked = false;
             });
+            if (searchInput) searchInput.value = "";
             applyFilters();
           });
         }

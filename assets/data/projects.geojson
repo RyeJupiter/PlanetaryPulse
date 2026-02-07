@@ -7,6 +7,7 @@
         "id": "alb-001",
         "name": "Al Baydha Project",
         "summary": "Desert regreening with low-tech water harvesting and native species.",
+        "size": "2,400 ha",
         "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",
         "links": "https://aridagriculture.org,https://www.youtube.com/watch?v=T39QHprz-x8"
       },
@@ -21,6 +22,7 @@
         "id": "knepp-001",
         "name": "Knepp Estate Rewilding",
         "summary": "Large-scale rewilding on former farmland with biodiversity recovery.",
+        "size": "1,400 ha",
         "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
         "links": "https://knepp.co.uk"
       },
@@ -43,6 +45,7 @@
         "id": "alf-001",
         "name": "Apricot Lane Farms",
         "summary": "Regenerative mixed farm system documented in a feature film.",
+        "size": "214 ha",
         "tags": "regenerative-farm,biodiversity,california,mixed-livestock,film",
         "links": "https://www.apricotlanefarms.com"
       },
@@ -57,6 +60,7 @@
         "id": "loess-001",
         "name": "Loess Plateau Restoration",
         "summary": "Landscape restoration and watershed recovery across degraded terrain.",
+        "size": "35,000 km²",
         "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
         "links": "https://www.pbs.org"
       },
@@ -79,6 +83,7 @@
         "id": "wop-001",
         "name": "White Oak Pastures",
         "summary": "Regenerative grazing, diversified livestock, rural community revival.",
+        "size": "1,200 ha",
         "tags": "regenerative-grazing,beef,georgia,grassfed,book",
         "links": "https://whiteoakpastures.com"
       },
