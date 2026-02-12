@@ -19,7 +19,7 @@
 
   navRoot.innerHTML = `
     <header class="nav">
-      <div class="brand">Planetary Pulse</div>
+      <div class="brand">EarthPulse</div>
       <nav class="links">
         ${links
           .map(
@@ -79,4 +79,19 @@
     document.body.appendChild(railLeft);
     document.body.appendChild(railRight);
   }
+
+  const updateSatelliteRailVisibility = () => {
+    const contentCandidates = Array.from(
+      document.querySelectorAll(".layout, .page, .copy, .panel")
+    );
+    const widestContent = contentCandidates.length
+      ? Math.max(...contentCandidates.map((el) => el.getBoundingClientRect().width))
+      : document.documentElement.clientWidth;
+    const shouldShow = window.innerWidth > widestContent * 2;
+    document.body.classList.toggle("showSatelliteRails", shouldShow);
+  };
+
+  updateSatelliteRailVisibility();
+  window.addEventListener("resize", updateSatelliteRailVisibility);
 })();
+

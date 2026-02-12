@@ -181,7 +181,7 @@
       const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        name: "Planetary Pulse Blog",
+        name: "EarthPulse Blog",
         description: "Field notes on Earth Metrics, regeneration, and climate stability.",
         blogPost: sorted.map((post) => ({
           "@type": "BlogPosting",
@@ -202,3 +202,4 @@
       emptyTip.textContent = "Posts are temporarily unavailable.";
     });
 })();
+

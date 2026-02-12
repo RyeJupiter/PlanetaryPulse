@@ -3,7 +3,7 @@
 (function globeUI() {
     const METRICS = window.PP_METRICS;
     if (!METRICS) {
-        console.warn("[PlanetaryPulse] Missing PP_METRICS. Did you load /js/metrics-config.js before globe-ui.js?");
+        console.warn("[EarthPulse] Missing PP_METRICS. Did you load /js/metrics-config.js before globe-ui.js?");
         return;
     }
 
@@ -144,3 +144,4 @@
         init();
     }
 })();
+

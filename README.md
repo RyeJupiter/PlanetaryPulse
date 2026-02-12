@@ -1,2 +1,3 @@
-# PlanetaryPulse
-Planetary Pulse — visualizing Earth system function and regeneration
+# EarthPulse
+EarthPulse — visualizing Earth system function and regeneration
+

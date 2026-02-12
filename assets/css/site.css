@@ -89,6 +89,9 @@ body::after {
   color: var(--muted);
   margin-top: 6px;
 }
+.showSatelliteRails .satelliteRail {
+  display: flex;
+}
 
 
 .nav {
@@ -597,11 +600,5 @@ h2 {
   }
   .card {
     padding: 16px;
-  }
-}
-
-@media (min-width: 1400px) {
-  .satelliteRail {
-    display: flex;
   }
 }
