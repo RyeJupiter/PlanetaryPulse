@@ -5,16 +5,22 @@
   if (!grid) return;
 
   const imageBySpecies = {
-    "Monarch Butterfly": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Monarch_Butterfly_Danaus_plexippus_Male_2664px.jpg",
-    "Western Scrub-Jay": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Aphelocoma_californica_cropped.jpg",
-    "Brown Pelican": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Brown_pelican_in_flight%2C_Morro_Bay.jpg",
-    Cormorant: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Double-crested_Cormorant.jpg",
-    "California Poppy": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Eschscholzia_californica_2.jpg",
-    "Coast Live Oak": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Quercus_agrifolia_tree.jpg",
-    "Coastal Sagebrush": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Artemisia_californica.jpg",
-    "Sea Otter": "https://upload.wikimedia.org/wikipedia/commons/2/28/Sea_Otter_Cropped.jpg",
-    "Giant Kelp": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Macrocystis_pyrifera_%28giant_kelp%29.jpg",
+    "Monarch Butterfly": "Monarch Butterfly Danaus plexippus Male 2664px.jpg",
+    "Western Scrub-Jay": "Aphelocoma californica cropped.jpg",
+    "Brown Pelican": "Brown pelican in flight, Morro Bay.jpg",
+    Cormorant: "Double-crested Cormorant.jpg",
+    "California Poppy": "Eschscholzia californica 2.jpg",
+    "Coast Live Oak": "Quercus agrifolia tree.jpg",
+    "Coastal Sagebrush": "Artemisia californica.jpg",
+    "Sea Otter": "Sea Otter Cropped.jpg",
+    "Giant Kelp": "Macrocystis pyrifera (giant kelp).jpg",
   };
+
+  const noImageSvg =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 360'%3E%3Crect width='640' height='360' fill='%23070a12'/%3E%3Ctext x='50%25' y='50%25' fill='%239fb4ce' font-size='28' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif'%3EImage unavailable%3C/text%3E%3C/svg%3E";
+
+  const toWikiFilePath = (fileName) =>
+    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=900`;
 
   const categoryNames = {
     insects: "Insects",
@@ -31,7 +37,8 @@
     card.className = "speciesCard";
     card.setAttribute("aria-label", `${species.common_name} details`);
 
-    const image = imageBySpecies[species.common_name] || "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+    const imageName = imageBySpecies[species.common_name];
+    const image = imageName ? toWikiFilePath(imageName) : noImageSvg;
 
     card.innerHTML = `
       <div class="speciesCardInner">
@@ -60,6 +67,13 @@
     card.addEventListener("click", () => {
       card.classList.toggle("isFlipped");
     });
+
+    const imageEl = card.querySelector(".speciesImage");
+    if (imageEl) {
+      imageEl.addEventListener("error", () => {
+        imageEl.src = noImageSvg;
+      });
+    }
 
     return card;
   };
