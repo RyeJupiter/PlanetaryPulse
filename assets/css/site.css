@@ -215,23 +215,34 @@ h2 {
 .cardLink .cardTitle {
   color: var(--text);
 }
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
 .cardCta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 64px;
-  padding: 4px 10px;
-  margin-bottom: 10px;
+  min-width: 58px;
+  padding: 3px 9px;
   border-radius: 999px;
   border: 1px solid rgba(102, 227, 255, 0.38);
   background: rgba(102, 227, 255, 0.14);
   color: var(--accent);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  line-height: 1.2;
+  flex-shrink: 0;
 }
 .cardTitle { font-weight: 600; margin-bottom: 6px; }
+.cardHead .cardTitle {
+  margin-bottom: 0;
+}
 .cardBody { color: var(--muted); }
 .blogCard .cardTitle,
 .blogCard .muted,
@@ -438,6 +449,11 @@ h2 {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+}
+.detailDivider {
+  border-top: 1px solid rgba(130, 170, 210, 0.22);
+  margin-top: 14px;
+  padding-top: 2px;
 }
 .detailLinks .btn {
   padding: 6px 10px;

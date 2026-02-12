@@ -17,6 +17,15 @@
     detail.appendChild(content);
   }
 
+  function getDomainLabel(rawUrl) {
+    if (!rawUrl) return "";
+    try {
+      return new URL(rawUrl).hostname.replace(/^www\./i, "");
+    } catch (error) {
+      return "";
+    }
+  }
+
   function buildDetail(entity) {
     const wrapper = document.createElement("div");
     wrapper.className = "detailCard";
@@ -25,6 +34,43 @@
     title.className = "detailTitle";
     title.textContent = entity.name || "Project";
     wrapper.appendChild(title);
+
+    if (entity._pp_images && entity._pp_images.length) {
+      const grid = document.createElement("div");
+      grid.className = "imageGrid";
+      entity._pp_images.slice(0, 3).forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "imageCard";
+
+        const img = document.createElement("img");
+        img.src = item.url;
+        img.alt = item.alt || `${entity.name} landscape`;
+        img.loading = "lazy";
+        card.appendChild(img);
+
+        if (item.credit || item.source) {
+          const caption = document.createElement("div");
+          caption.className = "imageCaption";
+          if (item.credit) {
+            caption.appendChild(document.createTextNode(item.credit));
+            if (item.source) caption.appendChild(document.createTextNode(" - "));
+          }
+          if (item.source) {
+            const link = document.createElement("a");
+            link.className = "link";
+            link.href = item.source;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.textContent = "Source";
+            caption.appendChild(link);
+          }
+          card.appendChild(caption);
+        }
+
+        grid.appendChild(card);
+      });
+      wrapper.appendChild(grid);
+    }
 
     const summary = document.createElement("div");
     summary.className = "muted";
@@ -50,53 +96,20 @@
       wrapper.appendChild(tagWrap);
     }
 
-    if (entity._pp_images && entity._pp_images.length) {
-      const grid = document.createElement("div");
-      grid.className = "imageGrid";
-      entity._pp_images.slice(0, 3).forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "imageCard";
-
-        const img = document.createElement("img");
-        img.src = item.url;
-        img.alt = item.alt || `${entity.name} landscape`;
-        img.loading = "lazy";
-        card.appendChild(img);
-
-        if (item.credit || item.source) {
-          const caption = document.createElement("div");
-          caption.className = "imageCaption";
-          if (item.credit) {
-            caption.appendChild(document.createTextNode(item.credit));
-            if (item.source) caption.appendChild(document.createTextNode(" • "));
-          }
-          if (item.source) {
-            const link = document.createElement("a");
-            link.className = "link";
-            link.href = item.source;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.textContent = "Source";
-            caption.appendChild(link);
-          }
-          card.appendChild(caption);
-        }
-
-        grid.appendChild(card);
-      });
-      wrapper.appendChild(grid);
-    }
-
     if (entity._pp_links && entity._pp_links.length) {
+      const divider = document.createElement("div");
+      divider.className = "detailDivider";
+      wrapper.appendChild(divider);
+
       const linkWrap = document.createElement("div");
       linkWrap.className = "detailLinks";
-      entity._pp_links.forEach((url) => {
+      entity._pp_links.forEach((item) => {
         const link = document.createElement("a");
         link.className = "btn";
-        link.href = url;
+        link.href = item.url;
         link.target = "_blank";
         link.rel = "noopener";
-        link.textContent = "Learn more";
+        link.textContent = item.text || item.domain || "Open link";
         linkWrap.appendChild(link);
       });
       wrapper.appendChild(linkWrap);
@@ -156,6 +169,56 @@
           return [];
         }
 
+        function normalizeLinks(value) {
+          const cleaned = [];
+
+          function addLink(urlValue, textValue) {
+            const url = String(urlValue || "").trim();
+            if (!/^https?:\/\//i.test(url)) return;
+            const text = String(textValue || "").trim();
+            cleaned.push({
+              url,
+              text,
+              domain: getDomainLabel(url),
+            });
+          }
+
+          if (!value) return cleaned;
+
+          if (Array.isArray(value)) {
+            value.forEach((item) => {
+              if (typeof item === "string") {
+                addLink(item, "");
+              } else if (item && typeof item === "object") {
+                addLink(item.url || item.href, item.text || item.label || item.displayText || "");
+              }
+            });
+            return cleaned;
+          }
+
+          if (typeof value === "string") {
+            const trimmed = value.trim();
+            if (!trimmed) return cleaned;
+
+            if (trimmed.startsWith("[")) {
+              try {
+                const parsed = JSON.parse(trimmed);
+                return normalizeLinks(parsed);
+              } catch (error) {
+                // fall through to comma-separated fallback
+              }
+            }
+
+            trimmed
+              .split(",")
+              .map((entry) => entry.trim())
+              .filter(Boolean)
+              .forEach((url) => addLink(url, ""));
+          }
+
+          return cleaned;
+        }
+
         entities.forEach((entity) => {
           const props = entity.properties || {};
           const name = props.name && props.name.getValue ? props.name.getValue() : entity.name;
@@ -170,7 +233,7 @@
           entity._pp_summary = summary;
           entity._pp_size = size;
           entity._pp_tags = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
-          entity._pp_links = links ? links.split(",").map((t) => t.trim()).filter(Boolean) : [];
+          entity._pp_links = normalizeLinks(links);
           entity._pp_images = normalizeImages(images);
 
           entity._pp_tags.forEach((tag) => {
@@ -194,7 +257,7 @@
         });
 
         const allTagsSorted = Array.from(tagCounts.keys())
-          .sort((a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0))
+          .sort((a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0));
         const topTags = allTagsSorted.slice(0, 3);
         const selectedTags = new Set();
 
@@ -244,11 +307,11 @@
         }
 
         function applyFilters() {
-          const selectedTags = getSelectedTags();
+          const selectedTagValues = getSelectedTags();
           entities.forEach((entity) => {
-            const matchesTags = !selectedTags.length
+            const matchesTags = !selectedTagValues.length
               ? true
-              : entity._pp_tags.some((tag) => selectedTags.includes(tag));
+              : entity._pp_tags.some((tag) => selectedTagValues.includes(tag));
             entity.show = matchesTags;
           });
         }

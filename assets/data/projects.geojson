@@ -21,7 +21,16 @@
           }
         ],
         "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",
-        "links": "https://aridagriculture.org,https://www.youtube.com/watch?v=T39QHprz-x8"
+        "links": [
+          {
+            "text": "Arid Agriculture",
+            "url": "https://aridagriculture.org"
+          },
+          {
+            "text": "Al Baydha overview video",
+            "url": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          }
+        ]
       },
       "geometry": {
         "type": "Point",
@@ -53,7 +62,16 @@
           }
         ],
         "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
-        "links": "https://knepp.co.uk"
+        "links": [
+          {
+            "text": "Knepp",
+            "url": "https://knepp.co.uk"
+          },
+          {
+            "text": "Knepp Rewilding",
+            "url": "https://knepp.co.uk/rewilding/"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",
@@ -93,7 +111,16 @@
           }
         ],
         "tags": "regenerative-farm,biodiversity,california,mixed-livestock,film",
-        "links": "https://www.apricotlanefarms.com"
+        "links": [
+          {
+            "text": "Apricot Lane Farms",
+            "url": "https://www.apricotlanefarms.com"
+          },
+          {
+            "text": "The Biggest Little Farm",
+            "url": "https://www.biggestlittlefarmmovie.com"
+          }
+        ]
       },
       "geometry": {
         "type": "Point",
@@ -120,7 +147,7 @@
           }
         ],
         "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
-        "links": "https://www.pbs.org"
+        "links": []
       },
       "geometry": {
         "type": "Polygon",
@@ -160,7 +187,16 @@
           }
         ],
         "tags": "regenerative-grazing,beef,georgia,grassfed,book",
-        "links": "https://whiteoakpastures.com"
+        "links": [
+          {
+            "text": "White Oak Pastures",
+            "url": "https://whiteoakpastures.com"
+          },
+          {
+            "text": "About White Oak Pastures",
+            "url": "https://whiteoakpastures.com/pages/about-us"
+          }
+        ]
       },
       "geometry": {
         "type": "Point",
@@ -172,11 +208,16 @@
       "properties": {
         "id": "achm-001",
         "name": "Africa Centre for Holistic Management",
-        "summary": "Allan Savory’s flagship landscape restoration site using holistic planned grazing.",
+        "summary": "Allan Savory's flagship landscape restoration site using holistic planned grazing.",
         "size": "3,200 ha",
         "images": [],
         "tags": "holistic-management,regenerative-grazing,zimbabwe,savanna,soil-restoration",
-        "links": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+        "links": [
+          {
+            "text": "Africa Centre for Holistic Management",
+            "url": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
+          }
+        ]
       },
       "geometry": {
         "type": "Point",
@@ -208,7 +249,16 @@
           }
         ],
         "tags": "water-harvesting,watershed,india,community,monsoon",
-        "links": "https://paanifoundation.in,https://paanifoundation.in/satyamev-jayate-water-cup/"
+        "links": [
+          {
+            "text": "Paani Foundation",
+            "url": "https://paanifoundation.in"
+          },
+          {
+            "text": "Satyamev Jayate Water Cup",
+            "url": "https://paanifoundation.in/satyamev-jayate-water-cup/"
+          }
+        ]
       },
       "geometry": {
         "type": "Point",
