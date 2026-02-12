@@ -5,82 +5,24 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <title>Explore - EarthPulse</title>
-  <meta name="description" content="Explore Earth Metrics that make landscape impact on local climate visible, including hydrology, vegetation, thermal regulation, albedo, aerosols, and resilience." />
-
-  <!-- Cesium -->
-  <link rel="stylesheet" href="https://unpkg.com/cesium@latest/Build/Cesium/Widgets/widgets.css">
-  <script src="https://unpkg.com/cesium@latest/Build/Cesium/Cesium.js" defer></script>
+  <meta name="description" content="Explore V1 data drawdown for NDVI and Land Surface Temperature time series by location and month range." />
 
   <link rel="stylesheet" href="assets/css/site.css" />
-  <script src="assets/js/cesium-init.js" defer></script>
-  <script src="assets/js/explore-signals.js" defer></script>
+  <link rel="stylesheet" href="assets/css/explore-app.css" />
+  <script src="assets/js/explore-app.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
 </head>
 
 <body data-page="explore">
   <div id="site-nav"></div>
 
-  <main class="layout">
-    <section class="copy">
-      <h1>Explore</h1>
+  <main class="page">
+    <section class="panel">
+      <h1>Explore V1</h1>
       <p class="subtitle">
-        Explore is the interactive heart of EarthPulse. It evolves into a metric-driven
-        analysis view with time sliders, regional bookmarks, and narrative tours. The goal is to
-        deliver the same Earth Metrics for any location so landscape impact on local climate can be
-        compared consistently. For now, use the selector below to preview each metric category with a
-        clear visual tint.
+        Build-first interface for monthly NDVI and land surface temperature drawdown by location.
       </p>
-      <p class="lede">
-        The intent is simple: compare how different landscapes regulate heat, water, and vegetation
-        function over time. Climate is the macro-pattern that emerges from these local conditions.
-      </p>
-
-      <div class="card">
-        <div class="cardTitle">Metric selector</div>
-        <div class="cardBody">
-          <div class="muted">Selected: <span id="signal-name">None</span></div>
-          <div class="signalList">
-            <button class="signalBtn" data-signal="none" type="button">None</button>
-            <button class="signalBtn" data-signal="hydrology" type="button">Hydrology</button>
-            <button class="signalBtn" data-signal="vegetation" type="button">Vegetation Function</button>
-            <button class="signalBtn" data-signal="thermal" type="button">Thermal Regulation</button>
-            <button class="signalBtn" data-signal="albedo" type="button">Albedo and Light Absorption</button>
-            <button class="signalBtn" data-signal="aerosols" type="button">Atmospheric Dust and Aerosols</button>
-            <button class="signalBtn" data-signal="resilience" type="button">Resilience</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="callouts">
-        <div class="card">
-          <div class="cardTitle">Coming next</div>
-          <div class="cardBody">True raster overlays, regional bookmarks, and time-based comparisons.</div>
-        </div>
-        <div class="card">
-          <div class="cardTitle">Learn more</div>
-          <div class="cardBody">
-            Read about each metric on the <a class="link" href="signals.html">Earth Metrics</a> page or browse projects in the
-            <a class="link" href="regen-registry.html">Regen Registry</a>.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="globeColumn">
-      <div class="globeWrap">
-        <div id="globe" class="globe"></div>
-      </div>
-      <div class="timeSlider">
-        <div class="timeSliderHeader">
-          <span>Time window (placeholder)</span>
-          <span id="time-slider-value">2026</span>
-        </div>
-        <input id="time-slider" type="range" min="2014" max="2026" value="2026" step="1" aria-label="Time slider from 2014 to current year" />
-        <div class="timeSliderLabels">
-          <span>2014</span>
-          <span id="time-slider-max">2026</span>
-        </div>
-      </div>
+      <div id="explorer-app"></div>
     </section>
   </main>
 
@@ -89,20 +31,7 @@
   </footer>
 
   <script>
-    const nowYear = new Date().getFullYear();
-    document.getElementById("year").textContent = nowYear;
-    const slider = document.getElementById("time-slider");
-    const sliderValue = document.getElementById("time-slider-value");
-    const sliderMax = document.getElementById("time-slider-max");
-    if (slider && sliderValue && sliderMax) {
-      slider.max = nowYear;
-      slider.value = nowYear;
-      sliderValue.textContent = nowYear;
-      sliderMax.textContent = nowYear;
-      slider.addEventListener("input", () => {
-        sliderValue.textContent = slider.value;
-      });
-    }
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
