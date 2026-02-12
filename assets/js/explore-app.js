@@ -48,6 +48,7 @@
     return Math.max(min, Math.min(max, n));
   }
 
+  // Adapter registry: each provider must implement getMonthlySeries(...)
   const providers = {
     modis: {
       id: "modis",
@@ -82,6 +83,7 @@
       if (!res.ok) {
         const err = new Error(payload.error || "Backend request failed.");
         err.code = payload.code || "backend_error";
+        err.status = res.status;
         throw err;
       }
       return payload;
@@ -303,6 +305,16 @@
     updateStatus();
 
     const provider = providers[state.provider];
+    if (!provider || typeof provider.getMonthlySeries !== "function") {
+      state.series = [];
+      state.loading = false;
+      state.source = "none";
+      state.warning = "Provider is not configured.";
+      updateStatus();
+      updateCharts();
+      return;
+    }
+
     provider
       .getMonthlySeries({
         lat: state.lat,
@@ -326,10 +338,17 @@
           state.metrics
         );
         state.source = "mock";
-        state.warning =
+        const fallbackReason =
           error?.code === "missing_credentials"
             ? "Mock fallback (set AppEEARS env vars)"
-            : "Mock fallback";
+            : `Mock fallback (${error?.status || "request error"})`;
+        state.warning = fallbackReason;
+        // Keep a console trail for debugging failed backend draws without breaking UI flow.
+        console.warn("[Explore] Monthly backend fetch failed:", {
+          message: error?.message || "Unknown error",
+          code: error?.code || "unknown",
+          status: error?.status || null,
+        });
       })
       .finally(() => {
         state.loading = false;
@@ -347,13 +366,19 @@
       return;
     }
 
-    map = new maplibregl.Map({
-      container: mapNode,
-      style: "https://demotiles.maplibre.org/style.json",
-      center: [state.lon, state.lat],
-      zoom: 2.2,
-      attributionControl: false,
-    });
+    try {
+      map = new maplibregl.Map({
+        container: mapNode,
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [state.lon, state.lat],
+        zoom: 2.2,
+        attributionControl: false,
+      });
+    } catch (error) {
+      mapNode.innerHTML = "<div class=\"chartEmpty\">Could not initialize map.</div>";
+      console.error("[Explore] Map initialization failed:", error);
+      return;
+    }
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
@@ -396,6 +421,7 @@
     if (provider) {
       provider.addEventListener("change", () => {
         state.provider = provider.value;
+        updateStatus();
       });
     }
 

@@ -47,6 +47,9 @@ export async function onRequestPost(context) {
     if (!/^\d{4}-\d{2}$/.test(startMonth) || !/^\d{4}-\d{2}$/.test(endMonth)) {
       return json({ error: "startMonth and endMonth must be YYYY-MM." }, 400);
     }
+    if (monthIndex(startMonth) > monthIndex(endMonth)) {
+      return json({ error: "startMonth must be <= endMonth." }, 400);
+    }
 
     if (!metrics.length) {
       return json({ error: "At least one metric is required." }, 400);
@@ -65,8 +68,10 @@ export async function onRequestPost(context) {
       );
     }
 
+    // 1) Authenticate with AppEEARS and fetch a bearer token.
     const token = await loginAppeears(username, password);
 
+    // 2) Resolve product data layer + QA layer for each requested metric.
     const metricDefs = await Promise.all(
       metrics.map((metric) => buildMetricDefinition({ token, metric, config: providerConfig[metric] }))
     );
@@ -78,6 +83,7 @@ export async function onRequestPost(context) {
       ])
     );
 
+    // 3) Submit point task for date range + layers + coordinates.
     const dates = monthRange(startMonth, endMonth);
     const taskBody = {
       task_type: "point",
@@ -106,6 +112,7 @@ export async function onRequestPost(context) {
       return json({ error: "Failed to create AppEEARS task." }, 502);
     }
 
+    // 4) Poll until AppEEARS task reaches done/failed.
     await waitForTaskDone(token, taskId);
 
     const bundle = await appeearsRequest(`/bundle/${taskId}`, { token });
@@ -114,6 +121,7 @@ export async function onRequestPost(context) {
       return json({ error: "AppEEARS task completed but no CSV file found.", taskId }, 502);
     }
 
+    // 5) Download result CSV, apply QA filtering, aggregate monthly medians.
     const csvText = await appeearsRequest(`/bundle/${taskId}/${csvFile.file_id}`, { token, rawText: true });
     const rows = parseCsv(csvText);
 
@@ -132,6 +140,7 @@ export async function onRequestPost(context) {
       series,
     });
   } catch (error) {
+    console.error("[AppEEARS adapter] request failed:", error);
     return json({ error: error.message || "Unexpected server error." }, 500);
   }
 }
@@ -167,14 +176,19 @@ async function loginAppeears(username, password) {
 }
 
 async function appeearsRequest(path, options = {}) {
-  const response = await fetch(`${APPEEARS_BASE}${path}`, {
-    method: options.method || "GET",
-    headers: {
-      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
-      ...(options.body ? { "content-type": "application/json" } : {}),
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let response;
+  try {
+    response = await fetch(`${APPEEARS_BASE}${path}`, {
+      method: options.method || "GET",
+      headers: {
+        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+        ...(options.body ? { "content-type": "application/json" } : {}),
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch (error) {
+    throw new Error(`AppEEARS network error for ${path}: ${error.message || "unknown"}`);
+  }
 
   if (!response.ok) {
     const message = await response.text();
@@ -447,7 +461,7 @@ function aggregateMonthly({ rows, startMonth, endMonth, metricDefs }) {
       totalMap.set(month, (totalMap.get(month) || 0) + 1);
 
       const qaValue = Number(qaRaw);
-      const qaPass = !def.acceptableQa.size || def.acceptableQa.has(qaValue);
+      const qaPass = Number.isFinite(qaValue) && (!def.acceptableQa.size || def.acceptableQa.has(qaValue));
       if (!qaPass) return;
 
       let value = Number(dataRaw);
