@@ -1,52 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-
   <defs>
-    <!-- Planet clip -->
-    <clipPath id="planetClip">
-      <circle cx="32" cy="32" r="22"/>
-    </clipPath>
+    <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#53d3ff"/>
+      <stop offset="1" stop-color="#2a7dff"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7affc5"/>
+      <stop offset="1" stop-color="#00d084"/>
+    </linearGradient>
   </defs>
 
-  <!-- Planet (darker blue) -->
-  <circle cx="32" cy="32" r="22" fill="#1f7fd6"/>
+  <rect width="64" height="64" rx="14" fill="#060b14"/>
+  <circle cx="32" cy="32" r="20" fill="url(#ocean)"/>
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#b9ecff" stroke-opacity="0.25" stroke-width="2"/>
 
-  <!-- Polar caps (slightly off-white for contrast) -->
-  <g clip-path="url(#planetClip)" fill="#f2f7fa">
-
-    <!-- North cap -->
-    <path
-      d="M8 16
-         Q32 8 56 16
-         L56 10
-         Q32 4 8 10
-         Z"/>
-
-    <!-- South cap -->
-    <path
-      d="M8 48
-         Q32 56 56 48
-         L56 54
-         Q32 60 8 54
-         Z"/>
-
-  </g>
-
-  <!-- Pulse (dark emerald) -->
-  <path
-    d="M6 36
-       H20
-       L24 22
-       L28 48
-       L33 26
-       L38 38
-       L42 24
-       L46 36
-       H58"
-    fill="none"
-    stroke="#0a6b3f"
-    stroke-width="4.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-
+  <path d="M7 37h11l4-10 5 20 5-14 4 7 5-12 4 9h12" fill="none" stroke="url(#pulse)" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
 </svg>
