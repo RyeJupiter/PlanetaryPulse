@@ -77,19 +77,19 @@
         "size": "214 ha",
         "images": [
           {
-            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1704003199?download=1",
-            "credit": "Disney Press",
-            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+            "url": "https://www.apricotlanefarms.com/wp-content/uploads/2025/10/DSC08939-5-1920x1280.jpg",
+            "credit": "Apricot Lane Farms",
+            "source": "https://www.apricotlanefarms.com/"
           },
           {
-            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1704003196?download=1",
-            "credit": "Disney Press",
-            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+            "url": "https://www.apricotlanefarms.com/wp-content/uploads/2024/05/Tour-the-farm-min.png",
+            "credit": "Apricot Lane Farms",
+            "source": "https://www.apricotlanefarms.com/"
           },
           {
-            "url": "https://dam.gettyimages.com/the-biggest-little-farm/1732421457?download=1",
-            "credit": "Disney Press",
-            "source": "https://dam.gettyimages.com/the-biggest-little-farm/"
+            "url": "https://www.apricotlanefarms.com/wp-content/uploads/2021/02/biggest-little-farm-poster.jpg",
+            "credit": "Apricot Lane Farms",
+            "source": "https://www.apricotlanefarms.com/"
           }
         ],
         "tags": "regenerative-farm,biodiversity,california,mixed-livestock,film",
@@ -144,19 +144,19 @@
         "size": "1,200 ha",
         "images": [
           {
-            "url": "https://certifiedhumane.org/uploads/images/whiteoak1.jpeg",
-            "credit": "Certified Humane",
-            "source": "https://certifiedhumane.org/white-oak-pastures/"
+            "url": "https://cdn.shopify.com/s/files/1/0517/3277/5108/t/4/assets/pf-0e55edf6--ourtransition_1200x.jpg?v=1615911705",
+            "credit": "White Oak Pastures",
+            "source": "https://whiteoakpastures.com/pages/about-us"
           },
           {
-            "url": "https://certifiedhumane.org/uploads/images/whiteoak2.jpeg",
-            "credit": "Certified Humane",
-            "source": "https://certifiedhumane.org/white-oak-pastures/"
+            "url": "https://cdn.shopify.com/s/files/1/0517/3277/5108/t/4/assets/pf-db65d080--regenerativeagriculture_1200x.jpg?v=1615912480",
+            "credit": "White Oak Pastures",
+            "source": "https://whiteoakpastures.com/pages/about-us"
           },
           {
-            "url": "https://certifiedhumane.org/uploads/images/whiteoak3.jpeg",
-            "credit": "Certified Humane",
-            "source": "https://certifiedhumane.org/white-oak-pastures/"
+            "url": "https://cdn.shopify.com/s/files/1/0517/3277/5108/t/4/assets/pf-e39187ee--savoryhub_1200x.jpg?v=1615912161",
+            "credit": "White Oak Pastures",
+            "source": "https://whiteoakpastures.com/pages/about-us"
           }
         ],
         "tags": "regenerative-grazing,beef,georgia,grassfed,book",
@@ -174,23 +174,7 @@
         "name": "Africa Centre for Holistic Management",
         "summary": "Allan Savory’s flagship landscape restoration site using holistic planned grazing.",
         "size": "3,200 ha",
-        "images": [
-          {
-            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-2-1.jpg",
-            "credit": "Savory Institute",
-            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
-          },
-          {
-            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-1-1.jpg",
-            "credit": "Savory Institute",
-            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
-          },
-          {
-            "url": "https://savory.global/wp-content/uploads/2020/06/ACHM-3.jpg",
-            "credit": "Savory Institute",
-            "source": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
-          }
-        ],
+        "images": [],
         "tags": "holistic-management,regenerative-grazing,zimbabwe,savanna,soil-restoration",
         "links": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
       },
