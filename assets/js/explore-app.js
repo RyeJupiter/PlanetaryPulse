@@ -16,6 +16,8 @@
     metrics: new Set(["ndvi", "lst"]),
     series: [],
     loading: false,
+    source: "mock",
+    warning: "",
   };
 
   let map;
@@ -49,19 +51,42 @@
   const providers = {
     modis: {
       id: "modis",
-      label: "MODIS (mock adapter)",
+      label: "MODIS",
       getMonthlySeries({ lat, lon, startMonth, endMonth, metrics }) {
-        return Promise.resolve(generateMockSeries("modis", lat, lon, startMonth, endMonth, metrics));
+        return fetchMonthlyFromBackend("modis", lat, lon, startMonth, endMonth, metrics);
       },
     },
     viirs: {
       id: "viirs",
-      label: "VIIRS (mock adapter)",
+      label: "VIIRS",
       getMonthlySeries({ lat, lon, startMonth, endMonth, metrics }) {
-        return Promise.resolve(generateMockSeries("viirs", lat, lon, startMonth, endMonth, metrics));
+        return fetchMonthlyFromBackend("viirs", lat, lon, startMonth, endMonth, metrics);
       },
     },
   };
+
+  function fetchMonthlyFromBackend(providerId, lat, lon, startMonth, endMonth, metrics) {
+    return fetch("/api/explore/monthly", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        provider: providerId,
+        lat,
+        lon,
+        startMonth,
+        endMonth,
+        metrics: Array.from(metrics),
+      }),
+    }).then(async (res) => {
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const err = new Error(payload.error || "Backend request failed.");
+        err.code = payload.code || "backend_error";
+        throw err;
+      }
+      return payload;
+    });
+  }
 
   function generateMockSeries(providerId, lat, lon, startMonth, endMonth, metrics) {
     const months = monthRange(startMonth, endMonth);
@@ -209,9 +234,10 @@
     const status = document.getElementById("explorer-status");
     const coords = document.getElementById("viewer-coords");
     if (status) {
+      const sourceTag = state.source ? `Source: ${state.source.toUpperCase()}` : "";
       status.textContent = state.loading
         ? "Loading monthly series..."
-        : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.`;
+        : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}. ${sourceTag}`;
     }
     if (coords) {
       coords.textContent = `${state.lat.toFixed(3)}, ${state.lon.toFixed(3)}`;
@@ -226,7 +252,10 @@
     if (ndvi) ndvi.innerHTML = makeChartSvg(state.series, "ndvi", 0, 1, "#76ffc1");
     if (lst) lst.innerHTML = makeChartSvg(state.series, "lst", -10, 50, "#ffb070");
     if (ndviMeta) ndviMeta.textContent = `${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
-    if (lstMeta) lstMeta.textContent = `${state.provider.toUpperCase()} | QA-filtered monthly mock`;
+    if (lstMeta) {
+      const suffix = state.warning ? ` | ${state.warning}` : " | QA-filtered monthly series";
+      lstMeta.textContent = `${state.provider.toUpperCase()}${suffix}`;
+    }
   }
 
   function syncMapMarker() {
@@ -282,11 +311,25 @@
         endMonth: state.endMonth,
         metrics: state.metrics,
       })
-      .then((series) => {
-        state.series = series;
+      .then((payload) => {
+        state.series = Array.isArray(payload?.series) ? payload.series : [];
+        state.source = payload?.source || "appeears";
+        state.warning = "";
       })
-      .catch(() => {
-        state.series = [];
+      .catch((error) => {
+        state.series = generateMockSeries(
+          state.provider,
+          state.lat,
+          state.lon,
+          state.startMonth,
+          state.endMonth,
+          state.metrics
+        );
+        state.source = "mock";
+        state.warning =
+          error?.code === "missing_credentials"
+            ? "Mock fallback (set AppEEARS env vars)"
+            : "Mock fallback";
       })
       .finally(() => {
         state.loading = false;
