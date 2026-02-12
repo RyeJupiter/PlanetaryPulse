@@ -6,15 +6,15 @@
 
   const page = document.body.getAttribute("data-page") || "";
   const links = [
-    { href: "index.html", label: "Home", key: "home" },
-    { href: "explore.html", label: "Explore", key: "explore" },
-    { href: "regen-registry.html", label: "Regen Registry", key: "atlas" },
-    { href: "signals.html", label: "Earth Metrics", key: "signals" },
-    { href: "blog.html", label: "Blog", key: "blog" },
-    { href: "future-plans.html", label: "Plans & Vibes", key: "future-plans" },
-    { href: "why.html", label: "Why", key: "why" },
-    { href: "about.html", label: "About", key: "about" },
-    { href: "contact.html", label: "Contact", key: "contact" },
+    { href: "/index.html", label: "Home", key: "home" },
+    { href: "/explore.html", label: "Explore", key: "explore" },
+    { href: "/regen-registry.html", label: "Regen Registry", key: "atlas" },
+    { href: "/signals.html", label: "Earth Metrics", key: "signals" },
+    { href: "/blog.html", label: "Field Notes", key: "blog" },
+    { href: "/future-plans.html", label: "Plans & Vibes", key: "future-plans" },
+    { href: "/why.html", label: "Why", key: "why" },
+    { href: "/about.html", label: "About", key: "about" },
+    { href: "/contact.html", label: "Contact", key: "contact" },
   ];
 
   navRoot.innerHTML = `
@@ -93,5 +93,14 @@
 
   updateSatelliteRailVisibility();
   window.addEventListener("resize", updateSatelliteRailVisibility);
+
+  const footer = document.querySelector(".footer");
+  if (footer && !footer.querySelector(".footerProjectsLink")) {
+    const projectsLink = document.createElement("a");
+    projectsLink.className = "footerProjectsLink";
+    projectsLink.href = "/everything/index.html";
+    projectsLink.textContent = "Explore Rye's Other Projects";
+    footer.appendChild(projectsLink);
+  }
 })();
 

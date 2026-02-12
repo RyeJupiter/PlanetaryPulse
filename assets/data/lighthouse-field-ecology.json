@@ -1,0 +1,180 @@
+{
+  "site": {
+    "name": "Lighthouse Field",
+    "location": {
+      "city": "Santa Cruz",
+      "state": "California",
+      "country": "USA",
+      "coordinates": {
+        "latitude": 36.9529,
+        "longitude": -122.0253
+      }
+    },
+    "ecosystem_type": [
+      "Coastal prairie",
+      "Coastal bluff",
+      "Monterey Bay shoreline"
+    ],
+    "description": "A coastal open space featuring native grasslands, bluff habitats, and nearshore marine ecosystems."
+  },
+  "signature_species": {
+    "insects": [
+      {
+        "common_name": "Monarch Butterfly",
+        "scientific_name": "Danaus plexippus",
+        "status": "Seasonal migrant",
+        "role": "Pollinator and indicator species",
+        "notes": "Uses coastal areas as overwintering habitat during migration."
+      }
+    ],
+    "birds": [
+      {
+        "common_name": "Western Scrub-Jay",
+        "scientific_name": "Aphelocoma californica",
+        "status": "Resident",
+        "role": "Seed disperser",
+        "notes": "Plays a key role in oak regeneration."
+      },
+      {
+        "common_name": "Brown Pelican",
+        "scientific_name": "Pelecanus occidentalis",
+        "status": "Protected",
+        "role": "Marine predator",
+        "notes": "Often seen diving offshore."
+      },
+      {
+        "common_name": "Cormorant",
+        "scientific_name": "Phalacrocorax auritus",
+        "status": "Resident",
+        "role": "Fish population regulator",
+        "notes": "Frequently roosts on coastal cliffs."
+      }
+    ],
+    "plants": [
+      {
+        "common_name": "California Poppy",
+        "scientific_name": "Eschscholzia californica",
+        "status": "Native",
+        "role": "Pollinator support",
+        "notes": "State flower; blooms in spring."
+      },
+      {
+        "common_name": "Coast Live Oak",
+        "scientific_name": "Quercus agrifolia",
+        "status": "Native",
+        "role": "Keystone species",
+        "notes": "Supports hundreds of insect species."
+      },
+      {
+        "common_name": "Coastal Sagebrush",
+        "scientific_name": "Artemisia californica",
+        "status": "Native",
+        "role": "Habitat provider",
+        "notes": "Important for coastal scrub ecosystems."
+      }
+    ],
+    "marine_life": [
+      {
+        "common_name": "Sea Otter",
+        "scientific_name": "Enhydra lutris nereis",
+        "status": "Protected",
+        "role": "Keystone predator",
+        "notes": "Maintains kelp forest balance."
+      },
+      {
+        "common_name": "Giant Kelp",
+        "scientific_name": "Macrocystis pyrifera",
+        "status": "Native",
+        "role": "Primary producer",
+        "notes": "Forms underwater forests."
+      }
+    ]
+  },
+  "environmental_indicators": {
+    "vegetation": {
+      "metric": "NDVI",
+      "source": "NASA satellite data",
+      "purpose": "Measure plant health and coverage"
+    },
+    "land_surface_temperature": {
+      "metric": "Thermal infrared",
+      "source": "Satellite imagery",
+      "purpose": "Track surface heat and microclimate regulation"
+    },
+    "hydrology": {
+      "metric": "Soil moisture and runoff patterns",
+      "source": "Remote sensing and local monitoring",
+      "purpose": "Assess water cycle function"
+    }
+  },
+  "human_interaction": {
+    "primary_uses": [
+      "Recreation",
+      "Calisthenics",
+      "Walking",
+      "Nature observation",
+      "Community events"
+    ],
+    "stewardship_groups": [
+      "Local volunteers",
+      "California Calisthenics Creepy Crawlers",
+      "City of Santa Cruz Parks"
+    ],
+    "impact_notes": "Foot traffic and recreation require careful management to protect sensitive habitats."
+  },
+  "education_and_outreach": {
+    "signage": [
+      "Laser-cut layered ecology panels",
+      "QR-linked digital database",
+      "Species spotlight plaques"
+    ],
+    "target_audience": [
+      "Children",
+      "Local residents",
+      "Visitors",
+      "Students"
+    ],
+    "learning_goals": [
+      "Ecological literacy",
+      "Stewardship values",
+      "Climate awareness",
+      "Biodiversity appreciation"
+    ]
+  },
+  "regeneration_projects": {
+    "current": [
+      {
+        "name": "Native Plant Restoration",
+        "focus": "Coastal prairie recovery",
+        "status": "Ongoing"
+      }
+    ],
+    "future": [
+      {
+        "name": "Community Habitat Corridor",
+        "focus": "Pollinator pathways",
+        "status": "Planned"
+      }
+    ]
+  },
+  "data_integration": {
+    "platforms": [
+      "Planetary Pulse",
+      "CesiumJS",
+      "Cloudflare Pages"
+    ],
+    "datasets": [
+      "NASA NDVI",
+      "Land Surface Temperature",
+      "Coastal erosion maps",
+      "Biodiversity surveys"
+    ],
+    "update_frequency": "Quarterly"
+  },
+  "metadata": {
+    "created_by": "Rye Jupiter Seekins",
+    "project": "Lighthouse Field Ecology Database",
+    "version": "1.0.0",
+    "last_updated": "2026-02-11"
+  }
+}

@@ -137,7 +137,7 @@
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
       imgEl.src = img.src;
-      imgEl.alt = img.alt || "Blog image";
+      imgEl.alt = img.alt || "Field note image";
       captionEl.textContent = img.alt || "";
       lightbox.classList.add("active");
     }
@@ -181,7 +181,7 @@
       const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        name: "EarthPulse Blog",
+        name: "EarthPulse Field Notes",
         description: "Field notes on Earth Metrics, regeneration, and climate stability.",
         blogPost: sorted.map((post) => ({
           "@type": "BlogPosting",

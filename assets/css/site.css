@@ -556,6 +556,103 @@ h2 {
   color: var(--muted);
   background: rgba(4, 6, 12, 0.6);
   backdrop-filter: blur(18px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.footerProjectsLink {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(102, 227, 255, 0.35);
+  font-size: 13px;
+}
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.breadcrumb a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.ecologyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.speciesCard {
+  perspective: 1200px;
+  min-height: 340px;
+}
+.speciesCardInner {
+  position: relative;
+  width: 100%;
+  min-height: 340px;
+  transform-style: preserve-3d;
+  transition: transform 360ms ease;
+}
+.speciesCard.isFlipped .speciesCardInner {
+  transform: rotateY(180deg);
+}
+.speciesFace {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(130, 170, 210, 0.16);
+  box-shadow: 0 18px 40px rgba(2, 6, 14, 0.55);
+  background: var(--panel2);
+}
+.speciesFace.front {
+  display: grid;
+  grid-template-rows: 180px auto;
+}
+.speciesFace.back {
+  padding: 16px;
+  transform: rotateY(180deg);
+}
+.speciesImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba(130, 170, 210, 0.2);
+}
+.speciesBody {
+  padding: 14px 16px 16px;
+}
+.speciesTitle {
+  margin: 0;
+  font-size: 18px;
+}
+.speciesScientific {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 13px;
+}
+.speciesMeta {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.speciesMetaRow {
+  font-size: 13px;
+  color: var(--muted);
+}
+.speciesMetaRow b {
+  color: var(--text);
+}
+.speciesFlipHint {
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 10px;
 }
 
 @media (max-width: 980px) {

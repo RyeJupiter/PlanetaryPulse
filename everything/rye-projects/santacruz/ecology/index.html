@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Santa Cruz Ecology - EarthPulse</title>
+  <meta name="description" content="Lighthouse Field ecology cards for Santa Cruz species and ecosystem roles." />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+  <script src="/assets/js/nav.js" defer></script>
+  <script src="/assets/js/santacruz-ecology.js" defer></script>
+</head>
+<body data-page="everything">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <section class="panel">
+      <p class="breadcrumb"><a href="/index.html">EarthPulse</a> / <a href="/everything/index.html">Everything</a> / <a href="/everything/rye-projects/index.html">Rye Projects</a> / <a href="/everything/rye-projects/santacruz/index.html">SantaCruz</a> / <span>Ecology</span></p>
+      <h1>Lighthouse Field Ecology Cards</h1>
+      <p id="ecology-summary" class="subtitle">Loading ecology summary...</p>
+      <p class="lede">Tap or click a card to flip it and learn about each organism's role in the local system.</p>
+      <section id="ecology-grid" class="ecologyGrid" aria-live="polite"></section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
+
