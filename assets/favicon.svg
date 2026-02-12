@@ -7,11 +7,11 @@
     </clipPath>
   </defs>
 
-  <!-- Planet -->
-  <circle cx="32" cy="32" r="22" fill="#4fc3ff"/>
+  <!-- Planet (darker blue) -->
+  <circle cx="32" cy="32" r="22" fill="#1f7fd6"/>
 
-  <!-- Polar caps (flat + curved, clipped to sphere) -->
-  <g clip-path="url(#planetClip)" fill="#ffffff" opacity="0.95">
+  <!-- Polar caps (slightly off-white for contrast) -->
+  <g clip-path="url(#planetClip)" fill="#f2f7fa">
 
     <!-- North cap -->
     <path
@@ -31,7 +31,7 @@
 
   </g>
 
-  <!-- Pulse -->
+  <!-- Pulse (dark emerald) -->
   <path
     d="M6 36
        H20
@@ -43,8 +43,8 @@
        L46 36
        H58"
     fill="none"
-    stroke="#00b86b"
-    stroke-width="4.5"
+    stroke="#0a6b3f"
+    stroke-width="4.8"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
