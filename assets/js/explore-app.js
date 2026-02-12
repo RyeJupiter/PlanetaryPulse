@@ -18,6 +18,8 @@
     loading: false,
     source: "mock",
     warning: "",
+    banner: "",
+    bannerLevel: "info",
   };
 
   let map;
@@ -201,6 +203,7 @@
               </div>
               <button id="load-series" class="explorerBtn" type="button">Load monthly series</button>
               <div id="explorer-status" class="explorerStatus"></div>
+              <div id="explorer-banner" class="explorerBanner info" hidden></div>
             </div>
           </section>
           <section class="explorerCard">
@@ -235,11 +238,17 @@
   function updateStatus() {
     const status = document.getElementById("explorer-status");
     const coords = document.getElementById("viewer-coords");
+    const banner = document.getElementById("explorer-banner");
     if (status) {
       const sourceTag = state.source ? `Source: ${state.source.toUpperCase()}` : "";
       status.textContent = state.loading
         ? "Loading monthly series..."
         : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}. ${sourceTag}`;
+    }
+    if (banner) {
+      banner.hidden = !state.banner;
+      banner.className = `explorerBanner ${state.bannerLevel || "info"}`;
+      banner.textContent = state.banner;
     }
     if (coords) {
       coords.textContent = `${state.lat.toFixed(3)}, ${state.lon.toFixed(3)}`;
@@ -310,6 +319,8 @@
       state.loading = false;
       state.source = "none";
       state.warning = "Provider is not configured.";
+      state.banner = "Dataset provider is not configured.";
+      state.bannerLevel = "error";
       updateStatus();
       updateCharts();
       return;
@@ -327,6 +338,8 @@
         state.series = Array.isArray(payload?.series) ? payload.series : [];
         state.source = payload?.source || "appeears";
         state.warning = "";
+        state.banner = "Using live NASA AppEEARS monthly data.";
+        state.bannerLevel = "info";
       })
       .catch((error) => {
         state.series = generateMockSeries(
@@ -343,6 +356,19 @@
             ? "Mock fallback (set AppEEARS env vars)"
             : `Mock fallback (${error?.status || "request error"})`;
         state.warning = fallbackReason;
+        if (error?.status === 503) {
+          state.banner =
+            "NASA AppEEARS is temporarily unavailable (503). Showing mock data until service recovers.";
+          state.bannerLevel = "warning";
+        } else if (error?.code === "missing_credentials") {
+          state.banner =
+            "NASA AppEEARS credentials are not configured in deployment secrets. Showing mock data.";
+          state.bannerLevel = "warning";
+        } else {
+          state.banner =
+            `Could not load live NASA AppEEARS data (${error?.status || "request error"}). Showing mock data.`;
+          state.bannerLevel = "warning";
+        }
         // Keep a console trail for debugging failed backend draws without breaking UI flow.
         console.warn("[Explore] Monthly backend fetch failed:", {
           message: error?.message || "Unknown error",
@@ -363,6 +389,9 @@
 
     if (typeof maplibregl === "undefined" || typeof deck === "undefined") {
       mapNode.innerHTML = "<div class=\"chartEmpty\">Map libraries failed to load.</div>";
+      state.banner = "Map libraries failed to load. Data controls and charts remain available.";
+      state.bannerLevel = "error";
+      updateStatus();
       return;
     }
 
@@ -377,6 +406,9 @@
     } catch (error) {
       mapNode.innerHTML = "<div class=\"chartEmpty\">Could not initialize map.</div>";
       console.error("[Explore] Map initialization failed:", error);
+      state.banner = "Map failed to initialize. Data controls and charts remain available.";
+      state.bannerLevel = "error";
+      updateStatus();
       return;
     }
 
