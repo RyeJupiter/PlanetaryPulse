@@ -4,23 +4,22 @@
   const grid = document.getElementById("ecology-grid");
   if (!grid) return;
 
-  const imageBySpecies = {
-    "Monarch Butterfly": "Monarch Butterfly Danaus plexippus Male 2664px.jpg",
-    "Western Scrub-Jay": "Aphelocoma californica cropped.jpg",
-    "Brown Pelican": "Brown pelican in flight, Morro Bay.jpg",
-    Cormorant: "Double-crested Cormorant.jpg",
-    "California Poppy": "Eschscholzia californica 2.jpg",
-    "Coast Live Oak": "Quercus agrifolia tree.jpg",
-    "Coastal Sagebrush": "Artemisia californica.jpg",
-    "Sea Otter": "Sea Otter Cropped.jpg",
-    "Giant Kelp": "Macrocystis pyrifera (giant kelp).jpg",
+  const pageTitleBySpecies = {
+    "Monarch Butterfly": "Monarch butterfly",
+    "Western Scrub-Jay": "California scrub jay",
+    "Brown Pelican": "Brown pelican",
+    Cormorant: "Double-crested cormorant",
+    "California Poppy": "Eschscholzia californica",
+    "Coast Live Oak": "Quercus agrifolia",
+    "Coastal Sagebrush": "Artemisia californica",
+    "Sea Otter": "Sea otter",
+    "Giant Kelp": "Macrocystis pyrifera",
   };
 
   const noImageSvg =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 360'%3E%3Crect width='640' height='360' fill='%23070a12'/%3E%3Ctext x='50%25' y='50%25' fill='%239fb4ce' font-size='28' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif'%3EImage unavailable%3C/text%3E%3C/svg%3E";
 
-  const toWikiFilePath = (fileName) =>
-    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=900`;
+  const imageCache = new Map();
 
   const categoryNames = {
     insects: "Insects",
@@ -31,19 +30,41 @@
 
   const categoryOrder = ["insects", "birds", "plants", "marine_life"];
 
+  function getWikiImageForSpecies(species) {
+    const key = species.common_name;
+    if (imageCache.has(key)) {
+      return Promise.resolve(imageCache.get(key));
+    }
+
+    const pageTitle = pageTitleBySpecies[species.common_name] || species.scientific_name || species.common_name;
+    const endpoint = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`;
+
+    return fetch(endpoint)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const image =
+          (data && data.thumbnail && data.thumbnail.source) ||
+          (data && data.originalimage && data.originalimage.source) ||
+          noImageSvg;
+        imageCache.set(key, image);
+        return image;
+      })
+      .catch(() => {
+        imageCache.set(key, noImageSvg);
+        return noImageSvg;
+      });
+  }
+
   const renderCard = (species, categoryLabel) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "speciesCard";
     card.setAttribute("aria-label", `${species.common_name} details`);
 
-    const imageName = imageBySpecies[species.common_name];
-    const image = imageName ? toWikiFilePath(imageName) : noImageSvg;
-
     card.innerHTML = `
       <div class="speciesCardInner">
         <div class="speciesFace front">
-          <img class="speciesImage" src="${image}" alt="${species.common_name}" loading="lazy" />
+          <img class="speciesImage" src="${noImageSvg}" alt="${species.common_name}" loading="lazy" />
           <div class="speciesBody">
             <p class="chip">${categoryLabel}</p>
             <h3 class="speciesTitle">${species.common_name}</h3>
@@ -72,6 +93,9 @@
     if (imageEl) {
       imageEl.addEventListener("error", () => {
         imageEl.src = noImageSvg;
+      });
+      getWikiImageForSpecies(species).then((imageUrl) => {
+        imageEl.src = imageUrl || noImageSvg;
       });
     }
 

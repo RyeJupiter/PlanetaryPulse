@@ -39,60 +39,9 @@
   }
   const backgroundChoices = [1, 2, 3, 4];
   const pick = backgroundChoices[Math.floor(Math.random() * backgroundChoices.length)];
-  const bgValue = `url("public/media/backgrounds/background-${pick}.png"), url("media/backgrounds/background-${pick}.png")`;
+  const bgValue = `url("/public/media/backgrounds/background-${pick}.png"), url("public/media/backgrounds/background-${pick}.png"), url("media/backgrounds/background-${pick}.png"), radial-gradient(circle at 30% 25%, rgba(50, 84, 130, 0.35), rgba(5, 10, 20, 0.95) 65%)`;
   document.body.style.setProperty("--page-bg", bgValue);
   bg.style.backgroundImage = bgValue;
-
-  if (!document.querySelector(".satelliteRail")) {
-    const railRight = document.createElement("div");
-    railRight.className = "satelliteRail right";
-    railRight.innerHTML = `
-      <div class="satelliteCard">
-        <img src="public/media/satellites/aqua.png" alt="NASA Aqua satellite" />
-        <div class="satelliteLabel">Aqua (NASA)</div>
-      </div>
-      <div class="satelliteCard">
-        <img src="public/media/satellites/terra.png" alt="NASA Terra satellite" />
-        <div class="satelliteLabel">Terra (NASA)</div>
-      </div>
-      <div class="satelliteCard">
-        <img src="public/media/satellites/suomi-npp.png" alt="Suomi NPP satellite" />
-        <div class="satelliteLabel">Suomi NPP</div>
-      </div>
-    `;
-    const railLeft = document.createElement("div");
-    railLeft.className = "satelliteRail left";
-    railLeft.innerHTML = `
-      <div class="satelliteCard">
-        <img src="public/media/satellites/terra.png" alt="NASA Terra satellite" />
-        <div class="satelliteLabel">Terra (NASA)</div>
-      </div>
-      <div class="satelliteCard">
-        <img src="public/media/satellites/aqua.png" alt="NASA Aqua satellite" />
-        <div class="satelliteLabel">Aqua (NASA)</div>
-      </div>
-      <div class="satelliteCard">
-        <img src="public/media/satellites/suomi-npp.png" alt="Suomi NPP satellite" />
-        <div class="satelliteLabel">Suomi NPP</div>
-      </div>
-    `;
-    document.body.appendChild(railLeft);
-    document.body.appendChild(railRight);
-  }
-
-  const updateSatelliteRailVisibility = () => {
-    const contentCandidates = Array.from(
-      document.querySelectorAll(".layout, .page, .copy, .panel")
-    );
-    const widestContent = contentCandidates.length
-      ? Math.max(...contentCandidates.map((el) => el.getBoundingClientRect().width))
-      : document.documentElement.clientWidth;
-    const shouldShow = window.innerWidth > widestContent * 2;
-    document.body.classList.toggle("showSatelliteRails", shouldShow);
-  };
-
-  updateSatelliteRailVisibility();
-  window.addEventListener("resize", updateSatelliteRailVisibility);
 
   const footer = document.querySelector(".footer");
   if (footer && !footer.querySelector(".footerProjectsLink")) {
@@ -103,4 +52,3 @@
     footer.appendChild(projectsLink);
   }
 })();
-

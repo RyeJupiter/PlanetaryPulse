@@ -22,7 +22,7 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: transparent;
+  background: radial-gradient(circle at 25% 20%, #223348 0%, #101724 48%, #070b13 100%);
   color: var(--text);
   position: relative;
 }
@@ -51,48 +51,6 @@ body::before,
 body::after {
   content: none;
 }
-
-.satelliteRail {
-  position: fixed;
-  top: 140px;
-  width: 220px;
-  display: none;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 2;
-  pointer-events: none;
-}
-.satelliteRail.left {
-  left: 24px;
-}
-.satelliteRail.right {
-  right: 24px;
-}
-.satelliteCard {
-  background: rgba(8, 14, 26, 0.55);
-  border: 1px solid rgba(120, 160, 200, 0.22);
-  border-radius: 16px;
-  padding: 10px;
-  box-shadow: 0 16px 40px rgba(2, 6, 14, 0.5);
-}
-.satelliteCard img {
-  width: 100%;
-  height: 140px;
-  object-fit: contain;
-  filter: saturate(0.7) contrast(1.05) brightness(0.95);
-  opacity: 0.75;
-}
-.satelliteLabel {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 6px;
-}
-.showSatelliteRails .satelliteRail {
-  display: flex;
-}
-
 
 .nav {
   display: flex;
@@ -175,6 +133,12 @@ h2 {
   color: var(--muted);
   line-height: 1.65;
   margin: 0 0 18px;
+}
+.homeTitle {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
 }
 .lede { margin: 0 0 14px; color: var(--muted); line-height: 1.7; }
 .muted { color: var(--muted); }
@@ -621,11 +585,19 @@ h2 {
 .speciesCard {
   perspective: 1200px;
   min-height: 340px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 .speciesCardInner {
   position: relative;
   width: 100%;
   min-height: 340px;
+  height: 100%;
   transform-style: preserve-3d;
   transition: transform 360ms ease;
 }

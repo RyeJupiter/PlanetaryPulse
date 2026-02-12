@@ -1,6 +1,6 @@
 /* global Cesium */
 
-(function initProjectAtlas() {
+(function initRegenRegistry() {
   const filterWrap = document.getElementById("atlas-filters");
   const clearBtn = document.getElementById("clear-filters");
   const searchInput = document.getElementById("atlas-tag-search");
@@ -394,3 +394,4 @@
 
   waitForViewer();
 })();
+
