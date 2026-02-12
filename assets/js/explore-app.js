@@ -1,4 +1,4 @@
-/* global document */
+/* global document, maplibregl, deck */
 
 (function initExploreApp() {
   const root = document.getElementById("explorer-app");
@@ -17,6 +17,9 @@
     series: [],
     loading: false,
   };
+
+  let map;
+  let deckOverlay;
 
   function monthToIndex(month) {
     const [year, m] = month.split("-").map(Number);
@@ -43,8 +46,6 @@
     return Math.max(min, Math.min(max, n));
   }
 
-  // Common adapter contract:
-  // getMonthlySeries({lat, lon, startMonth, endMonth, metrics}) -> Promise<Array<{month, ndvi?, lst?, count, qaScore}>>
   const providers = {
     modis: {
       id: "modis",
@@ -122,7 +123,7 @@
     `;
   }
 
-  function render() {
+  function renderShell() {
     const months = monthRange("2020-01", currentMonth);
     const monthOptions = months
       .map((m) => `<option value="${m}"${m === state.startMonth ? " selected" : ""}>${m}</option>`)
@@ -130,12 +131,6 @@
     const monthOptionsEnd = months
       .map((m) => `<option value="${m}"${m === state.endMonth ? " selected" : ""}>${m}</option>`)
       .join("");
-
-    const markerLeft = ((state.lon + 180) / 360) * 100;
-    const markerTop = ((90 - state.lat) / 180) * 100;
-    const status = state.loading
-      ? "Loading monthly series..."
-      : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.`;
 
     root.innerHTML = `
       <div class="explorerApp">
@@ -178,15 +173,15 @@
                 </div>
               </div>
               <button id="load-series" class="explorerBtn" type="button">Load monthly series</button>
-              <div class="explorerStatus">${status}</div>
+              <div id="explorer-status" class="explorerStatus"></div>
             </div>
           </section>
           <section class="explorerCard">
-            <h2 class="explorerCardTitle">Viewer (engine selectable later)</h2>
-            <div id="viewer-stage" class="viewerStage" aria-label="Location picker surface">
-              <div class="viewerGrid"></div>
-              <div class="viewerHint">Click to set location for drawdown</div>
-              <div class="viewerMarker" style="left:${markerLeft.toFixed(2)}%; top:${markerTop.toFixed(2)}%;"></div>
+            <h2 class="explorerCardTitle">Viewer (MapLibre + deck.gl)</h2>
+            <div id="viewer-stage" class="viewerStage" aria-label="Location picker map">
+              <div id="viewer-map" class="viewerMap"></div>
+              <div class="viewerHint">Click map to set location</div>
+              <div id="viewer-coords" class="viewerStatus"></div>
             </div>
           </section>
         </div>
@@ -194,34 +189,89 @@
           <section class="chartCard">
             <div class="chartHeader">
               <h3 class="chartTitle">NDVI Monthly Series</h3>
-              <div class="chartMeta">${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}</div>
+              <div id="chart-meta-ndvi" class="chartMeta"></div>
             </div>
-            ${makeChartSvg(state.series, "ndvi", 0, 1, "#76ffc1")}
+            <div id="chart-ndvi"></div>
           </section>
           <section class="chartCard">
             <div class="chartHeader">
               <h3 class="chartTitle">LST Monthly Series (deg C)</h3>
-              <div class="chartMeta">${state.provider.toUpperCase()} | QA-filtered monthly mock</div>
+              <div id="chart-meta-lst" class="chartMeta"></div>
             </div>
-            ${makeChartSvg(state.series, "lst", -10, 50, "#ffb070")}
+            <div id="chart-lst"></div>
           </section>
         </div>
       </div>
     `;
+  }
 
-    attachEvents();
+  function updateStatus() {
+    const status = document.getElementById("explorer-status");
+    const coords = document.getElementById("viewer-coords");
+    if (status) {
+      status.textContent = state.loading
+        ? "Loading monthly series..."
+        : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.`;
+    }
+    if (coords) {
+      coords.textContent = `${state.lat.toFixed(3)}, ${state.lon.toFixed(3)}`;
+    }
+  }
+
+  function updateCharts() {
+    const ndvi = document.getElementById("chart-ndvi");
+    const lst = document.getElementById("chart-lst");
+    const ndviMeta = document.getElementById("chart-meta-ndvi");
+    const lstMeta = document.getElementById("chart-meta-lst");
+    if (ndvi) ndvi.innerHTML = makeChartSvg(state.series, "ndvi", 0, 1, "#76ffc1");
+    if (lst) lst.innerHTML = makeChartSvg(state.series, "lst", -10, 50, "#ffb070");
+    if (ndviMeta) ndviMeta.textContent = `${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
+    if (lstMeta) lstMeta.textContent = `${state.provider.toUpperCase()} | QA-filtered monthly mock`;
+  }
+
+  function syncMapMarker() {
+    if (!map || !deckOverlay) return;
+    deckOverlay.setProps({
+      layers: [
+        new deck.ScatterplotLayer({
+          id: "selected-location",
+          data: [{ position: [state.lon, state.lat] }],
+          getPosition: (d) => d.position,
+          getRadius: 90000,
+          radiusMinPixels: 6,
+          radiusMaxPixels: 18,
+          getFillColor: [10, 20, 30, 220],
+          getLineColor: [118, 255, 193, 255],
+          lineWidthMinPixels: 2,
+          stroked: true,
+          filled: true,
+          pickable: false,
+        }),
+      ],
+    });
+  }
+
+  function centerMap() {
+    if (!map) return;
+    map.easeTo({
+      center: [state.lon, state.lat],
+      duration: 450,
+      zoom: Math.max(map.getZoom(), 2.2),
+    });
   }
 
   function normalizeRange() {
     if (monthToIndex(state.startMonth) > monthToIndex(state.endMonth)) {
       state.endMonth = state.startMonth;
+      const endSelect = document.getElementById("end-month");
+      if (endSelect) endSelect.value = state.endMonth;
     }
   }
 
   function loadSeries() {
     normalizeRange();
     state.loading = true;
-    render();
+    updateStatus();
 
     const provider = providers[state.provider];
     provider
@@ -240,20 +290,65 @@
       })
       .finally(() => {
         state.loading = false;
-        render();
+        updateStatus();
+        updateCharts();
       });
   }
 
-  function attachEvents() {
-    const provider = root.querySelector("#provider");
-    const latInput = root.querySelector("#lat");
-    const lonInput = root.querySelector("#lon");
-    const startMonth = root.querySelector("#start-month");
-    const endMonth = root.querySelector("#end-month");
-    const metricNdvi = root.querySelector("#metric-ndvi");
-    const metricLst = root.querySelector("#metric-lst");
-    const loadBtn = root.querySelector("#load-series");
-    const viewer = root.querySelector("#viewer-stage");
+  function initMap() {
+    const mapNode = document.getElementById("viewer-map");
+    if (!mapNode) return;
+
+    if (typeof maplibregl === "undefined" || typeof deck === "undefined") {
+      mapNode.innerHTML = "<div class=\"chartEmpty\">Map libraries failed to load.</div>";
+      return;
+    }
+
+    map = new maplibregl.Map({
+      container: mapNode,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [state.lon, state.lat],
+      zoom: 2.2,
+      attributionControl: false,
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+
+    map.on("load", () => {
+      if (typeof map.setProjection === "function") {
+        map.setProjection({ type: "globe" });
+      }
+
+      deckOverlay = new deck.MapboxOverlay({ interleaved: true, layers: [] });
+      map.addControl(deckOverlay);
+      syncMapMarker();
+      updateStatus();
+    });
+
+    map.on("click", (event) => {
+      state.lat = clamp(event.lngLat.lat, -90, 90);
+      state.lon = clamp(event.lngLat.lng, -180, 180);
+
+      const latInput = document.getElementById("lat");
+      const lonInput = document.getElementById("lon");
+      if (latInput) latInput.value = state.lat.toFixed(4);
+      if (lonInput) lonInput.value = state.lon.toFixed(4);
+
+      syncMapMarker();
+      updateStatus();
+      updateCharts();
+    });
+  }
+
+  function bindControls() {
+    const provider = document.getElementById("provider");
+    const latInput = document.getElementById("lat");
+    const lonInput = document.getElementById("lon");
+    const startMonth = document.getElementById("start-month");
+    const endMonth = document.getElementById("end-month");
+    const metricNdvi = document.getElementById("metric-ndvi");
+    const metricLst = document.getElementById("metric-lst");
+    const loadBtn = document.getElementById("load-series");
 
     if (provider) {
       provider.addEventListener("change", () => {
@@ -264,14 +359,20 @@
     if (latInput) {
       latInput.addEventListener("change", () => {
         state.lat = clamp(Number(latInput.value) || 0, -90, 90);
-        render();
+        centerMap();
+        syncMapMarker();
+        updateStatus();
+        updateCharts();
       });
     }
 
     if (lonInput) {
       lonInput.addEventListener("change", () => {
         state.lon = clamp(Number(lonInput.value) || 0, -180, 180);
-        render();
+        centerMap();
+        syncMapMarker();
+        updateStatus();
+        updateCharts();
       });
     }
 
@@ -279,7 +380,7 @@
       startMonth.addEventListener("change", () => {
         state.startMonth = startMonth.value;
         normalizeRange();
-        render();
+        updateStatus();
       });
     }
 
@@ -287,7 +388,7 @@
       endMonth.addEventListener("change", () => {
         state.endMonth = endMonth.value;
         normalizeRange();
-        render();
+        updateStatus();
       });
     }
 
@@ -305,17 +406,6 @@
       });
     }
 
-    if (viewer) {
-      viewer.addEventListener("click", (event) => {
-        const rect = viewer.getBoundingClientRect();
-        const xRatio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-        const yRatio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-        state.lon = xRatio * 360 - 180;
-        state.lat = 90 - yRatio * 180;
-        render();
-      });
-    }
-
     if (loadBtn) {
       loadBtn.addEventListener("click", () => {
         if (!state.metrics.size) state.metrics.add("ndvi");
@@ -324,6 +414,10 @@
     }
   }
 
-  render();
+  renderShell();
+  bindControls();
+  initMap();
+  updateStatus();
+  updateCharts();
   loadSeries();
 })();
