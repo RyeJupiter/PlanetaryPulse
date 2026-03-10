@@ -233,23 +233,26 @@
       "properties": {
         "id": "iwc-001",
         "name": "India Water Cup (Paani Foundation)",
-        "summary": "Community-led watershed restoration competition across Maharashtra, India.",
+        "summary": "Community-led watershed restoration movement across Maharashtra, India, where villages train in decentralized watershed management and then compete in a 45-day Water Cup to build soil and water conservation structures at massive scale.",
         "size": "6,000+ villages",
         "images": [
           {
-            "url": "https://paanifoundation.in/wp-content/uploads/2019/05/watercup-img1-1.jpg",
+            "url": "https://www.paanifoundation.in/wp-content/uploads/2020/02/watercup-img1-1.jpg",
             "credit": "Paani Foundation",
-            "source": "https://paanifoundation.in/"
+            "source": "https://www.paanifoundation.in/satyamev-jayate-water-cup/",
+            "alt": "Water harvesting structures built through the Paani Foundation Water Cup in Maharashtra"
           },
           {
-            "url": "https://paanifoundation.in/wp-content/uploads/2021/02/Navnath-Bhosle-1.jpg",
+            "url": "https://www.paanifoundation.in/wp-content/uploads/2020/02/Navnath-Bhosle-1.jpg",
             "credit": "Paani Foundation",
-            "source": "https://paanifoundation.in/"
+            "source": "https://www.paanifoundation.in/satyamev-jayate-water-cup/",
+            "alt": "Navnath Bhosle of Velu village, featured in Paani Foundation Water Cup stories of change"
           },
           {
-            "url": "https://paanifoundation.in/wp-content/uploads/2021/02/KRUSHNAPUR_03.jpg",
+            "url": "https://www.paanifoundation.in/wp-content/uploads/2020/03/KRUSHNAPUR_03.jpg",
             "credit": "Paani Foundation",
-            "source": "https://paanifoundation.in/"
+            "source": "https://www.paanifoundation.in/satyamev-jayate-water-cup/",
+            "alt": "Community labor and watershed transformation work in Maharashtra during the Water Cup"
           }
         ],
         "tags": "water-harvesting,watershed,india,community,monsoon",
@@ -261,6 +264,28 @@
           {
             "text": "Satyamev Jayate Water Cup",
             "url": "https://paanifoundation.in/satyamev-jayate-water-cup/"
+          },
+          {
+            "text": "Paani Foundation Mission",
+            "url": "https://www.paanifoundation.in/our-mission/"
+          },
+          {
+            "text": "Wilding the Watershed with Villagers: India Water Revolution #1",
+            "url": "https://www.youtube.com/watch?v=-8nqnOcoLqE"
+          },
+          {
+            "text": "India Water Revolution #2",
+            "url": "https://www.youtube.com/watch?v=jDMnbeW3F8A"
+          }
+        ],
+        "videos": [
+          {
+            "title": "Andrew Millison: India's Water Revolution #1",
+            "url": "https://www.youtube.com/watch?v=-8nqnOcoLqE"
+          },
+          {
+            "title": "Andrew Millison: India's Water Revolution #2",
+            "url": "https://www.youtube.com/watch?v=jDMnbeW3F8A"
           }
         ]
       },

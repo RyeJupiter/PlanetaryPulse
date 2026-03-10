@@ -90,6 +90,29 @@
     return [];
   }
 
+  function createSproutBillboard(size, isSelected) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "";
+
+    const glow = ctx.createRadialGradient(size / 2, size / 2, size * 0.08, size / 2, size / 2, size * 0.48);
+    glow.addColorStop(0, isSelected ? "rgba(255, 246, 218, 0.95)" : "rgba(250, 243, 222, 0.72)");
+    glow.addColorStop(1, "rgba(250, 243, 222, 0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = `${Math.round(size * 0.62)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+    ctx.fillText("🌱", size / 2, size * 0.56);
+
+    return canvas.toDataURL("image/png");
+  }
+
   function buildDetail(entity) {
     const wrapper = document.createElement("div");
     wrapper.className = "detailCard";
@@ -303,8 +326,12 @@
 
     const selected = { entity: null };
     const selectedStyle = {
-      pointColor: Cesium.Color.fromCssColorString("#ffffff"),
+      billboardScale: 1.14,
       polygonOutline: Cesium.Color.fromCssColorString("#7bdcff"),
+    };
+    const sproutIcons = {
+      default: createSproutBillboard(88, false),
+      selected: createSproutBillboard(100, true),
     };
 
     fetch("assets/data/projects.geojson")
@@ -415,11 +442,13 @@
           });
 
           if (entity.position) {
-            entity.point = new Cesium.PointGraphics({
-              color: Cesium.Color.fromCssColorString("#7bdcff"),
-              pixelSize: 10,
-              outlineColor: Cesium.Color.fromCssColorString("#0b1a2b"),
-              outlineWidth: 2,
+            entity.billboard = new Cesium.BillboardGraphics({
+              image: sproutIcons.default,
+              width: 34,
+              height: 34,
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              scale: 1,
             });
           }
 
@@ -540,18 +569,18 @@
           if (!Cesium.defined(picked) || !picked.id) return;
 
           const entity = picked.id;
-          if (selected.entity && selected.entity.point) {
-            selected.entity.point.color = Cesium.Color.fromCssColorString("#7bdcff");
-            selected.entity.point.pixelSize = 10;
+          if (selected.entity && selected.entity.billboard) {
+            selected.entity.billboard.image = sproutIcons.default;
+            selected.entity.billboard.scale = 1;
           }
           if (selected.entity && selected.entity.polygon) {
             selected.entity.polygon.outlineColor = Cesium.Color.fromCssColorString("#6aa0c7");
           }
 
           selected.entity = entity;
-          if (entity.point) {
-            entity.point.color = selectedStyle.pointColor;
-            entity.point.pixelSize = 14;
+          if (entity.billboard) {
+            entity.billboard.image = sproutIcons.selected;
+            entity.billboard.scale = selectedStyle.billboardScale;
           }
           if (entity.polygon) {
             entity.polygon.outlineColor = selectedStyle.polygonOutline;
