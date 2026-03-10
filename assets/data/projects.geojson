@@ -403,6 +403,45 @@
         "type": "Point",
         "coordinates": [-157.88, 21.47]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "wfp-001",
+        "name": "UN World Food Programme Sahel Half-Moon Regreening",
+        "summary": "Large-scale land restoration in the Sahel using half-moon water-harvesting earthworks to capture runoff, restore vegetation, improve fodder and food security, and support aquifer recharge.",
+        "size": "Hundreds of thousands of hectares across the Sahel",
+        "images": [],
+        "tags": "wfp,half-moons,sahel,great-green-wall,water-harvesting,food-security,andrew-milison",
+        "links": [
+          {
+            "text": "WFP: World Water Day - half-moons and aquifer recharge",
+            "url": "https://www.wfp.org/stories/world-water-day-how-world-food-programme-works-make-every-drop-count"
+          },
+          {
+            "text": "FAO: How the UN is Holding Back the Sahara Desert",
+            "url": "https://www.fao.org/agroecology/database/detail/en/c/1680162/"
+          },
+          {
+            "text": "FAO: Inside Africa's Food Forest Mega-Project",
+            "url": "https://www.fao.org/agroecology/database/detail/en/c/1730492/"
+          }
+        ],
+        "videos": [
+          {
+            "title": "How the UN is Holding Back the Sahara Desert",
+            "url": "https://www.youtube.com/watch?v=WCli0gyNwL0"
+          },
+          {
+            "title": "Inside Africa's Food Forest Mega-Project",
+            "url": "https://www.youtube.com/watch?v=xbBdIG--b58"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-15.95, 16.06]
+      }
     }
   ]
 }

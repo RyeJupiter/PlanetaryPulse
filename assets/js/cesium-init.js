@@ -21,6 +21,13 @@
     // requestRenderMode: true,
   });
 
+  // Sharpen the globe on high-density displays without letting render cost explode.
+  viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2);
+
+  if (viewer.scene && "msaaSamples" in viewer.scene) {
+    viewer.scene.msaaSamples = 4;
+  }
+
   // Remove default imagery
   viewer.imageryLayers.removeAll(true);
 
@@ -36,6 +43,10 @@
   viewer.scene.skyBox = undefined;
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
   viewer.scene.globe.enableLighting = false;
+  viewer.scene.globe.maximumScreenSpaceError = 1;
+  viewer.scene.globe.tileCacheSize = 800;
+  viewer.scene.highDynamicRange = true;
+  viewer.scene.postProcessStages.fxaa.enabled = true;
 
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(-30, 20, 22000000),
