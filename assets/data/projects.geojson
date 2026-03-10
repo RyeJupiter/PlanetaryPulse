@@ -270,22 +270,10 @@
       "properties": {
         "id": "slm-001",
         "name": "Sixto Luna Mangrove Agroforestry",
-        "summary": "Costa Rica coastal regeneration blending mangrove restoration, agroforestry buffers, and community stewardship near estuary edges.",
-        "size": "Community-scale watershed edge",
+        "summary": "Costa Rica mangrove agroforestry work centered on coastal regeneration, mixed planting, and estuary-edge stewardship.",
+        "size": "Costa Rica coastal site",
         "images": [],
-        "tags": "costa-rica,mangrove,agroforestry,coastal-resilience,envision-festival",
-        "links": [
-          {
-            "text": "EarthPulse field reference: Costa Rica learning stream",
-            "url": "https://www.envisionfestival.com/"
-          }
-        ],
-        "videos": [
-          {
-            "title": "Andrew Milison: Water-centered regeneration lens",
-            "url": "https://www.youtube.com/playlist?list=PLNdMkGYdEqODd4hJ4bXl1UR1ncdDdlalT"
-          }
-        ]
+        "tags": "costa-rica,mangrove,agroforestry,coastal-resilience,estuary"
       },
       "geometry": {
         "type": "Point",
