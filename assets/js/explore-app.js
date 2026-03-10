@@ -13,10 +13,13 @@
     lon: -122.0253,
     startMonth: "2020-01",
     endMonth: currentMonth,
+    earthdataUsername: "",
+    earthdataPassword: "",
     metrics: new Set(["ndvi", "lst"]),
     series: [],
     loading: false,
-    source: "mock",
+    hasLoaded: false,
+    source: "",
     warning: "",
     banner: "",
     bannerLevel: "info",
@@ -50,6 +53,14 @@
     return Math.max(min, Math.min(max, n));
   }
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
   // Adapter registry: each provider must implement getMonthlySeries(...)
   const providers = {
     modis: {
@@ -79,6 +90,8 @@
         startMonth,
         endMonth,
         metrics: Array.from(metrics),
+        earthdataUsername: state.earthdataUsername || undefined,
+        earthdataPassword: state.earthdataPassword || undefined,
       }),
     }).then(async (res) => {
       const payload = await res.json().catch(() => ({}));
@@ -89,35 +102,6 @@
         throw err;
       }
       return payload;
-    });
-  }
-
-  function generateMockSeries(providerId, lat, lon, startMonth, endMonth, metrics) {
-    const months = monthRange(startMonth, endMonth);
-    const latFactor = lat / 90;
-    const lonFactor = lon / 180;
-    const providerBias = providerId === "viirs" ? 0.03 : 0;
-
-    return months.map((month, idx) => {
-      const seasonal = Math.sin((idx / 12) * Math.PI * 2);
-      const drift = idx / Math.max(1, months.length - 1);
-      const ndviBase = 0.46 + seasonal * 0.16 + latFactor * 0.06 + providerBias + drift * 0.02;
-      const lstBase = 19 + seasonal * 7 - latFactor * 8 + lonFactor * 1.8 - providerBias * 10;
-      const cloudyPenalty = Math.cos((idx / 6) * Math.PI * 2) > 0.82 ? 0.08 : 0;
-
-      const point = {
-        month,
-        count: providerId === "viirs" ? 3 : 2,
-        qaScore: clamp(1 - cloudyPenalty, 0.72, 0.99),
-      };
-
-      if (metrics.has("ndvi")) {
-        point.ndvi = clamp(ndviBase - cloudyPenalty, 0.08, 0.92);
-      }
-      if (metrics.has("lst")) {
-        point.lst = clamp(lstBase + cloudyPenalty * 18, -10, 48);
-      }
-      return point;
     });
   }
 
@@ -195,6 +179,34 @@
                 </div>
               </div>
               <div class="explorerRow">
+                <div class="explorerCredentialHead">
+                  <span class="explorerLabel">Earthdata login</span>
+                  <span class="explorerCredentialTag">NASA required</span>
+                </div>
+                <div class="explorerSplit">
+                  <input
+                    id="earthdata-username"
+                    class="explorerInput"
+                    type="text"
+                    autocomplete="username"
+                    placeholder="Earthdata username"
+                    value="${escapeHtml(state.earthdataUsername)}"
+                  />
+                  <input
+                    id="earthdata-password"
+                    class="explorerInput"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Earthdata password"
+                    value="${escapeHtml(state.earthdataPassword)}"
+                  />
+                </div>
+                <div class="explorerHelp">
+                  Uses NASA AppEEARS through the site backend. If deployment secrets are not configured,
+                  your Earthdata Login is used for this request only.
+                </div>
+              </div>
+              <div class="explorerRow">
                 <span class="explorerLabel">Metrics</span>
                 <div class="explorerMetricList">
                   <label class="explorerMetric"><input id="metric-ndvi" type="checkbox"${state.metrics.has("ndvi") ? " checked" : ""} /> NDVI</label>
@@ -240,10 +252,16 @@
     const coords = document.getElementById("viewer-coords");
     const banner = document.getElementById("explorer-banner");
     if (status) {
-      const sourceTag = state.source ? `Source: ${state.source.toUpperCase()}` : "";
-      status.textContent = state.loading
-        ? "Loading monthly series..."
-        : `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}. ${sourceTag}`;
+      if (state.loading) {
+        status.textContent = "Loading monthly series from NASA AppEEARS...";
+      } else if (!state.hasLoaded) {
+        status.textContent = "Ready to request NASA Earthdata monthly series.";
+      } else if (state.series.length) {
+        const sourceTag = state.source ? ` Source: ${state.source}.` : "";
+        status.textContent = `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.${sourceTag}`;
+      } else {
+        status.textContent = "No live series loaded.";
+      }
     }
     if (banner) {
       banner.hidden = !state.banner;
@@ -262,9 +280,13 @@
     const lstMeta = document.getElementById("chart-meta-lst");
     if (ndvi) ndvi.innerHTML = makeChartSvg(state.series, "ndvi", 0, 1, "#76ffc1");
     if (lst) lst.innerHTML = makeChartSvg(state.series, "lst", -10, 50, "#ffb070");
-    if (ndviMeta) ndviMeta.textContent = `${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
+    if (ndviMeta) {
+      ndviMeta.textContent = state.series.length
+        ? `${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`
+        : "Awaiting live data request";
+    }
     if (lstMeta) {
-      const suffix = state.warning ? ` | ${state.warning}` : " | QA-filtered monthly series";
+      const suffix = state.warning ? ` | ${state.warning}` : state.series.length ? " | QA-filtered monthly series" : "";
       lstMeta.textContent = `${state.provider.toUpperCase()}${suffix}`;
     }
   }
@@ -336,40 +358,30 @@
       })
       .then((payload) => {
         state.series = Array.isArray(payload?.series) ? payload.series : [];
-        state.source = payload?.source || "appeears";
+        state.source = payload?.source || "NASA AppEEARS";
+        state.hasLoaded = true;
         state.warning = "";
-        state.banner = "Using live NASA AppEEARS monthly data.";
+        state.banner = "Using live NASA Earthdata monthly data through AppEEARS.";
         state.bannerLevel = "info";
       })
       .catch((error) => {
-        state.series = generateMockSeries(
-          state.provider,
-          state.lat,
-          state.lon,
-          state.startMonth,
-          state.endMonth,
-          state.metrics
-        );
-        state.source = "mock";
-        const fallbackReason =
-          error?.code === "missing_credentials"
-            ? "Mock fallback (set AppEEARS env vars)"
-            : `Mock fallback (${error?.status || "request error"})`;
-        state.warning = fallbackReason;
+        state.series = [];
+        state.source = "";
+        state.hasLoaded = true;
+        state.warning = error?.code === "missing_credentials"
+          ? "Earthdata Login required"
+          : `Live request failed (${error?.status || "request error"})`;
         if (error?.status === 503) {
-          state.banner =
-            "NASA AppEEARS is temporarily unavailable (503). Showing mock data until service recovers.";
+          state.banner = "NASA AppEEARS is temporarily unavailable (503). Try again later.";
           state.bannerLevel = "warning";
         } else if (error?.code === "missing_credentials") {
           state.banner =
-            "NASA AppEEARS credentials are not configured in deployment secrets. Showing mock data.";
+            "Enter your NASA Earthdata Login or configure AppEEARS secrets in deployment to load live data.";
           state.bannerLevel = "warning";
         } else {
-          state.banner =
-            `Could not load live NASA AppEEARS data (${error?.status || "request error"}). Showing mock data.`;
-          state.bannerLevel = "warning";
+          state.banner = `Could not load live NASA Earthdata/AppEEARS data (${error?.status || "request error"}).`;
+          state.bannerLevel = "error";
         }
-        // Keep a console trail for debugging failed backend draws without breaking UI flow.
         console.warn("[Explore] Monthly backend fetch failed:", {
           message: error?.message || "Unknown error",
           code: error?.code || "unknown",
@@ -446,6 +458,8 @@
     const lonInput = document.getElementById("lon");
     const startMonth = document.getElementById("start-month");
     const endMonth = document.getElementById("end-month");
+    const earthdataUsername = document.getElementById("earthdata-username");
+    const earthdataPassword = document.getElementById("earthdata-password");
     const metricNdvi = document.getElementById("metric-ndvi");
     const metricLst = document.getElementById("metric-lst");
     const loadBtn = document.getElementById("load-series");
@@ -493,6 +507,22 @@
       });
     }
 
+    if (earthdataUsername) {
+      const syncUsername = () => {
+        state.earthdataUsername = earthdataUsername.value.trim();
+      };
+      earthdataUsername.addEventListener("change", syncUsername);
+      earthdataUsername.addEventListener("input", syncUsername);
+    }
+
+    if (earthdataPassword) {
+      const syncPassword = () => {
+        state.earthdataPassword = earthdataPassword.value;
+      };
+      earthdataPassword.addEventListener("change", syncPassword);
+      earthdataPassword.addEventListener("input", syncPassword);
+    }
+
     if (metricNdvi) {
       metricNdvi.addEventListener("change", () => {
         if (metricNdvi.checked) state.metrics.add("ndvi");
@@ -509,6 +539,8 @@
 
     if (loadBtn) {
       loadBtn.addEventListener("click", () => {
+        if (earthdataUsername) state.earthdataUsername = earthdataUsername.value.trim();
+        if (earthdataPassword) state.earthdataPassword = earthdataPassword.value;
         if (!state.metrics.size) state.metrics.add("ndvi");
         loadSeries();
       });
@@ -520,5 +552,4 @@
   initMap();
   updateStatus();
   updateCharts();
-  loadSeries();
 })();

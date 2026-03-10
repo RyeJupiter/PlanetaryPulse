@@ -9,11 +9,13 @@ The Explore app uses a Cloudflare Pages Function endpoint:
 
 It calls NASA AppEEARS, downloads point-sample CSV results (with QA layers), applies QA filtering, and returns monthly medians for NDVI/LST.
 
-### Required environment variables
+### Authentication
 
-Set these in Cloudflare for the project:
+The Explore app calls NASA AppEEARS, which requires an Earthdata Login.
 
 - `APPEEARS_USERNAME`
 - `APPEEARS_PASSWORD`
 
-If credentials are missing, Explore automatically falls back to mock data in the UI.
+Set those in Cloudflare if you want server-side credentials for the deployed site.
+
+If deployment secrets are missing, the Explore UI now accepts a user-provided Earthdata Login and forwards it only for the active request. It no longer falls back to mock data.

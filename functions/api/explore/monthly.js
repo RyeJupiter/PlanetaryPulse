@@ -55,16 +55,18 @@ export async function onRequestPost(context) {
       return json({ error: "At least one metric is required." }, 400);
     }
 
-    const username = context.env.APPEEARS_USERNAME;
-    const password = context.env.APPEEARS_PASSWORD;
+    const requestUsername = String(body.earthdataUsername || "").trim();
+    const requestPassword = String(body.earthdataPassword || "");
+    const username = requestUsername || context.env.APPEEARS_USERNAME;
+    const password = requestPassword || context.env.APPEEARS_PASSWORD;
 
     if (!username || !password) {
       return json(
         {
-          error: "AppEEARS credentials are not configured.",
+          error: "Earthdata Login credentials are required for AppEEARS.",
           code: "missing_credentials",
         },
-        501
+        400
       );
     }
 

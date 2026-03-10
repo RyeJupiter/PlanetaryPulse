@@ -28,6 +28,32 @@
   gap: 10px;
 }
 
+.explorerCredentialHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.explorerCredentialTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 146, 83, 0.28);
+  background: rgba(236, 228, 198, 0.72);
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.explorerHelp {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .explorerRow {
   display: grid;
   gap: 8px;
