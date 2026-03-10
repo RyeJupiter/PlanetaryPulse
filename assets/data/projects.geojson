@@ -42,7 +42,7 @@
       "properties": {
         "id": "knepp-001",
         "name": "Knepp Estate Rewilding",
-        "summary": "Large-scale rewilding on former farmland with biodiversity recovery.",
+        "summary": "Large-scale rewilding on former farmland in West Sussex, where free-roaming grazing animals, scrub succession, and dynamic habitat mosaics drive biodiversity recovery. Isabella Tree's book Wilding helped make Knepp one of the defining public stories of modern rewilding.",
         "size": "1,400 ha",
         "images": [
           {
@@ -70,6 +70,10 @@
           {
             "text": "Knepp Rewilding",
             "url": "https://knepp.co.uk/rewilding/"
+          },
+          {
+            "text": "Wilding by Isabella Tree",
+            "url": "https://isabellatree.com/books/"
           }
         ]
       },
@@ -270,14 +274,14 @@
       "properties": {
         "id": "slm-001",
         "name": "Sixto Luna Mangrove Agroforestry",
-        "summary": "Costa Rica mangrove agroforestry work centered on coastal regeneration, mixed planting, and estuary-edge stewardship.",
-        "size": "Costa Rica coastal site",
+        "summary": "Dominican Republic mangrove agroforestry work centered on coastal regeneration, mixed planting, and estuary-edge stewardship. EarthPulse's link to the project came through Andrew Millison and Envision in Costa Rica, but the site itself is in the Dominican Republic.",
+        "size": "Dominican Republic coastal site",
         "images": [],
-        "tags": "costa-rica,mangrove,agroforestry,coastal-resilience,estuary"
+        "tags": "dominican-republic,mangrove,agroforestry,coastal-resilience,estuary"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-83.73, 9.16]
+        "coordinates": [-70.1627, 18.7357]
       }
     },
     {

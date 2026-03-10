@@ -36,7 +36,9 @@
 
     <section class="homeRegistrySection">
       <section class="homeRegistryIntro">
-        <h2>Regen Registry</h2>
+        <div class="homeRegistryTitleBox">
+          <h2>Regen Registry</h2>
+        </div>
         <p class="subtitle homeRegistrySubtitle">
           Explore the tagged global registry directly from the front page. Filter by theme, select a real site on the globe,
           and open its imagery, sources, and project media.
@@ -46,7 +48,7 @@
       <section class="layout homeRegistryLayout">
         <section class="copy">
           <div class="stack">
-            <div class="card">
+            <div class="card homeTagCard">
               <div class="cardTitle">Tags</div>
               <div class="cardBody">
                 <input
@@ -63,6 +65,16 @@
                 <div id="atlas-search-results" class="filterList"></div>
                 <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
               </div>
+            </div>
+            <div class="card homeStoryCard">
+              <div class="cardHead">
+                <div class="cardTitle">Upwelling Tide</div>
+                <div class="badge" aria-hidden="true">3 Stories</div>
+              </div>
+              <div class="cardBody">
+                A rising pulse of repair is visible across watersheds, rangelands, and estuaries. These stories rotate from the registry below.
+              </div>
+              <div id="home-story-block" class="homeStoryList"></div>
             </div>
           </div>
         </section>

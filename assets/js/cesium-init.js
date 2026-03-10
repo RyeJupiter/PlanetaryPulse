@@ -3,6 +3,7 @@
 (function initCesiumGlobe() {
   const el = document.getElementById("globe");
   if (!el || typeof Cesium === "undefined") return; // page doesn't include globe
+  const isMobile = window.matchMedia("(max-width: 720px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
   const viewer = new Cesium.Viewer("globe", {
     animation: false,
@@ -22,10 +23,12 @@
   });
 
   // Sharpen the globe on high-density displays without letting render cost explode.
-  viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2);
+  viewer.resolutionScale = isMobile
+    ? Math.min(window.devicePixelRatio || 1, 1.1)
+    : Math.min(window.devicePixelRatio || 1, 2);
 
   if (viewer.scene && "msaaSamples" in viewer.scene) {
-    viewer.scene.msaaSamples = 4;
+    viewer.scene.msaaSamples = isMobile ? 1 : 4;
   }
 
   // Remove default imagery
@@ -43,8 +46,8 @@
   viewer.scene.skyBox = undefined;
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#070B12");
   viewer.scene.globe.enableLighting = false;
-  viewer.scene.globe.maximumScreenSpaceError = 1;
-  viewer.scene.globe.tileCacheSize = 800;
+  viewer.scene.globe.maximumScreenSpaceError = isMobile ? 2.5 : 1;
+  viewer.scene.globe.tileCacheSize = isMobile ? 300 : 800;
   viewer.scene.highDynamicRange = true;
   viewer.scene.postProcessStages.fxaa.enabled = true;
 

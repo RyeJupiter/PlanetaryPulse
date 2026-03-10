@@ -6,6 +6,7 @@
   const searchInput = document.getElementById("atlas-tag-search");
   const searchResultsWrap = document.getElementById("atlas-search-results");
   const detail = document.getElementById("atlas-detail");
+  const storyBlock = document.getElementById("home-story-block");
   if (!filterWrap || !detail || !searchResultsWrap) return;
 
   function getViewer() {
@@ -218,6 +219,67 @@
     return wrapper;
   }
 
+  function storySentence(entity) {
+    const name = entity.name || "This site";
+    const summary = String(entity._pp_summary || "").trim();
+    if (!summary) {
+      return `${name} adds another signal to the rising tide of regeneration.`;
+    }
+
+    const trimmed = summary.replace(/\s+/g, " ").trim();
+    const sentence = trimmed.match(/.*?[.!?](\s|$)/);
+    return `${name}: ${sentence ? sentence[0].trim() : trimmed}`;
+  }
+
+  function pickStories(entities, count) {
+    const candidates = entities.filter((entity) => entity && entity._pp_summary);
+    const pool = [...candidates];
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, count);
+  }
+
+  function renderStoryBlock(entities) {
+    if (!storyBlock) return;
+    storyBlock.innerHTML = "";
+    const stories = pickStories(entities, 3);
+    stories.forEach((entity, index) => {
+      const item = document.createElement("article");
+      item.className = "homeStoryItem";
+
+      const label = document.createElement("div");
+      label.className = "sectionLabel homeStoryLabel";
+      label.textContent = `Story ${index + 1}`;
+      item.appendChild(label);
+
+      const title = document.createElement("div");
+      title.className = "homeStoryTitle";
+      title.textContent = entity.name || "Registry story";
+      item.appendChild(title);
+
+      const body = document.createElement("div");
+      body.className = "muted";
+      body.textContent = storySentence(entity);
+      item.appendChild(body);
+
+      if (entity._pp_tags && entity._pp_tags.length) {
+        const tags = document.createElement("div");
+        tags.className = "detailMeta";
+        entity._pp_tags.slice(0, 3).forEach((tag) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = tag;
+          tags.appendChild(chip);
+        });
+        item.appendChild(tags);
+      }
+
+      storyBlock.appendChild(item);
+    });
+  }
+
   function updateEmptyDetail() {
     const wrapper = document.createElement("div");
     wrapper.className = "detailCard";
@@ -370,7 +432,7 @@
 
         const allTagsSorted = Array.from(tagCounts.keys())
           .sort((a, b) => (tagCounts.get(b) || 0) - (tagCounts.get(a) || 0));
-        const topTags = allTagsSorted.slice(0, 3);
+        const topTags = allTagsSorted.slice(0, 5);
         const selectedTags = new Set();
 
         function renderTagList(container, tags) {
@@ -471,6 +533,7 @@
 
         renderTopTags();
         renderSearchResults(getSearchQuery());
+        renderStoryBlock(entities);
         const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
         handler.setInputAction((movement) => {
           const picked = viewer.scene.pick(movement.position);
