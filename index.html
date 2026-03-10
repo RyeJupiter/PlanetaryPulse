@@ -34,45 +34,47 @@
       </div>
     </section>
 
-    <section class="homeRegistryIntro">
-      <h2>Regen Registry</h2>
-      <p class="subtitle homeRegistrySubtitle">
-        Explore the tagged global registry directly from the front page. Filter by theme, select a real site on the globe,
-        and open its imagery, sources, and project media.
-      </p>
-    </section>
-
-    <section class="layout homeRegistryLayout">
-      <section class="copy">
-        <div class="stack">
-          <div class="card">
-            <div class="cardTitle">Tags</div>
-            <div class="cardBody">
-              <input
-                id="atlas-tag-search"
-                class="input"
-                type="search"
-                placeholder="Search the tag database"
-                data-empty-tooltip="Type to search the full tag database."
-                aria-label="Search the tag database"
-              />
-              <div class="sectionLabel">Top tags</div>
-              <div id="atlas-filters" class="filterList"></div>
-              <div class="sectionLabel">Search results</div>
-              <div id="atlas-search-results" class="filterList"></div>
-              <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
-            </div>
-          </div>
-        </div>
+    <section class="homeRegistrySection">
+      <section class="homeRegistryIntro">
+        <h2>Regen Registry</h2>
+        <p class="subtitle homeRegistrySubtitle">
+          Explore the tagged global registry directly from the front page. Filter by theme, select a real site on the globe,
+          and open its imagery, sources, and project media.
+        </p>
       </section>
 
-      <section class="globeColumn">
-        <div class="card" id="atlas-detail">
-          <div class="cardTitle">Project detail</div>
-          <div class="cardBody muted">
-            Select a project pin or polygon on the globe.
+      <section class="layout homeRegistryLayout">
+        <section class="copy">
+          <div class="stack">
+            <div class="card">
+              <div class="cardTitle">Tags</div>
+              <div class="cardBody">
+                <input
+                  id="atlas-tag-search"
+                  class="input"
+                  type="search"
+                  placeholder="Search the tag database"
+                  data-empty-tooltip="Type to search the full tag database."
+                  aria-label="Search the tag database"
+                />
+                <div class="sectionLabel">Top tags</div>
+                <div id="atlas-filters" class="filterList"></div>
+                <div class="sectionLabel">Search results</div>
+                <div id="atlas-search-results" class="filterList"></div>
+                <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section class="globeColumn">
+          <div class="card" id="atlas-detail">
+            <div class="cardTitle">Project detail</div>
+            <div class="cardBody muted">
+              Select a project pin or polygon on the globe.
+            </div>
+          </div>
+        </section>
       </section>
     </section>
 

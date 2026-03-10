@@ -1280,6 +1280,18 @@ li,
   padding: 0 16px;
 }
 
+.homeRegistrySection {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid rgba(117, 143, 93, 0.24);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top right, rgba(156, 186, 108, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(247, 241, 220, 0.9), rgba(234, 226, 195, 0.86));
+  box-shadow: 0 18px 40px rgba(117, 97, 48, 0.12);
+}
+
 .homeRegistrySubtitle {
   max-width: 64ch;
   margin: 0;
@@ -1315,6 +1327,11 @@ li,
 @media (max-width: 720px) {
   .homeBanner {
     padding: 20px;
+  }
+
+  .homeRegistrySection {
+    padding: 18px;
+    border-radius: 20px;
   }
 
   .homeHeroTitle {
