@@ -13,6 +13,7 @@
 
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/cesium-init.js" defer></script>
+  <script src="assets/js/regen-registry.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
 </head>
 
@@ -22,8 +23,8 @@
   <main class="page homePage">
     <section class="copy homeBanner">
       <div class="homeBannerIntro">
-        <div class="homeEyebrow">EarthPulse</div>
-        <h1 class="homeHeroTitle">Planetary regeneration, made visible.</h1>
+        <div class="homeEyebrow">Planetary Regeneration Interface</div>
+        <h1 class="homeHeroTitle">EarthPulse</h1>
         <p class="subtitle homeSubtitle">
           A living interface for landscape restoration stories, Earth system signals, and place-based climate memory.
         </p>
@@ -33,17 +34,46 @@
       </div>
     </section>
 
-    <section class="homeRegistrySpotlight">
-      <a class="card cardLink homeRegistryCard" href="regen-registry.html">
-        <div class="cardHead">
-          <div class="cardTitle">Regen Registry</div>
-          <div class="cardCta" aria-hidden="true">Open</div>
+    <section class="homeRegistryIntro">
+      <h2>Regen Registry</h2>
+      <p class="subtitle homeRegistrySubtitle">
+        Explore the tagged global registry directly from the front page. Filter by theme, select a real site on the globe,
+        and open its imagery, sources, and project media.
+      </p>
+    </section>
+
+    <section class="layout homeRegistryLayout">
+      <section class="copy">
+        <div class="stack">
+          <div class="card">
+            <div class="cardTitle">Tags</div>
+            <div class="cardBody">
+              <input
+                id="atlas-tag-search"
+                class="input"
+                type="search"
+                placeholder="Search the tag database"
+                data-empty-tooltip="Type to search the full tag database."
+                aria-label="Search the tag database"
+              />
+              <div class="sectionLabel">Top tags</div>
+              <div id="atlas-filters" class="filterList"></div>
+              <div class="sectionLabel">Search results</div>
+              <div id="atlas-search-results" class="filterList"></div>
+              <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
+            </div>
+          </div>
         </div>
-        <div class="cardBody">
-          Browse real regeneration sites with Earth Metrics, project imagery, source links, and embedded field media.
-          Start from the registry and branch into the rest of the platform.
+      </section>
+
+      <section class="globeColumn">
+        <div class="card" id="atlas-detail">
+          <div class="cardTitle">Project detail</div>
+          <div class="cardBody muted">
+            Select a project pin or polygon on the globe.
+          </div>
         </div>
-      </a>
+      </section>
     </section>
 
     <section class="grid homeSecondaryGrid">

@@ -1248,8 +1248,12 @@ li,
 
 .homeHeroTitle {
   margin: 0;
-  max-width: 12ch;
+  max-width: none;
   text-align: center;
+  font-size: clamp(58px, 11vw, 140px);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  color: #31503a;
 }
 
 .homeSubtitle {
@@ -1266,6 +1270,33 @@ li,
 .homeRegistrySpotlight {
   display: flex;
   justify-content: center;
+}
+
+.homeRegistryIntro {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.homeRegistrySubtitle {
+  max-width: 64ch;
+  margin: 0;
+}
+
+.homeRegistryLayout {
+  align-items: start;
+  padding-top: 0;
+}
+
+.homeRegistryLayout .copy {
+  min-height: 100%;
+}
+
+.homeRegistryLayout .globeColumn {
+  position: sticky;
+  top: 94px;
 }
 
 .homeRegistryCard {
@@ -1287,12 +1318,16 @@ li,
   }
 
   .homeHeroTitle {
-    max-width: 11ch;
+    font-size: clamp(44px, 15vw, 74px);
   }
 
   .homeHeroGlobe {
     min-height: 300px;
     height: 42vh;
+  }
+
+  .homeRegistryLayout .globeColumn {
+    position: static;
   }
 }
 
