@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Sora:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;600&family=Sora:wght@300;400;500;600&display=swap");
 
 :root {
   --bg: #08101a;
@@ -916,3 +916,308 @@ li,
     padding: 16px;
   }
 }
+/* Botanical refresh */
+:root {
+  --bg: #eff0db;
+  --bg-deep: #d8d4b3;
+  --panel: rgba(248, 245, 231, 0.84);
+  --panel2: rgba(241, 236, 214, 0.88);
+  --text: #223422;
+  --muted: rgba(52, 72, 51, 0.84);
+  --border: rgba(99, 128, 88, 0.26);
+  --accent: #39694a;
+  --accent-warm: #b57d38;
+  --accent-green: #69914f;
+  --accent-red: #a35641;
+  --glow-cool: rgba(133, 176, 132, 0.18);
+  --glow-warm: rgba(212, 170, 101, 0.2);
+  --shadow: 0 22px 58px rgba(69, 59, 30, 0.14);
+  --font-display: "Cormorant Garamond", "Sora", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-label: "Space Grotesk", "Sora", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(126, 158, 96, 0.22), transparent 26%),
+    radial-gradient(circle at 82% 12%, rgba(212, 170, 101, 0.24), transparent 24%),
+    radial-gradient(circle at 50% 120%, rgba(148, 175, 108, 0.22), transparent 28%),
+    linear-gradient(180deg, #ede6cf 0%, #e3ddc1 46%, #d6cfac 100%);
+  color: var(--text);
+}
+body .pageBg {
+  filter: blur(16px) brightness(1.02) saturate(1.08);
+  opacity: 0.38;
+}
+body .pageBg::after {
+  background:
+    linear-gradient(180deg, rgba(245, 239, 216, 0.58), rgba(226, 218, 186, 0.68)),
+    radial-gradient(circle at 10% 20%, rgba(89, 120, 73, 0.12), transparent 26%),
+    radial-gradient(circle at 88% 18%, rgba(182, 131, 55, 0.16), transparent 24%);
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: min(34vw, 360px);
+  height: min(34vw, 360px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.34;
+}
+body::before {
+  top: 0;
+  left: 0;
+  background:
+    radial-gradient(circle at 22% 78%, rgba(91, 126, 67, 0.55) 0 10%, transparent 11%),
+    radial-gradient(ellipse at 34% 66%, rgba(126, 160, 93, 0.44) 0 16%, transparent 17%),
+    radial-gradient(ellipse at 18% 44%, rgba(101, 138, 76, 0.36) 0 14%, transparent 15%),
+    radial-gradient(ellipse at 46% 34%, rgba(165, 191, 118, 0.42) 0 13%, transparent 14%),
+    radial-gradient(ellipse at 60% 20%, rgba(91, 126, 67, 0.34) 0 12%, transparent 13%);
+}
+body::after {
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 72% 24%, rgba(186, 137, 62, 0.52) 0 9%, transparent 10%),
+    radial-gradient(ellipse at 64% 38%, rgba(214, 178, 102, 0.42) 0 15%, transparent 16%),
+    radial-gradient(ellipse at 82% 58%, rgba(106, 145, 81, 0.35) 0 13%, transparent 14%),
+    radial-gradient(ellipse at 52% 74%, rgba(153, 183, 104, 0.34) 0 13%, transparent 14%),
+    radial-gradient(ellipse at 26% 84%, rgba(90, 120, 69, 0.28) 0 11%, transparent 12%);
+}
+
+.nav {
+  border-bottom: 1px solid rgba(110, 140, 91, 0.2);
+  background: linear-gradient(180deg, rgba(244, 238, 216, 0.92), rgba(233, 225, 194, 0.86));
+  box-shadow: 0 10px 30px rgba(111, 91, 42, 0.12);
+}
+.brand {
+  font-family: var(--font-label);
+  color: #29452f;
+  text-shadow: 0 1px 0 rgba(255, 247, 226, 0.65);
+}
+.links a:hover {
+  color: var(--text);
+  background: rgba(109, 145, 83, 0.1);
+}
+.links a.active {
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(111, 145, 84, 0.18), rgba(214, 174, 102, 0.18));
+  border: 1px solid rgba(111, 145, 84, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 233, 0.36), 0 8px 22px rgba(125, 106, 54, 0.12);
+}
+
+.copy,
+.panel,
+.card,
+.globeWrap,
+.timeSlider,
+.detailCard,
+.galleryCard,
+.speciesFace,
+.lfParkHero,
+.lfParkSection,
+.videoCard,
+.blogIndexLink,
+.signalBtn,
+.btn,
+.input {
+  position: relative;
+}
+.copy,
+.panel {
+  background-image:
+    radial-gradient(circle at top right, var(--glow-cool), transparent 34%),
+    linear-gradient(180deg, rgba(249, 245, 229, 0.96), rgba(239, 232, 205, 0.92));
+}
+.card,
+.galleryCard,
+.speciesFace,
+.lfParkSection,
+.detailCard,
+.videoCard {
+  background:
+    radial-gradient(circle at top right, rgba(148, 182, 102, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(249, 244, 225, 0.94), rgba(236, 228, 198, 0.92));
+  border: 1px solid rgba(116, 146, 94, 0.22);
+  box-shadow: 0 18px 40px rgba(117, 97, 48, 0.14);
+}
+.copy::before,
+.panel::before,
+.card::before,
+.globeWrap::before,
+.detailCard::before,
+.galleryCard::before,
+.speciesFace::before,
+.lfParkHero::before,
+.lfParkSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(145, 175, 98, 0.12) 0 2px, transparent 3px),
+    radial-gradient(circle at 86% 20%, rgba(209, 171, 100, 0.12) 0 2px, transparent 3px),
+    linear-gradient(135deg, rgba(255, 252, 240, 0.22), transparent 40%);
+  opacity: 0.78;
+}
+.copy::after,
+.panel::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: 14px;
+  bottom: 12px;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    radial-gradient(circle at 30% 70%, rgba(107, 140, 77, 0.6) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 42% 54%, rgba(129, 161, 95, 0.45) 0 16%, transparent 17%),
+    radial-gradient(ellipse at 58% 36%, rgba(169, 191, 117, 0.42) 0 14%, transparent 15%),
+    radial-gradient(ellipse at 74% 24%, rgba(204, 164, 93, 0.4) 0 10%, transparent 11%);
+}
+
+h1 {
+  font-size: clamp(40px, 5vw, 62px);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  color: #20311f;
+  text-shadow: 0 1px 0 rgba(255, 247, 230, 0.72);
+}
+h2 {
+  font-size: 28px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #284028;
+}
+.homeTitle {
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-align: center;
+  font-size: clamp(40px, 5vw, 62px);
+  color: #3b5c3e;
+}
+.subtitle,
+.lede,
+p,
+li,
+.cardBody,
+.galleryDesc,
+.lfParkSectionBody,
+.lfParkList,
+.speciesMetaRow,
+.imageCaption,
+.muted {
+  color: var(--muted);
+}
+.cardTitle,
+.detailTitle,
+.galleryTitle,
+.speciesTitle,
+.lfParkSectionTitle,
+.videoTitle {
+  color: #233522;
+}
+.badge,
+.cardCta,
+.chip {
+  border-color: rgba(120, 146, 83, 0.35);
+  background: linear-gradient(135deg, rgba(111, 145, 84, 0.14), rgba(214, 174, 102, 0.16));
+}
+.link,
+.footerProjectsLink,
+.breadcrumb a,
+.speciesFlipHint {
+  color: var(--accent);
+  border-color: rgba(111, 145, 84, 0.34);
+}
+.link:hover,
+.footerProjectsLink:hover {
+  color: var(--accent-warm);
+  border-color: rgba(181, 125, 56, 0.35);
+}
+
+.blogIndexLink,
+.chip,
+.input,
+.btn.secondary {
+  background: rgba(248, 242, 220, 0.78);
+  border-color: rgba(116, 144, 92, 0.2);
+}
+.btn,
+.signalBtn,
+.timeSlider,
+.globeWrap,
+.lfParkHero {
+  background: linear-gradient(180deg, rgba(247, 241, 220, 0.94), rgba(234, 226, 195, 0.9));
+  border-color: rgba(117, 143, 93, 0.22);
+  box-shadow: 0 16px 36px rgba(117, 97, 48, 0.14);
+}
+.signalBtn.active,
+.btn:hover,
+.signalBtn:hover,
+.blogIndexLink:hover,
+.cardLink:hover {
+  border-color: rgba(111, 145, 84, 0.42);
+  box-shadow: 0 18px 38px rgba(117, 97, 48, 0.16), 0 0 24px rgba(188, 147, 70, 0.08);
+}
+.input {
+  color: var(--text);
+}
+.input::placeholder {
+  color: rgba(74, 92, 61, 0.6);
+}
+.globeWrap {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(163, 190, 114, 0.22), transparent 30%),
+    linear-gradient(180deg, rgba(244, 238, 216, 0.94), rgba(222, 214, 183, 0.92));
+  border: 1px solid rgba(117, 143, 93, 0.24);
+  box-shadow: var(--shadow), 0 0 36px rgba(189, 150, 69, 0.08);
+}
+.globe {
+  background: radial-gradient(circle at 35% 35%, rgba(224, 204, 142, 0.55), rgba(84, 107, 72, 0.96) 58%);
+}
+.blogHero,
+.imageCard img,
+.galleryImage,
+.lfParkSlotImg,
+.speciesImage {
+  border-color: rgba(117, 143, 93, 0.24);
+}
+.lightbox {
+  background: rgba(44, 55, 34, 0.52);
+}
+.lightboxImage,
+.lightboxClose,
+.lightboxPrev,
+.lightboxNext {
+  border-color: rgba(227, 218, 185, 0.42);
+  background: rgba(244, 237, 214, 0.88);
+  color: var(--text);
+}
+.footer {
+  border-top: 1px solid rgba(117, 143, 93, 0.18);
+  background: rgba(241, 233, 206, 0.78);
+}
+
+@media (max-width: 720px) {
+  body::before,
+  body::after {
+    width: min(48vw, 220px);
+    height: min(48vw, 220px);
+    opacity: 0.24;
+  }
+  h1 {
+    font-size: clamp(34px, 9vw, 46px);
+  }
+  h2 {
+    font-size: 24px;
+  }
+}
+
+
