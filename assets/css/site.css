@@ -1220,4 +1220,80 @@ li,
   }
 }
 
+.homePage {
+  display: grid;
+  gap: 24px;
+}
+
+.homeBanner {
+  display: grid;
+  gap: 22px;
+  padding: 28px;
+}
+
+.homeBannerIntro {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  text-align: center;
+}
+
+.homeEyebrow {
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 13px;
+  color: #4f744e;
+}
+
+.homeHeroTitle {
+  margin: 0;
+  max-width: 12ch;
+  text-align: center;
+}
+
+.homeSubtitle {
+  max-width: 54ch;
+  margin: 0 auto;
+}
+
+.homeHeroGlobe {
+  width: 100%;
+  min-height: 380px;
+  height: clamp(360px, 52vh, 560px);
+}
+
+.homeRegistrySpotlight {
+  display: flex;
+  justify-content: center;
+}
+
+.homeRegistryCard {
+  width: min(720px, 100%);
+  text-align: center;
+}
+
+.homeRegistryCard .cardHead {
+  justify-content: center;
+}
+
+.homeSecondaryGrid {
+  align-items: stretch;
+}
+
+@media (max-width: 720px) {
+  .homeBanner {
+    padding: 20px;
+  }
+
+  .homeHeroTitle {
+    max-width: 11ch;
+  }
+
+  .homeHeroGlobe {
+    min-height: 300px;
+    height: 42vh;
+  }
+}
+
 
