@@ -108,7 +108,11 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = `${Math.round(size * 0.62)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-    ctx.fillText("🌱", size / 2, size * 0.56);
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Math.max(3, size * 0.06);
+    ctx.strokeStyle = "rgba(16, 18, 14, 0.96)";
+    ctx.strokeText("\uD83C\uDF31", size / 2, size * 0.56);
+    ctx.fillText("\uD83C\uDF31", size / 2, size * 0.56);
 
     return canvas.toDataURL("image/png");
   }
@@ -458,7 +462,6 @@
               width: 34,
               height: 34,
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              disableDepthTestDistance: Number.POSITIVE_INFINITY,
               scale: 1,
             });
           }
@@ -609,4 +612,7 @@
 
   waitForViewer();
 })();
+
+
+
 
