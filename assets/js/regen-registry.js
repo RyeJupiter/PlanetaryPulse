@@ -242,18 +242,6 @@
     return wrapper;
   }
 
-  function storySentence(entity) {
-    const name = entity.name || "This site";
-    const summary = String(entity._pp_summary || "").trim();
-    if (!summary) {
-      return `${name} adds another signal to the rising tide of regeneration.`;
-    }
-
-    const trimmed = summary.replace(/\s+/g, " ").trim();
-    const sentence = trimmed.match(/.*?[.!?](\s|$)/);
-    return `${name}: ${sentence ? sentence[0].trim() : trimmed}`;
-  }
-
   function pickStories(entities, count) {
     const candidates = entities.filter((entity) => entity && entity._pp_summary);
     const pool = [...candidates];
@@ -264,43 +252,66 @@
     return pool.slice(0, count);
   }
 
+  function summaryFragment(entity) {
+    const summary = String(entity._pp_summary || "").replace(/\s+/g, " ").trim();
+    if (!summary) return "repair takes root in lived landscapes";
+    return summary.replace(/[.?!]\s*$/, "").replace(/^[A-Z]/, (match) => match.toLowerCase());
+  }
+
+  function humanizeTag(tag) {
+    return String(tag || "").replace(/-/g, " ");
+  }
+
+  function tagFragment(entity) {
+    const tags = Array.isArray(entity._pp_tags) ? entity._pp_tags.filter(Boolean) : [];
+    const chosen = tags
+      .filter((tag) => !["project-viewer", "book", "film", "documentary"].includes(tag))
+      .slice(0, 2)
+      .map(humanizeTag);
+
+    if (!chosen.length) return "living systems";
+    if (chosen.length === 1) return chosen[0];
+    return `${chosen[0]} and ${chosen[1]}`;
+  }
+
+  function buildNarrative(stories) {
+    const [a, b, c] = stories;
+    if (!a || !b || !c) {
+      return "Across the registry, regeneration rises in many forms at once: water held longer in a landscape, vegetation returning, soils rebuilding, and communities choosing care over extraction.";
+    }
+
+    return [
+      `${a.name}, ${b.name}, and ${c.name} suggest the same tide moving through very different places.`,
+      `In one place, ${summaryFragment(a)}; in another, ${summaryFragment(b)}; elsewhere, ${summaryFragment(c)}.`,
+      `The forms differ, but the pattern is familiar: ${tagFragment(a)}, ${tagFragment(b)}, and ${tagFragment(c)} all begin to pull a landscape back toward function.`,
+      `Water slows down. Habitat thickens. People reorganize around repair.`,
+      `Taken together, these sites make regeneration feel less like an exception and more like an upwelling memory in the Earth itself.`
+    ].join(" ");
+  }
+
   function renderStoryBlock(entities) {
     if (!storyBlock) return;
     storyBlock.innerHTML = "";
     const stories = pickStories(entities, 3);
-    stories.forEach((entity, index) => {
-      const item = document.createElement("article");
-      item.className = "homeStoryItem";
+    const item = document.createElement("article");
+    item.className = "homeStoryItem";
 
-      const label = document.createElement("div");
-      label.className = "sectionLabel homeStoryLabel";
-      label.textContent = `Story ${index + 1}`;
-      item.appendChild(label);
+    const body = document.createElement("p");
+    body.className = "homeStoryNarrative";
+    body.textContent = buildNarrative(stories);
+    item.appendChild(body);
 
-      const title = document.createElement("div");
-      title.className = "homeStoryTitle";
-      title.textContent = entity.name || "Registry story";
-      item.appendChild(title);
-
-      const body = document.createElement("div");
-      body.className = "muted";
-      body.textContent = storySentence(entity);
-      item.appendChild(body);
-
-      if (entity._pp_tags && entity._pp_tags.length) {
-        const tags = document.createElement("div");
-        tags.className = "detailMeta";
-        entity._pp_tags.slice(0, 3).forEach((tag) => {
-          const chip = document.createElement("span");
-          chip.className = "chip";
-          chip.textContent = tag;
-          tags.appendChild(chip);
-        });
-        item.appendChild(tags);
-      }
-
-      storyBlock.appendChild(item);
+    const meta = document.createElement("div");
+    meta.className = "detailMeta";
+    stories.forEach((entity) => {
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      chip.textContent = entity.name || "Registry story";
+      meta.appendChild(chip);
     });
+    item.appendChild(meta);
+
+    storyBlock.appendChild(item);
   }
 
   function updateEmptyDetail() {
