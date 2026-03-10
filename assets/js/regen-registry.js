@@ -256,12 +256,6 @@
     return pool.slice(0, count);
   }
 
-  function summaryFragment(entity) {
-    const summary = String(entity._pp_summary || "").replace(/\s+/g, " ").trim();
-    if (!summary) return "repair takes root in lived landscapes";
-    return summary.replace(/[.?!]\s*$/, "").replace(/^[A-Z]/, (match) => match.toLowerCase());
-  }
-
   function humanizeTag(tag) {
     return String(tag || "").replace(/-/g, " ");
   }
@@ -281,16 +275,10 @@
   function buildNarrative(stories) {
     const [a, b, c] = stories;
     if (!a || !b || !c) {
-      return "Across the registry, regeneration rises in many forms at once: water held longer in a landscape, vegetation returning, soils rebuilding, and communities choosing care over extraction.";
+      return "Repair rises where water, habitat, and people begin working together again.";
     }
 
-    return [
-      `${a.name}, ${b.name}, and ${c.name} suggest the same tide moving through very different places.`,
-      `In one place, ${summaryFragment(a)}; in another, ${summaryFragment(b)}; elsewhere, ${summaryFragment(c)}.`,
-      `The forms differ, but the pattern is familiar: ${tagFragment(a)}, ${tagFragment(b)}, and ${tagFragment(c)} all begin to pull a landscape back toward function.`,
-      `Water slows down. Habitat thickens. People reorganize around repair.`,
-      `Taken together, these sites make regeneration feel less like an exception and more like an upwelling memory in the Earth itself.`
-    ].join(" ");
+    return `${a.name}, ${b.name}, and ${c.name}: different landscapes, same tide of ${tagFragment(a)}, ${tagFragment(b)}, and ${tagFragment(c)} returning.`;
   }
 
   function renderStoryBlock(entities) {
