@@ -1099,7 +1099,7 @@ h2 {
   text-transform: uppercase;
   letter-spacing: 0.16em;
   text-align: center;
-  font-size: clamp(40px, 5vw, 62px);
+  font-size: clamp(26px, 3vw, 38px);
   color: #3b5c3e;
 }
 .subtitle,
