@@ -26,6 +26,69 @@
     }
   }
 
+  function toYouTubeEmbedUrl(rawUrl) {
+    if (!rawUrl) return "";
+    let parsed;
+    try {
+      parsed = new URL(rawUrl);
+    } catch (error) {
+      return "";
+    }
+
+    const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+    if (host === "youtu.be") {
+      const id = parsed.pathname.replace("/", "").trim();
+      return id ? `https://www.youtube.com/embed/${id}` : "";
+    }
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (parsed.pathname === "/watch") {
+        const listId = parsed.searchParams.get("list");
+        if (listId) return `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(listId)}`;
+        const id = parsed.searchParams.get("v");
+        return id ? `https://www.youtube.com/embed/${id}` : "";
+      }
+      if (parsed.pathname.startsWith("/shorts/")) {
+        const id = parsed.pathname.split("/").filter(Boolean)[1] || "";
+        return id ? `https://www.youtube.com/embed/${id}` : "";
+      }
+      if (parsed.pathname === "/playlist") {
+        const listId = parsed.searchParams.get("list");
+        return listId ? `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(listId)}` : "";
+      }
+    }
+    return "";
+  }
+
+  function normalizeVideos(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => {
+          if (typeof item === "string") {
+            const embedUrl = toYouTubeEmbedUrl(item);
+            return embedUrl ? { title: "Project video", url: item, embedUrl } : null;
+          }
+          if (item && typeof item === "object") {
+            const rawUrl = item.url || item.href || "";
+            const embedUrl = toYouTubeEmbedUrl(rawUrl);
+            return embedUrl ? { title: item.title || item.text || "Project video", url: rawUrl, embedUrl } : null;
+          }
+          return null;
+        })
+        .filter(Boolean);
+    }
+    if (typeof value === "string") {
+      try {
+        const parsed = JSON.parse(value);
+        return normalizeVideos(parsed);
+      } catch (error) {
+        const embedUrl = toYouTubeEmbedUrl(value);
+        return embedUrl ? [{ title: "Project video", url: value, embedUrl }] : [];
+      }
+    }
+    return [];
+  }
+
   function buildDetail(entity) {
     const wrapper = document.createElement("div");
     wrapper.className = "detailCard";
@@ -113,6 +176,43 @@
         linkWrap.appendChild(link);
       });
       wrapper.appendChild(linkWrap);
+    }
+
+    if (entity._pp_videos && entity._pp_videos.length) {
+      const divider = document.createElement("div");
+      divider.className = "detailDivider";
+      wrapper.appendChild(divider);
+
+      const videoLabel = document.createElement("div");
+      videoLabel.className = "sectionLabel";
+      videoLabel.textContent = "Project viewer";
+      wrapper.appendChild(videoLabel);
+
+      const videoGrid = document.createElement("div");
+      videoGrid.className = "videoGrid";
+
+      entity._pp_videos.slice(0, 3).forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "videoCard";
+        card.innerHTML = `
+          <div class="videoFrameWrap">
+            <iframe
+              src="${item.embedUrl}"
+              title="${item.title}"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="videoCardBody">
+            <div class="videoTitle">${item.title}</div>
+            <a class="link" href="${item.url}" target="_blank" rel="noopener">Open source video</a>
+          </div>
+        `;
+        videoGrid.appendChild(card);
+      });
+
+      wrapper.appendChild(videoGrid);
     }
 
     return wrapper;
@@ -229,12 +329,24 @@
           const tags = props.tags && props.tags.getValue ? props.tags.getValue() : "";
           const links = props.links && props.links.getValue ? props.links.getValue() : "";
           const images = props.images && props.images.getValue ? props.images.getValue() : [];
+          const videos = props.videos && props.videos.getValue ? props.videos.getValue() : [];
 
           entity._pp_summary = summary;
           entity._pp_size = size;
           entity._pp_tags = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
           entity._pp_links = normalizeLinks(links);
           entity._pp_images = normalizeImages(images);
+          entity._pp_videos = normalizeVideos(videos);
+
+          if (!entity._pp_videos.length && entity._pp_links.length) {
+            entity._pp_videos = entity._pp_links
+              .map((item) => ({
+                title: item.text || "Project video",
+                url: item.url,
+                embedUrl: toYouTubeEmbedUrl(item.url),
+              }))
+              .filter((item) => item.embedUrl);
+          }
 
           entity._pp_tags.forEach((tag) => {
             tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);

@@ -398,9 +398,14 @@ h2 {
 .detailCard {
   display: grid;
   gap: 6px;
+  background: linear-gradient(155deg, rgba(14, 24, 40, 0.92), rgba(9, 16, 28, 0.88));
+  border: 1px solid rgba(107, 227, 255, 0.2);
+  border-radius: 16px;
+  padding: 14px;
 }
 .detailTitle {
   font-weight: 600;
+  font-size: 18px;
 }
 .detailMeta {
   display: flex;
@@ -422,6 +427,40 @@ h2 {
 .detailLinks .btn {
   padding: 6px 10px;
   font-size: 12px;
+}
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.videoCard {
+  background: rgba(7, 13, 24, 0.7);
+  border: 1px solid rgba(130, 170, 210, 0.2);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.videoFrameWrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: rgba(2, 7, 14, 0.95);
+}
+.videoFrameWrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.videoCardBody {
+  padding: 10px 12px 12px;
+  display: grid;
+  gap: 6px;
+}
+.videoTitle {
+  font-size: 13px;
+  font-weight: 600;
 }
 .imageGrid {
   display: grid;
