@@ -6,7 +6,7 @@ Subject: EarthPulse — Making Landscape Regeneration Measurable and Visible | E
 
 Hi EarthX Team,
 
-My name is Rye, and I'm the creator of **EarthPulse** ([planetarypulse.earth](https://planetarypulse.earth)) — a planetary regeneration interface that makes landscape impact on local climate legible, so regeneration can scale with clarity, integrity, and measurable outcomes.
+My name is Rye, and I'm the creator of **EarthPulse** ([earthpulse.dev](https://earthpulse.dev)) — a planetary regeneration interface that makes landscape impact on local climate legible, so regeneration can scale with clarity, integrity, and measurable outcomes.
 
 **What EarthPulse Does**
 
@@ -33,7 +33,7 @@ I'd love to explore how EarthPulse could contribute to EarthX2026 — whether as
 - Connect with regeneration practitioners and funders in your network
 - Discuss how EarthPulse can serve as a shared tool for conference participants
 
-You can explore the platform now at **[planetarypulse.earth](https://planetarypulse.earth)**, and I'm happy to schedule a call or send more materials.
+You can explore the platform now at **[earthpulse.dev](https://earthpulse.dev)**, and I'm happy to schedule a call or send more materials.
 
 Thank you for the extraordinary work EarthX does convening people who care about the planet. I hope there's a place for EarthPulse at EarthX2026.
 
@@ -42,4 +42,4 @@ Warm regards,
 **Rye**
 Creator, EarthPulse
 [Rye@earthpulse.dev](mailto:Rye@earthpulse.dev)
-[planetarypulse.earth](https://planetarypulse.earth)
+[earthpulse.dev](https://earthpulse.dev)
