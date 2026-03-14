@@ -1,0 +1,11 @@
+{
+  "name": "planetarypulse",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "send-email": "node send-email.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
