@@ -93,13 +93,7 @@ function buildMime({ from, to, subject, html }) {
   });
 }
 
-export async function onRequestPost({ request, env }) {
-  // Guard with a secret so only you can trigger this
-  const secret = request.headers.get('x-secret');
-  if (!env.OUTREACH_SECRET || secret !== env.OUTREACH_SECRET) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
+export async function onRequest({ env }) {
   try {
     const msg = new EmailMessage(EMAIL.from, EMAIL.to, buildMime(EMAIL));
     await env.SEND_EMAIL.send(msg);
