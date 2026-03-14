@@ -1,21 +1,17 @@
 /**
- * POST /api/send-outreach
- * Sends the EarthX2026 outreach email via Cloudflare Email Workers.
+ * GET /api/send-outreach
+ * Sends the EarthX2026 outreach email via Resend API.
  *
- * Requires:
- *  - SEND_EMAIL binding configured in Cloudflare Pages settings
- *  - Email Routing enabled for earthpulse.dev in Cloudflare dashboard
- *  - OUTREACH_SECRET env var set in Pages settings (protects the endpoint)
- *
- * Trigger once:
- *   curl -X POST https://earthpulse.dev/api/send-outreach \
- *     -H "x-secret: YOUR_OUTREACH_SECRET"
+ * Setup:
+ *  1. resend.com → sign up → Add Domain (earthpulse.dev) → copy API key
+ *  2. Cloudflare Pages → Settings → Environment Variables → add RESEND_API_KEY
+ *  3. Open earthpulse.dev/api/send-outreach in browser — done.
  */
 
 const EMAIL = {
   from: 'Rye@earthpulse.dev',
   to: 'info@earthx.org',
-  subject: 'EarthPulse \u2014 Making Landscape Regeneration Measurable and Visible | EarthX2026',
+  subject: 'EarthPulse — Making Landscape Regeneration Measurable and Visible | EarthX2026',
   html: `
 <div style="font-family:sans-serif;max-width:640px;line-height:1.7;color:#1a1a1a">
 
@@ -68,37 +64,30 @@ const EMAIL = {
 `,
 };
 
-function buildMime({ from, to, subject, html }) {
-  const boundary = `----=_boundary_${Date.now()}`;
-  const mime = [
-    `From: ${from}`,
-    `To: ${to}`,
-    `Subject: ${subject}`,
-    'MIME-Version: 1.0',
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/html; charset=utf-8',
-    'Content-Transfer-Encoding: 7bit',
-    '',
-    html,
-    '',
-    `--${boundary}--`,
-  ].join('\r\n');
-  return new ReadableStream({
-    start(controller) {
-      controller.enqueue(new TextEncoder().encode(mime));
-      controller.close();
-    },
-  });
-}
-
 export async function onRequest({ env }) {
-  try {
-    const msg = new EmailMessage(EMAIL.from, EMAIL.to, buildMime(EMAIL));
-    await env.SEND_EMAIL.send(msg);
-    return Response.json({ ok: true, message: `Email sent to ${EMAIL.to}` });
-  } catch (err) {
-    return Response.json({ ok: false, error: err.message }, { status: 500 });
+  if (!env.RESEND_API_KEY) {
+    return Response.json({ ok: false, error: 'RESEND_API_KEY not set in environment variables' }, { status: 500 });
   }
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: EMAIL.from,
+      to: EMAIL.to,
+      subject: EMAIL.subject,
+      html: EMAIL.html,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    return Response.json({ ok: false, error: data }, { status: 500 });
+  }
+
+  return Response.json({ ok: true, id: data.id, message: `Email sent to ${EMAIL.to}` });
 }
