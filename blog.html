@@ -16,31 +16,37 @@
   <div id="site-nav"></div>
 
   <main class="page">
-    <section class="panel">
-      <h1>Field Notes</h1>
-      <p class="subtitle">
-        Field notes on landscape function, climate regulation, and the metrics that make change visible.
-      </p>
+    <div class="blogLayout">
 
-      <div class="card">
-        <div class="cardTitle">Search</div>
-        <div class="cardBody">
-          <input id="blog-search" class="input" type="search" placeholder="Search posts by topic or keyword" />
-          <div class="muted" id="blog-empty-tip">Start typing to filter posts.</div>
-        </div>
-      </div>
+      <aside class="blogSidebar">
+        <section class="panel">
+          <h1>Field Notes</h1>
+          <p class="subtitle">
+            Landscape function, climate regulation, and the metrics that make change visible.
+          </p>
+        </section>
 
-      <div class="card">
-        <div class="cardTitle">Index</div>
-        <div class="cardBody">
-          <div id="blog-index" class="blogIndex"></div>
-        </div>
-      </div>
-    </section>
+        <section class="panel">
+          <div class="cardTitle">Search</div>
+          <div class="cardBody" style="margin-top:10px">
+            <input id="blog-search" class="input" type="search" placeholder="Search by topic or keyword" />
+            <div class="muted" id="blog-empty-tip" style="margin-top:8px;font-size:12px">Start typing to filter.</div>
+          </div>
+        </section>
 
-    <section class="panel">
-      <div id="blog-list" class="stack"></div>
-    </section>
+        <section class="panel">
+          <div class="cardTitle">Index</div>
+          <div style="margin-top:12px">
+            <div id="blog-index" class="blogIndex"></div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="blogMain">
+        <div id="blog-list" class="stack"></div>
+      </section>
+
+    </div>
   </main>
 
   <footer class="footer">

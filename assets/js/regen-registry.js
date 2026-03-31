@@ -278,7 +278,7 @@
       return "Repair rises where water, habitat, and people begin working together again.";
     }
 
-    return `${a.name}, ${b.name}, and ${c.name}: different landscapes, same tide of ${tagFragment(a)}, ${tagFragment(b)}, and ${tagFragment(c)} returning.`;
+    return `${a.name}, ${b.name}, and ${c.name} — spanning ${tagFragment(a)}, ${tagFragment(b)}, and ${tagFragment(c)}.`;
   }
 
   function renderStoryBlock(entities) {
