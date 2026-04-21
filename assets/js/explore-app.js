@@ -532,7 +532,11 @@
   function loadSeries() {
     normalizeRange();
     state.loading = true;
+    // Clear prior series so the chart cards re-render into the empty
+    // (spinner) state instead of sticking on the last successful load.
+    state.series = [];
     updateStatus();
+    updateCharts();
 
     const provider = providers[state.provider];
     if (!provider || typeof provider.getMonthlySeries !== "function") {
