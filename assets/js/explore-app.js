@@ -13,8 +13,6 @@
     lon: -122.0253,
     startMonth: "2020-01",
     endMonth: currentMonth,
-    earthdataUsername: "",
-    earthdataPassword: "",
     metrics: new Set(["ndvi", "lst"]),
     series: [],
     loading: false,
@@ -27,6 +25,10 @@
 
   let map;
   let deckOverlay;
+  let pulsePhase = 0;
+  let pulseRaf = 0;
+
+  const BASEMAP_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
   function monthToIndex(month) {
     const [year, m] = month.split("-").map(Number);
@@ -53,57 +55,28 @@
     return Math.max(min, Math.min(max, n));
   }
 
-  function escapeHtml(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/"/g, "&quot;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
-
   // Adapter registry: each provider must implement getMonthlySeries(...)
   const providers = {
     modis: {
       id: "modis",
       label: "MODIS",
       getMonthlySeries({ lat, lon, startMonth, endMonth, metrics }) {
-        return fetchMonthlyFromBackend("modis", lat, lon, startMonth, endMonth, metrics);
-      },
-    },
-    viirs: {
-      id: "viirs",
-      label: "VIIRS",
-      getMonthlySeries({ lat, lon, startMonth, endMonth, metrics }) {
-        return fetchMonthlyFromBackend("viirs", lat, lon, startMonth, endMonth, metrics);
+        return fetch("/api/explore/monthly", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ provider: "modis", lat, lon, startMonth, endMonth, metrics: Array.from(metrics) }),
+        }).then(async (res) => {
+          const payload = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            const err = new Error(payload.error || "Backend request failed.");
+            err.status = res.status;
+            throw err;
+          }
+          return payload;
+        });
       },
     },
   };
-
-  function fetchMonthlyFromBackend(providerId, lat, lon, startMonth, endMonth, metrics) {
-    return fetch("/api/explore/monthly", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        provider: providerId,
-        lat,
-        lon,
-        startMonth,
-        endMonth,
-        metrics: Array.from(metrics),
-        earthdataUsername: state.earthdataUsername || undefined,
-        earthdataPassword: state.earthdataPassword || undefined,
-      }),
-    }).then(async (res) => {
-      const payload = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        const err = new Error(payload.error || "Backend request failed.");
-        err.code = payload.code || "backend_error";
-        err.status = res.status;
-        throw err;
-      }
-      return payload;
-    });
-  }
 
   function linePath(points, width, height, minY, maxY) {
     if (!points.length) return "";
@@ -151,13 +124,6 @@
           <section class="explorerCard">
             <h2 class="explorerCardTitle">Data Drawdown Controls</h2>
             <div class="explorerControlGrid">
-              <div class="explorerRow">
-                <label class="explorerLabel" for="provider">Dataset</label>
-                <select id="provider" class="explorerSelect">
-                  <option value="modis"${state.provider === "modis" ? " selected" : ""}>MODIS</option>
-                  <option value="viirs"${state.provider === "viirs" ? " selected" : ""}>VIIRS</option>
-                </select>
-              </div>
               <div class="explorerSplit">
                 <div class="explorerRow">
                   <label class="explorerLabel" for="lat">Latitude</label>
@@ -176,34 +142,6 @@
                 <div class="explorerRow">
                   <label class="explorerLabel" for="end-month">End month</label>
                   <select id="end-month" class="explorerSelect">${monthOptionsEnd}</select>
-                </div>
-              </div>
-              <div class="explorerRow">
-                <div class="explorerCredentialHead">
-                  <span class="explorerLabel">Earthdata login</span>
-                  <span class="explorerCredentialTag">NASA required</span>
-                </div>
-                <div class="explorerSplit">
-                  <input
-                    id="earthdata-username"
-                    class="explorerInput"
-                    type="text"
-                    autocomplete="username"
-                    placeholder="Earthdata username"
-                    value="${escapeHtml(state.earthdataUsername)}"
-                  />
-                  <input
-                    id="earthdata-password"
-                    class="explorerInput"
-                    type="password"
-                    autocomplete="current-password"
-                    placeholder="Earthdata password"
-                    value="${escapeHtml(state.earthdataPassword)}"
-                  />
-                </div>
-                <div class="explorerHelp">
-                  Uses NASA AppEEARS through the site backend. If deployment secrets are not configured,
-                  your Earthdata Login is used for this request only.
                 </div>
               </div>
               <div class="explorerRow">
@@ -253,9 +191,9 @@
     const banner = document.getElementById("explorer-banner");
     if (status) {
       if (state.loading) {
-        status.textContent = "Loading monthly series from NASA AppEEARS...";
+        status.textContent = "Loading MODIS monthly series from NASA ORNL DAAC...";
       } else if (!state.hasLoaded) {
-        status.textContent = "Ready to request NASA Earthdata monthly series.";
+        status.textContent = "Ready to load MODIS monthly series.";
       } else if (state.series.length) {
         const sourceTag = state.source ? ` Source: ${state.source}.` : "";
         status.textContent = `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.${sourceTag}`;
@@ -293,24 +231,64 @@
 
   function syncMapMarker() {
     if (!map || !deckOverlay) return;
+    const data = [{ position: [state.lon, state.lat] }];
+    // Pulse oscillates 0→1→0; use for ring opacity + radius breathing.
+    const pulse = 0.5 + 0.5 * Math.sin(pulsePhase);
+
     deckOverlay.setProps({
       layers: [
+        // Outer pulsing halo
         new deck.ScatterplotLayer({
-          id: "selected-location",
-          data: [{ position: [state.lon, state.lat] }],
+          id: "location-halo",
+          data,
           getPosition: (d) => d.position,
-          getRadius: 90000,
-          radiusMinPixels: 6,
-          radiusMaxPixels: 18,
-          getFillColor: [10, 20, 30, 220],
-          getLineColor: [118, 255, 193, 255],
-          lineWidthMinPixels: 2,
+          radiusUnits: "pixels",
+          getRadius: 22 + pulse * 14,
+          getFillColor: [118, 255, 193, Math.round(45 + pulse * 55)],
+          stroked: false,
+          filled: true,
+          pickable: false,
+          updateTriggers: { getRadius: pulsePhase, getFillColor: pulsePhase },
+        }),
+        // Mid ring
+        new deck.ScatterplotLayer({
+          id: "location-ring",
+          data,
+          getPosition: (d) => d.position,
+          radiusUnits: "pixels",
+          getRadius: 11,
+          getFillColor: [0, 0, 0, 0],
+          getLineColor: [118, 255, 193, 230],
+          lineWidthUnits: "pixels",
+          getLineWidth: 2,
           stroked: true,
+          filled: true,
+          pickable: false,
+        }),
+        // Inner solid dot
+        new deck.ScatterplotLayer({
+          id: "location-dot",
+          data,
+          getPosition: (d) => d.position,
+          radiusUnits: "pixels",
+          getRadius: 4,
+          getFillColor: [236, 255, 245, 255],
+          stroked: false,
           filled: true,
           pickable: false,
         }),
       ],
     });
+  }
+
+  function startPulse() {
+    if (pulseRaf) return;
+    const step = () => {
+      pulsePhase += 0.06;
+      syncMapMarker();
+      pulseRaf = requestAnimationFrame(step);
+    };
+    pulseRaf = requestAnimationFrame(step);
   }
 
   function centerMap() {
@@ -358,28 +336,22 @@
       })
       .then((payload) => {
         state.series = Array.isArray(payload?.series) ? payload.series : [];
-        state.source = payload?.source || "NASA AppEEARS";
+        state.source = payload?.source || "ORNL DAAC";
         state.hasLoaded = true;
         state.warning = "";
-        state.banner = "Using live NASA Earthdata monthly data through AppEEARS.";
+        state.banner = "Loaded MODIS monthly series from NASA ORNL DAAC.";
         state.bannerLevel = "info";
       })
       .catch((error) => {
         state.series = [];
         state.source = "";
         state.hasLoaded = true;
-        state.warning = error?.code === "missing_credentials"
-          ? "Earthdata Login required"
-          : `Live request failed (${error?.status || "request error"})`;
+        state.warning = `Request failed (${error?.status || "request error"})`;
         if (error?.status === 503) {
-          state.banner = "NASA AppEEARS is temporarily unavailable (503). Try again later.";
-          state.bannerLevel = "warning";
-        } else if (error?.code === "missing_credentials") {
-          state.banner =
-            "Enter your NASA Earthdata Login or configure AppEEARS secrets in deployment to load live data.";
+          state.banner = "NASA ORNL DAAC is temporarily unavailable (503). Try again later.";
           state.bannerLevel = "warning";
         } else {
-          state.banner = `Could not load live NASA Earthdata/AppEEARS data (${error?.status || "request error"}).`;
+          state.banner = `Could not load MODIS data from ORNL DAAC (${error?.status || "request error"}).`;
           state.bannerLevel = "error";
         }
         console.warn("[Explore] Monthly backend fetch failed:", {
@@ -410,10 +382,10 @@
     try {
       map = new maplibregl.Map({
         container: mapNode,
-        style: "https://demotiles.maplibre.org/style.json",
+        style: BASEMAP_STYLE,
         center: [state.lon, state.lat],
         zoom: 2.2,
-        attributionControl: false,
+        attributionControl: { compact: true },
       });
     } catch (error) {
       mapNode.innerHTML = "<div class=\"chartEmpty\">Could not initialize map.</div>";
@@ -434,6 +406,7 @@
       deckOverlay = new deck.MapboxOverlay({ interleaved: true, layers: [] });
       map.addControl(deckOverlay);
       syncMapMarker();
+      startPulse();
       updateStatus();
     });
 
@@ -453,23 +426,13 @@
   }
 
   function bindControls() {
-    const provider = document.getElementById("provider");
     const latInput = document.getElementById("lat");
     const lonInput = document.getElementById("lon");
     const startMonth = document.getElementById("start-month");
     const endMonth = document.getElementById("end-month");
-    const earthdataUsername = document.getElementById("earthdata-username");
-    const earthdataPassword = document.getElementById("earthdata-password");
     const metricNdvi = document.getElementById("metric-ndvi");
     const metricLst = document.getElementById("metric-lst");
     const loadBtn = document.getElementById("load-series");
-
-    if (provider) {
-      provider.addEventListener("change", () => {
-        state.provider = provider.value;
-        updateStatus();
-      });
-    }
 
     if (latInput) {
       latInput.addEventListener("change", () => {
@@ -507,22 +470,6 @@
       });
     }
 
-    if (earthdataUsername) {
-      const syncUsername = () => {
-        state.earthdataUsername = earthdataUsername.value.trim();
-      };
-      earthdataUsername.addEventListener("change", syncUsername);
-      earthdataUsername.addEventListener("input", syncUsername);
-    }
-
-    if (earthdataPassword) {
-      const syncPassword = () => {
-        state.earthdataPassword = earthdataPassword.value;
-      };
-      earthdataPassword.addEventListener("change", syncPassword);
-      earthdataPassword.addEventListener("input", syncPassword);
-    }
-
     if (metricNdvi) {
       metricNdvi.addEventListener("change", () => {
         if (metricNdvi.checked) state.metrics.add("ndvi");
@@ -539,8 +486,6 @@
 
     if (loadBtn) {
       loadBtn.addEventListener("click", () => {
-        if (earthdataUsername) state.earthdataUsername = earthdataUsername.value.trim();
-        if (earthdataPassword) state.earthdataPassword = earthdataPassword.value;
         if (!state.metrics.size) state.metrics.add("ndvi");
         loadSeries();
       });
