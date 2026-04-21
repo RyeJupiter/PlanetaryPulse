@@ -444,6 +444,37 @@
   text-align: center;
 }
 
+.metricLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 12px;
+  color: rgba(236, 248, 220, 0.88);
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.metricLoadingHint {
+  color: rgba(220, 196, 140, 0.62);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.metricSpinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(166, 236, 170, 0.2);
+  border-top-color: rgba(166, 236, 170, 0.96);
+  animation: metricSpin 0.9s linear infinite;
+}
+
+@keyframes metricSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 980px) {
   .explorerTop {

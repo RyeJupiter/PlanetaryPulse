@@ -625,11 +625,16 @@ li,
   display: grid;
   gap: 10px;
   margin-top: 4px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .galleryStage {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   aspect-ratio: 16 / 9;
   border-radius: 16px;
   overflow: hidden;
@@ -767,6 +772,50 @@ li,
 .galleryDot.galleryDotActive {
   background: linear-gradient(90deg, rgba(118, 255, 193, 0.95) 0%, rgba(135, 236, 255, 0.9) 100%);
   width: 44px;
+}
+
+/* Mobile: tighter controls + explicit overflow guards so the gallery
+   never pushes its parent card off the viewport. */
+@media (max-width: 640px) {
+  .detailCard {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding: 18px 16px 20px !important;
+  }
+  .galleryRotator,
+  .galleryStage {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .galleryStage {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
+  .galleryNav {
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
+  }
+  .galleryNavPrev {
+    left: 8px;
+  }
+  .galleryNavNext {
+    right: 8px;
+  }
+  .galleryCaption {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+  .galleryDot {
+    width: 22px;
+  }
+  .galleryDot.galleryDotActive {
+    width: 32px;
+  }
 }
 .blogHero {
   width: 100%;

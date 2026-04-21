@@ -7,11 +7,11 @@
   const now = new Date();
   const currentMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
-  // Default to a ~2-year window so the backend stays comfortably under
-  // Cloudflare Workers' 50-subrequest cap. Wider ranges are still selectable
+  // Default to a ~13-month window so the initial request finishes in a few
+  // seconds even on slow mobile networks. Wider ranges are still selectable
   // from the controls, and the user sees a warning if they cross the budget.
   const defaultStart = (() => {
-    const d = new Date(Date.UTC(now.getUTCFullYear() - 2, now.getUTCMonth(), 1));
+    const d = new Date(Date.UTC(now.getUTCFullYear() - 1, now.getUTCMonth() - 1, 1));
     return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
   })();
   const MIN_MONTH = "2015-01";
@@ -185,6 +185,17 @@
     }
 
     if (!stats) {
+      const emptyBody = state.loading
+        ? `<div class="metricLoading">
+             <div class="metricSpinner" aria-hidden="true"></div>
+             <div>Fetching ${meta.title} from NASA ORNL DAAC…</div>
+             <div class="metricLoadingHint">This can take 10–20 seconds on the first load.</div>
+           </div>`
+        : `<div class="metricEmpty">
+             ${state.series.length
+               ? `No QA-cleared ${meta.title} values for this location yet. Try widening the date range.`
+               : "Press Load monthly series to see signal."}
+           </div>`;
       return `
         <section class="metricCard" data-metric="${key}">
           <div class="metricHeader">
@@ -194,11 +205,7 @@
             </div>
             <div class="metricBadge">${meta.source}</div>
           </div>
-          <div class="metricEmpty">
-            ${state.series.length
-              ? `No QA-cleared ${meta.title} values for this location yet. Try widening the date range.`
-              : "Load a monthly series to see signal."}
-          </div>
+          ${emptyBody}
         </section>
       `;
     }
