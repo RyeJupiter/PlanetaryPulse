@@ -337,6 +337,21 @@
     // Scale pill and tag chips intentionally not rendered — the highlights
     // bullets already cover scale, and the tag cloud crowds the panel.
 
+    // "See satellite history" CTA — takes the user to the Explore view
+    // centered on this project, with the prefetched NDVI + LST series
+    // loaded instantly (covers years of signal, no live API call needed).
+    if (entity._pp_id) {
+      const cta = document.createElement("a");
+      cta.className = "btn detailCta";
+      cta.href = `explore.html?project=${encodeURIComponent(entity._pp_id)}`;
+      cta.rel = "noopener";
+      const interventionTag = entity._pp_intervention_start
+        ? ` (since ${entity._pp_intervention_start})`
+        : "";
+      cta.innerHTML = `<span class="detailCtaLabel">See satellite history${interventionTag}</span><span class="detailCtaArrow" aria-hidden="true">→</span>`;
+      wrapper.appendChild(cta);
+    }
+
     if (entity._pp_links && entity._pp_links.length) {
       const divider = document.createElement("div");
       divider.className = "detailDivider";
@@ -575,6 +590,16 @@
 
           const highlights =
             props.highlights && props.highlights.getValue ? props.highlights.getValue() : null;
+          const projectId = props.id && props.id.getValue ? props.id.getValue() : null;
+          const interventionStart =
+            props.intervention_start && props.intervention_start.getValue
+              ? props.intervention_start.getValue()
+              : null;
+          const historyNote =
+            props.history_note && props.history_note.getValue ? props.history_note.getValue() : null;
+          entity._pp_id = projectId;
+          entity._pp_intervention_start = interventionStart;
+          entity._pp_history_note = historyNote;
           entity._pp_summary = summary;
           entity._pp_highlights = Array.isArray(highlights)
             ? highlights.map((h) => String(h).trim()).filter(Boolean)

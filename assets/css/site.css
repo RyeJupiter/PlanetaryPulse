@@ -2154,6 +2154,44 @@ html.welcomeLock body {
   text-transform: uppercase;
 }
 
+/* Primary CTA: See satellite history */
+.detailCta {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px !important;
+  border-radius: 14px !important;
+  margin-top: 4px;
+  color: rgba(236, 255, 220, 0.98) !important;
+  background: linear-gradient(135deg, rgba(120, 200, 140, 0.32) 0%, rgba(196, 170, 108, 0.3) 100%) !important;
+  border: 1px solid rgba(166, 236, 170, 0.6) !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none !important;
+  text-decoration: none;
+  transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.detailCta:hover {
+  background: linear-gradient(135deg, rgba(120, 200, 140, 0.46) 0%, rgba(196, 170, 108, 0.4) 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(4, 10, 6, 0.5);
+}
+.detailCtaLabel {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+.detailCtaArrow {
+  font-size: 20px;
+  opacity: 0.88;
+  transition: transform 180ms ease;
+}
+.detailCta:hover .detailCtaArrow {
+  transform: translateX(3px);
+}
+
 .detailCard .videoCard {
   background: rgba(14, 22, 16, 0.72) !important;
   border: 1px solid rgba(166, 236, 170, 0.22) !important;

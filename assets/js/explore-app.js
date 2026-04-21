@@ -720,9 +720,111 @@
     }
   }
 
+  // URL-driven presets. Two modes:
+  //   ?project=<id>      → load prefetched /public/data/histories/<id>.json
+  //   ?lat=&lon=&start=&end=&metrics=  → prefill and trigger a live load
+  function applyUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get("project");
+    const lat = parseFloat(params.get("lat"));
+    const lon = parseFloat(params.get("lon"));
+    const start = params.get("start");
+    const end = params.get("end");
+    const metrics = params.get("metrics");
+
+    if (metrics) {
+      state.metrics = new Set(
+        metrics.split(",").map((s) => s.trim()).filter((m) => m === "ndvi" || m === "lst")
+      );
+      if (state.metrics.size === 0) state.metrics = new Set(["ndvi", "lst"]);
+    }
+
+    if (projectId) {
+      loadPrefetchedProject(projectId);
+      return true;
+    }
+
+    let changed = false;
+    if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
+      state.lat = lat;
+      changed = true;
+    }
+    if (Number.isFinite(lon) && lon >= -180 && lon <= 180) {
+      state.lon = lon;
+      changed = true;
+    }
+    if (start && /^\d{4}-\d{2}$/.test(start)) {
+      state.startMonth = start;
+      changed = true;
+    }
+    if (end && /^\d{4}-\d{2}$/.test(end)) {
+      state.endMonth = end;
+      changed = true;
+    }
+    return changed;
+  }
+
+  async function loadPrefetchedProject(projectId) {
+    state.loading = true;
+    state.banner = "Loading prefetched project history…";
+    state.bannerLevel = "info";
+    updateStatus();
+    updateCharts();
+
+    try {
+      const res = await fetch(`/public/data/histories/${projectId}.json`);
+      if (!res.ok) throw new Error(`history ${projectId} not found (${res.status})`);
+      const payload = await res.json();
+
+      state.lat = payload.lat;
+      state.lon = payload.lon;
+      state.startMonth = payload.startMonth;
+      state.endMonth = payload.endMonth;
+      state.series = Array.isArray(payload.series) ? payload.series : [];
+      state.source = `ornl_daac (prefetched for ${payload.projectName || projectId})`;
+      state.hasLoaded = true;
+      const interventionTag = payload.interventionStart
+        ? ` Intervention began ${payload.interventionStart}.`
+        : "";
+      state.banner = `Loaded ${state.series.length} months for ${
+        payload.projectName || projectId
+      }.${interventionTag}`;
+      state.bannerLevel = "info";
+
+      // Sync the control inputs to the preset so the UI reflects state.
+      const latInput = document.getElementById("lat");
+      const lonInput = document.getElementById("lon");
+      const startSelect = document.getElementById("start-month");
+      const endSelect = document.getElementById("end-month");
+      if (latInput) latInput.value = state.lat.toFixed(4);
+      if (lonInput) lonInput.value = state.lon.toFixed(4);
+      if (startSelect) startSelect.value = state.startMonth;
+      if (endSelect) endSelect.value = state.endMonth;
+      centerMap();
+      syncMapMarker();
+    } catch (error) {
+      console.warn("[Explore] prefetched project load failed:", error);
+      state.banner =
+        error?.message ||
+        `Could not load prefetched history for ${projectId}. Try widening the date range and pressing Load.`;
+      state.bannerLevel = "warning";
+      state.hasLoaded = false;
+    } finally {
+      state.loading = false;
+      updateStatus();
+      updateCharts();
+    }
+  }
+
   renderShell();
   bindControls();
   initMap();
+  const hasPreset = applyUrlParams();
   updateStatus();
   updateCharts();
+  // When the preset is coord-based (not a project), kick off a live load
+  // automatically so the user doesn't have to hit the button after a deep link.
+  if (hasPreset && !new URLSearchParams(window.location.search).get("project")) {
+    loadSeries();
+  }
 })();

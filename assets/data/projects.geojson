@@ -76,11 +76,17 @@
             "text": "Al Baydha overview video",
             "url": "https://www.youtube.com/watch?v=T39QHprz-x8"
           }
-        ]
+        ],
+        "intervention_start": "2009-01",
+        "history_start": "2005-01",
+        "history_note": "Al Baydha ground work began in 2009."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [41.02, 19.82]
+        "coordinates": [
+          41.02,
+          19.82
+        ]
       }
     },
     {
@@ -130,17 +136,35 @@
             "text": "Wilding by Isabella Tree",
             "url": "https://isabellatree.com/books/"
           }
-        ]
+        ],
+        "intervention_start": "2001-01",
+        "history_start": "2000-03",
+        "history_note": "Knepp rewilding pivot began in 2001."
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [-0.420, 50.950],
-            [-0.260, 50.950],
-            [-0.260, 50.800],
-            [-0.420, 50.800],
-            [-0.420, 50.950]
+            [
+              -0.42,
+              50.95
+            ],
+            [
+              -0.26,
+              50.95
+            ],
+            [
+              -0.26,
+              50.8
+            ],
+            [
+              -0.42,
+              50.8
+            ],
+            [
+              -0.42,
+              50.95
+            ]
           ]
         ]
       }
@@ -179,11 +203,17 @@
             "text": "The Biggest Little Farm",
             "url": "https://www.biggestlittlefarmmovie.com"
           }
-        ]
+        ],
+        "intervention_start": "2011-01",
+        "history_start": "2005-01",
+        "history_note": "Apricot Lane Farms regenerative transition began in 2011."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-118.88, 34.29]
+        "coordinates": [
+          -118.88,
+          34.29
+        ]
       }
     },
     {
@@ -206,17 +236,35 @@
           }
         ],
         "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
-        "links": []
+        "links": [],
+        "intervention_start": "2000-01",
+        "history_start": "2000-03",
+        "history_note": "Loess Plateau Watershed Rehabilitation Project launched 1999-2000."
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [108.50, 36.60],
-            [110.00, 36.60],
-            [110.00, 35.40],
-            [108.50, 35.40],
-            [108.50, 36.60]
+            [
+              108.5,
+              36.6
+            ],
+            [
+              110.0,
+              36.6
+            ],
+            [
+              110.0,
+              35.4
+            ],
+            [
+              108.5,
+              35.4
+            ],
+            [
+              108.5,
+              36.6
+            ]
           ]
         ]
       }
@@ -255,11 +303,17 @@
             "text": "About White Oak Pastures",
             "url": "https://whiteoakpastures.com/pages/about-us"
           }
-        ]
+        ],
+        "intervention_start": "1995-01",
+        "history_start": "2000-03",
+        "history_note": "White Oak Pastures transition under Will Harris began in the 1990s; satellite record starts 2000."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-84.88, 31.64]
+        "coordinates": [
+          -84.88,
+          31.64
+        ]
       }
     },
     {
@@ -301,11 +355,17 @@
             "text": "Africa Centre for Holistic Management",
             "url": "https://savory.global/our-work/hubs/africa-centre-for-holistic-management/"
           }
-        ]
+        ],
+        "intervention_start": "2005-01",
+        "history_start": "2001-01",
+        "history_note": "Africa Centre for Holistic Management founded at Dimbangombe in the early 2000s."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [29.73, -19.23]
+        "coordinates": [
+          29.73,
+          -19.23
+        ]
       }
     },
     {
@@ -367,11 +427,17 @@
             "title": "Andrew Millison: India's Water Revolution #2",
             "url": "https://www.youtube.com/watch?v=jDMnbeW3F8A"
           }
-        ]
+        ],
+        "intervention_start": "2016-04",
+        "history_start": "2012-01",
+        "history_note": "Paani Foundation Water Cup launched in 2016."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [73.85, 18.52]
+        "coordinates": [
+          73.85,
+          18.52
+        ]
       }
     },
     {
@@ -406,11 +472,17 @@
             "title": "Inside Africa's Food Forest Mega-Project",
             "url": "https://www.youtube.com/watch?v=xbBdIG--b58"
           }
-        ]
+        ],
+        "intervention_start": "2014-01",
+        "history_start": "2010-01",
+        "history_note": "WFP Integrated Resilience programme in the Sahel scaled from 2014."
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-15.95, 16.06]
+        "coordinates": [
+          -15.95,
+          16.06
+        ]
       }
     }
   ]
