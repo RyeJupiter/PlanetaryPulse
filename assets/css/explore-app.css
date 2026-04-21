@@ -2,11 +2,17 @@
 .explorerApp {
   display: grid;
   gap: 18px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.explorerApp * {
+  min-width: 0;
 }
 
 .explorerTop {
   display: grid;
-  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -231,8 +237,9 @@
 /* ── Metric dashboard cards ─────────────────────────────────────────────── */
 .metricDashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
   gap: 18px;
+  min-width: 0;
 }
 
 .metricCard {
@@ -306,6 +313,10 @@
   border: 1px solid rgba(196, 170, 108, 0.36);
   background: rgba(14, 22, 16, 0.55);
   white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metricStatRow {
@@ -340,13 +351,14 @@
 .metricStatValue {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 8px;
   font-family: var(--font-display);
   font-size: 19px;
   font-weight: 500;
   color: rgba(240, 250, 225, 0.98);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  word-break: break-word;
 }
 
 .metricStatFoot {
@@ -414,12 +426,14 @@
 
 .metricFooter {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
   font-size: 11px;
   color: rgba(220, 196, 140, 0.62);
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
+  word-break: break-word;
 }
 
 .metricEmpty {
@@ -440,9 +454,23 @@
 @media (max-width: 720px) {
   .metricStatRow {
     grid-template-columns: repeat(2, 1fr);
+    padding: 10px 10px 8px;
+    gap: 8px;
+  }
+  .metricStatValue {
+    font-size: 16px;
   }
   .metricHeader {
     flex-direction: column;
     gap: 8px;
+  }
+  .metricCard {
+    padding: 14px 14px 16px;
+  }
+  .explorerCard {
+    padding: 14px;
+  }
+  .metricDashboard {
+    gap: 12px;
   }
 }

@@ -194,6 +194,32 @@
       return frame;
     });
 
+    // Prev/next arrow buttons overlaid on the stage.
+    const prevBtn = document.createElement("button");
+    prevBtn.type = "button";
+    prevBtn.className = "galleryNav galleryNavPrev";
+    prevBtn.setAttribute("aria-label", "Previous image");
+    prevBtn.innerHTML = "<span aria-hidden=\"true\">‹</span>";
+    prevBtn.addEventListener("click", () => {
+      showFrame(currentIdx - 1);
+      restartTimer();
+    });
+
+    const nextBtn = document.createElement("button");
+    nextBtn.type = "button";
+    nextBtn.className = "galleryNav galleryNavNext";
+    nextBtn.setAttribute("aria-label", "Next image");
+    nextBtn.innerHTML = "<span aria-hidden=\"true\">›</span>";
+    nextBtn.addEventListener("click", () => {
+      showFrame(currentIdx + 1);
+      restartTimer();
+    });
+
+    if (images.length > 1) {
+      stage.appendChild(prevBtn);
+      stage.appendChild(nextBtn);
+    }
+
     // Dots — one per image, clickable to jump.
     const dots = document.createElement("div");
     dots.className = "galleryDots";
@@ -210,6 +236,20 @@
       return dot;
     });
     gallery.appendChild(dots);
+
+    // Touch swipe support — reads as native on phones.
+    let touchStartX = null;
+    stage.addEventListener("touchstart", (ev) => {
+      if (ev.touches.length === 1) touchStartX = ev.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener("touchend", (ev) => {
+      if (touchStartX == null) return;
+      const dx = (ev.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+      touchStartX = null;
+      if (Math.abs(dx) < 40) return;
+      showFrame(currentIdx + (dx < 0 ? 1 : -1));
+      restartTimer();
+    });
 
     let currentIdx = 0;
     let timer = null;
@@ -294,24 +334,8 @@
       wrapper.appendChild(summary);
     }
 
-    if (entity._pp_size) {
-      const size = document.createElement("div");
-      size.className = "detailSize";
-      size.innerHTML = `<span class="detailSizeLabel">Scale</span><span class="detailSizeValue">${entity._pp_size}</span>`;
-      wrapper.appendChild(size);
-    }
-
-    if (entity._pp_tags && entity._pp_tags.length) {
-      const tagWrap = document.createElement("div");
-      tagWrap.className = "detailMeta";
-      entity._pp_tags.forEach((tag) => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.textContent = tag;
-        tagWrap.appendChild(chip);
-      });
-      wrapper.appendChild(tagWrap);
-    }
+    // Scale pill and tag chips intentionally not rendered — the highlights
+    // bullets already cover scale, and the tag cloud crowds the panel.
 
     if (entity._pp_links && entity._pp_links.length) {
       const divider = document.createElement("div");

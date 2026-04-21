@@ -1,8 +1,9 @@
 const ORNL_BASE = "https://modis.ornl.gov/rst/api/v1";
 
-// ORNL DAAC caps each request at 10 composite dates. compositeDays × 10 = max
-// span we can ask for in one hop; chunk longer spans into sequential requests.
-const ORNL_MAX_COMPOSITES = 10;
+// ORNL DAAC caps each request at 10 composite dates, but composite boundaries
+// don't always line up with calendar days so asking for 10*compositeDays can
+// cross into an 11th composite. Use 8 for reliable headroom.
+const ORNL_MAX_COMPOSITES = 8;
 
 // MOD13Q1.061 = NDVI, 250m, 16-day composite
 // MOD11A2.061 = LST,  1km,  8-day composite
@@ -110,13 +111,30 @@ async function fetchBandChunked(config, band, lat, lon, startDate, endDate) {
   // metrics already run in parallel at the caller, so we still get 4
   // concurrent streams which keeps us under the 10-per-host limit with
   // headroom for retries.
+  //
+  // Individual chunk failures are treated as empty rather than fatal so a
+  // range ending in the current week (where the latest composite hasn't
+  // been published yet) still returns all the months that DO exist.
   const chunks = chunkOrnlDateRange(startDate, endDate, config.compositeDays);
   const merged = [];
   for (const [chunkStart, chunkEnd] of chunks) {
-    const payload = await fetchBand(config.product, band, lat, lon, chunkStart, chunkEnd);
-    if (Array.isArray(payload?.subset)) merged.push(...payload.subset);
+    try {
+      const payload = await fetchBand(config.product, band, lat, lon, chunkStart, chunkEnd);
+      if (Array.isArray(payload?.subset)) merged.push(...payload.subset);
+    } catch (err) {
+      if (isEmptyRangeError(err)) {
+        // Gracefully skip: ORNL has no composite for this window yet.
+        continue;
+      }
+      throw err;
+    }
   }
   return merged;
+}
+
+function isEmptyRangeError(err) {
+  const msg = String(err?.message || "");
+  return /no data available/i.test(msg);
 }
 
 async function fetchBand(product, band, lat, lon, startDate, endDate) {
@@ -127,7 +145,25 @@ async function fetchBand(product, band, lat, lon, startDate, endDate) {
     `&kmAboveBelow=0&kmLeftRight=0` +
     `&band=${encodeURIComponent(band)}`;
 
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  // 12-second per-request timeout so a single slow ORNL call can't stall the
+  // whole monthly series — we'd rather surface a partial failure to the user.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+  } catch (err) {
+    clearTimeout(timeout);
+    if (err.name === "AbortError") {
+      throw new Error(`ORNL DAAC ${product} ${band} request timed out after 12s`);
+    }
+    throw err;
+  }
+  clearTimeout(timeout);
+
   if (!res.ok) {
     const msg = await res.text().catch(() => res.statusText);
     throw new Error(`ORNL DAAC ${product} ${band} request failed (${res.status}): ${msg}`);
