@@ -249,15 +249,27 @@
       wrapper.appendChild(gallery);
     }
 
-    const summary = document.createElement("div");
-    summary.className = "muted";
-    summary.textContent = entity._pp_summary || "No summary provided yet.";
-    wrapper.appendChild(summary);
+    if (entity._pp_highlights && entity._pp_highlights.length) {
+      const highlights = document.createElement("ul");
+      highlights.className = "detailHighlights";
+      entity._pp_highlights.forEach((line) => {
+        const li = document.createElement("li");
+        li.className = "detailHighlight";
+        li.textContent = line;
+        highlights.appendChild(li);
+      });
+      wrapper.appendChild(highlights);
+    } else if (entity._pp_summary) {
+      const summary = document.createElement("p");
+      summary.className = "detailSummary";
+      summary.textContent = entity._pp_summary;
+      wrapper.appendChild(summary);
+    }
 
     if (entity._pp_size) {
       const size = document.createElement("div");
-      size.className = "muted";
-      size.textContent = "Size: " + entity._pp_size;
+      size.className = "detailSize";
+      size.innerHTML = `<span class="detailSizeLabel">Scale</span><span class="detailSizeValue">${entity._pp_size}</span>`;
       wrapper.appendChild(size);
     }
 
@@ -509,7 +521,12 @@
           const images = props.images && props.images.getValue ? props.images.getValue() : [];
           const videos = props.videos && props.videos.getValue ? props.videos.getValue() : [];
 
+          const highlights =
+            props.highlights && props.highlights.getValue ? props.highlights.getValue() : null;
           entity._pp_summary = summary;
+          entity._pp_highlights = Array.isArray(highlights)
+            ? highlights.map((h) => String(h).trim()).filter(Boolean)
+            : [];
           entity._pp_size = size;
           entity._pp_tags = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
           entity._pp_links = normalizeLinks(links);

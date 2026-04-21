@@ -6,7 +6,15 @@
       "properties": {
         "id": "alb-001",
         "name": "Al Baydha Project",
-        "summary": "Fifty kilometers south of Mecca, in the rocky Hijaz foothills, a permaculturist-led team transformed 2,400 hectares of overgrazed desert into a working savannah — without irrigation. Founded in 2009 by Neal Spackman, Princess Haifa Al-Faisal, and Mona Hamdy, Al Baydha reads the landscape for runoff and slows it down: rock terraces, gabion check dams, and swales catch rare rain and hold it in the soil long enough for native and drought-tolerant species to take root. Once the first generation of trees establishes, the cycle reinforces itself — more canopy means cooler soil, more infiltration, more seed bank, more canopy. Even after active work ended, the land has kept greening on its own.",
+        "summary": "Desert regreening at Al Baydha, Saudi Arabia — a self-reinforcing savannah revived without irrigation.",
+        "highlights": [
+          "50 km south of Mecca in the rocky Hijaz foothills, Saudi Arabia",
+          "2,400 hectares of overgrazed desert revived into a working savannah",
+          "Founded in 2009 by Neal Spackman, Princess Haifa Al-Faisal, and Mona Hamdy",
+          "Rock terraces, gabion check dams, and swales catch and hold rare rainfall",
+          "Native and drought-tolerant trees establish without irrigation",
+          "Canopy begets cooler soil, more infiltration, more seed bank, more canopy — greening continues on its own"
+        ],
         "size": "2,400 ha",
         "images": [
           {
