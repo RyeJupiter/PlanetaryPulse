@@ -1534,3 +1534,210 @@ li,
 }
 
 
+
+/* ── First-visit welcome overlay ─────────────────────────────────────────── */
+html.welcomeLock,
+html.welcomeLock body {
+  overflow: hidden;
+}
+
+.welcomeOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: clamp(24px, 6vh, 72px);
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  pointer-events: auto;
+}
+
+.welcomeOverlayVisible {
+  opacity: 1;
+}
+
+.welcomeOverlayFading {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.welcomeBackdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(25, 60, 85, 0.72) 0%, rgba(8, 15, 24, 0.92) 55%, rgba(4, 8, 14, 0.97) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.welcomePanel {
+  position: relative;
+  width: min(720px, 100%);
+  padding: clamp(22px, 3.2vw, 36px) clamp(26px, 3.6vw, 44px);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(12, 22, 32, 0.92) 0%, rgba(8, 14, 22, 0.94) 100%);
+  border: 1px solid rgba(118, 255, 193, 0.22);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.45) inset,
+    0 0 60px rgba(118, 255, 193, 0.08) inset;
+  transform: translateY(12px);
+  transition: transform 0.7s ease, padding 0.55s ease;
+}
+
+.welcomeOverlayVisible .welcomePanel {
+  transform: translateY(0);
+}
+
+.welcomePanelCollapsed {
+  padding-block: clamp(16px, 2.2vw, 22px);
+}
+
+.welcomeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.welcomeEyebrow {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(118, 255, 193, 0.78);
+}
+
+.welcomeSkip {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(230, 240, 246, 0.72);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.welcomeSkip:hover {
+  border-color: rgba(118, 255, 193, 0.55);
+  color: rgba(236, 255, 245, 0.95);
+  background: rgba(118, 255, 193, 0.06);
+}
+
+.welcomeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.welcomeTitle,
+.welcomeSubtitle,
+.welcomeCopy {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.welcomeStepVisible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.welcomeTitle {
+  font-size: clamp(26px, 3.6vw, 38px);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(240, 255, 250, 0.98);
+  margin: 0;
+}
+
+.welcomeSubtitle {
+  font-size: clamp(15px, 1.5vw, 18px);
+  color: rgba(186, 216, 226, 0.92);
+  margin: 0;
+}
+
+.welcomeCopy {
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.55;
+  color: rgba(216, 230, 240, 0.88);
+  margin: 0;
+}
+
+.welcomeCopy strong {
+  color: rgba(118, 255, 193, 0.98);
+  font-weight: 600;
+}
+
+.welcomeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.welcomeProgressTrack {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.welcomeProgress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(118, 255, 193, 0.85) 0%, rgba(148, 220, 255, 0.85) 100%);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.welcomeCta {
+  background: linear-gradient(135deg, rgba(118, 255, 193, 0.22) 0%, rgba(148, 220, 255, 0.22) 100%);
+  color: rgba(236, 255, 245, 0.96);
+  border: 1px solid rgba(118, 255, 193, 0.55);
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.welcomeCtaVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.welcomeCta:hover {
+  box-shadow: 0 0 0 3px rgba(118, 255, 193, 0.18), 0 12px 28px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(118, 255, 193, 0.32) 0%, rgba(148, 220, 255, 0.32) 100%);
+}
+
+@media (max-width: 640px) {
+  .welcomeOverlay {
+    align-items: stretch;
+  }
+  .welcomePanel {
+    border-radius: 16px;
+  }
+  .welcomeFooter {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .welcomeCta {
+    width: 100%;
+  }
+}

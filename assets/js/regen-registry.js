@@ -591,7 +591,40 @@
           setDetail(buildDetail(entity));
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+        // Expose a programmatic selector so other modules (e.g. the first-visit
+        // welcome sequence) can highlight a project and open its detail panel.
+        window.__pp_selectEntityById = function selectEntityById(id) {
+          const target = entities.find((ent) => {
+            const propId = ent.properties?.id?.getValue?.();
+            return propId === id;
+          });
+          if (!target) return false;
+
+          if (selected.entity && selected.entity !== target) {
+            if (selected.entity.billboard) {
+              selected.entity.billboard.image = sproutIcons.default;
+              selected.entity.billboard.scale = 1;
+            }
+            if (selected.entity.polygon) {
+              selected.entity.polygon.outlineColor = Cesium.Color.fromCssColorString("#6aa0c7");
+            }
+          }
+
+          selected.entity = target;
+          if (target.billboard) {
+            target.billboard.image = sproutIcons.selected;
+            target.billboard.scale = selectedStyle.billboardScale;
+          }
+          if (target.polygon) {
+            target.polygon.outlineColor = selectedStyle.polygonOutline;
+          }
+
+          setDetail(buildDetail(target));
+          return true;
+        };
+
         updateEmptyDetail();
+        document.dispatchEvent(new CustomEvent("earthpulse:registry-ready"));
       })
       .catch(() => {
         updateEmptyDetail();
