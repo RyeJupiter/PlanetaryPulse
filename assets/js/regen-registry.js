@@ -339,11 +339,27 @@
 
     // "See satellite history" CTA — takes the user to the Explore view
     // centered on this project, with the prefetched NDVI + LST series
-    // loaded instantly (covers years of signal, no live API call needed).
+    // loaded instantly when available. Include lat/lon/start/end as a
+    // fallback so Explore can still show the right place (and fire a live
+    // load) if the prefetched JSON isn't there yet.
     if (entity._pp_id) {
+      const params = new URLSearchParams({ project: entity._pp_id });
+      if (Number.isFinite(entity._pp_lat)) params.set("lat", entity._pp_lat.toFixed(4));
+      if (Number.isFinite(entity._pp_lon)) params.set("lon", entity._pp_lon.toFixed(4));
+      // Narrow default window for the live fallback so it stays under budget.
+      // If the project has an intervention_start in the MODIS era, use the
+      // history_start (a few years earlier) through today; otherwise let
+      // Explore's own defaults take over.
+      const yearAgo = new Date();
+      yearAgo.setUTCMonth(yearAgo.getUTCMonth() - 13);
+      const liveStart = `${yearAgo.getUTCFullYear()}-${String(yearAgo.getUTCMonth() + 1).padStart(2, "0")}`;
+      params.set("start", liveStart);
+      const now = new Date();
+      params.set("end", `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`);
+
       const cta = document.createElement("a");
       cta.className = "btn detailCta";
-      cta.href = `explore.html?project=${encodeURIComponent(entity._pp_id)}`;
+      cta.href = `explore.html?${params.toString()}`;
       cta.rel = "noopener";
       const interventionTag = entity._pp_intervention_start
         ? ` (since ${entity._pp_intervention_start})`
@@ -597,9 +613,45 @@
               : null;
           const historyNote =
             props.history_note && props.history_note.getValue ? props.history_note.getValue() : null;
+          const historyStart =
+            props.history_start && props.history_start.getValue
+              ? props.history_start.getValue()
+              : null;
           entity._pp_id = projectId;
           entity._pp_intervention_start = interventionStart;
           entity._pp_history_note = historyNote;
+          entity._pp_history_start = historyStart;
+
+          // Compute a representative lat/lon for the CTA deep-link so Explore
+          // can center the map even if the prefetched history isn't available.
+          try {
+            if (entity.position && typeof entity.position.getValue === "function") {
+              const now = Cesium.JulianDate.now();
+              const cart = entity.position.getValue(now);
+              if (cart) {
+                const carto = Cesium.Cartographic.fromCartesian(cart);
+                entity._pp_lat = Cesium.Math.toDegrees(carto.latitude);
+                entity._pp_lon = Cesium.Math.toDegrees(carto.longitude);
+              }
+            }
+            if ((entity._pp_lat == null || entity._pp_lon == null) && entity.polygon) {
+              const hierarchy = entity.polygon.hierarchy?.getValue?.(Cesium.JulianDate.now());
+              const positions = hierarchy?.positions || [];
+              if (positions.length) {
+                let lat = 0;
+                let lon = 0;
+                positions.forEach((p) => {
+                  const c = Cesium.Cartographic.fromCartesian(p);
+                  lat += Cesium.Math.toDegrees(c.latitude);
+                  lon += Cesium.Math.toDegrees(c.longitude);
+                });
+                entity._pp_lat = lat / positions.length;
+                entity._pp_lon = lon / positions.length;
+              }
+            }
+          } catch (err) {
+            /* leave lat/lon undefined; CTA will fall through gracefully */
+          }
           entity._pp_summary = summary;
           entity._pp_highlights = Array.isArray(highlights)
             ? highlights.map((h) => String(h).trim()).filter(Boolean)

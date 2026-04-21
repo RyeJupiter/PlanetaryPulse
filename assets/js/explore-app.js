@@ -720,9 +720,12 @@
     }
   }
 
-  // URL-driven presets. Two modes:
-  //   ?project=<id>      → load prefetched /public/data/histories/<id>.json
-  //   ?lat=&lon=&start=&end=&metrics=  → prefill and trigger a live load
+  // URL-driven presets.
+  //   ?project=<id>       → try /public/data/histories/<id>.json first
+  //   ?lat=&lon=&start=&end=&metrics=
+  //                       → also applied, either as the primary source or
+  //                         as a fallback if the prefetched history is
+  //                         missing (Explore triggers a live load).
   function applyUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const projectId = params.get("project");
@@ -739,29 +742,47 @@
       if (state.metrics.size === 0) state.metrics = new Set(["ndvi", "lst"]);
     }
 
-    if (projectId) {
-      loadPrefetchedProject(projectId);
-      return true;
-    }
-
-    let changed = false;
+    let coordsChanged = false;
     if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
       state.lat = lat;
-      changed = true;
+      coordsChanged = true;
     }
     if (Number.isFinite(lon) && lon >= -180 && lon <= 180) {
       state.lon = lon;
-      changed = true;
+      coordsChanged = true;
     }
     if (start && /^\d{4}-\d{2}$/.test(start)) {
       state.startMonth = start;
-      changed = true;
+      coordsChanged = true;
     }
     if (end && /^\d{4}-\d{2}$/.test(end)) {
       state.endMonth = end;
-      changed = true;
+      coordsChanged = true;
     }
-    return changed;
+
+    // Reflect any coord preset in the controls + map immediately so the user
+    // sees the right place even before the project history arrives.
+    if (coordsChanged) {
+      const latInput = document.getElementById("lat");
+      const lonInput = document.getElementById("lon");
+      const startSelect = document.getElementById("start-month");
+      const endSelect = document.getElementById("end-month");
+      if (latInput) latInput.value = state.lat.toFixed(4);
+      if (lonInput) lonInput.value = state.lon.toFixed(4);
+      if (startSelect) startSelect.value = state.startMonth;
+      if (endSelect) endSelect.value = state.endMonth;
+    }
+
+    return { projectId, coordsChanged };
+  }
+
+  async function tryLoadProjectOrFallback(projectId) {
+    const loaded = await loadPrefetchedProject(projectId);
+    if (!loaded) {
+      // Prefetch JSON isn't available yet — kick off a live load so the
+      // user at least sees the recent window of data for this site.
+      loadSeries();
+    }
   }
 
   async function loadPrefetchedProject(projectId) {
@@ -819,6 +840,10 @@
       if (endSelect) endSelect.value = state.endMonth;
       centerMap();
       syncMapMarker();
+      updateStatus();
+      updateCharts();
+      state.loading = false;
+      return true;
     } catch (error) {
       console.warn("[Explore] prefetched project load failed:", error);
       state.banner =
@@ -826,22 +851,26 @@
         `Could not load prefetched history for ${projectId}. Try widening the date range and pressing Load.`;
       state.bannerLevel = "warning";
       state.hasLoaded = false;
-    } finally {
       state.loading = false;
       updateStatus();
       updateCharts();
+      return false;
     }
   }
 
   renderShell();
   bindControls();
   initMap();
-  const hasPreset = applyUrlParams();
+  const { projectId, coordsChanged } = applyUrlParams();
   updateStatus();
   updateCharts();
-  // When the preset is coord-based (not a project), kick off a live load
-  // automatically so the user doesn't have to hit the button after a deep link.
-  if (hasPreset && !new URLSearchParams(window.location.search).get("project")) {
+
+  if (projectId) {
+    // Try prefetched first. If it's missing, fall back to a live load (which
+    // uses the lat/lon/start/end the CTA included as safety rails).
+    tryLoadProjectOrFallback(projectId);
+  } else if (coordsChanged) {
+    // Pure coord deep link: fire a live load right away.
     loadSeries();
   }
 })();
