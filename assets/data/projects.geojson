@@ -377,21 +377,6 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "slm-001",
-        "name": "Sixto Luna Mangrove Agroforestry",
-        "summary": "Dominican Republic mangrove agroforestry work centered on coastal regeneration, mixed planting, and estuary-edge stewardship. EarthPulse's link to the project came through Andrew Millison and Envision in Costa Rica, but the site itself is in the Dominican Republic.",
-        "size": "Dominican Republic coastal site",
-        "images": [],
-        "tags": "dominican-republic,mangrove,agroforestry,coastal-resilience,estuary"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-70.1627, 18.7357]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "id": "wfp-001",
         "name": "UN World Food Programme Sahel Half-Moon Regreening",
         "summary": "Large-scale land restoration in the Sahel using half-moon water-harvesting earthworks to capture runoff, restore vegetation, improve fodder and food security, and support aquifer recharge.",

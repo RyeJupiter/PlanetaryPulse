@@ -97,20 +97,48 @@
     const ctx = canvas.getContext("2d");
     if (!ctx) return "";
 
-    const glow = ctx.createRadialGradient(size / 2, size / 2, size * 0.08, size / 2, size / 2, size * 0.48);
-    glow.addColorStop(0, isSelected ? "rgba(255, 246, 218, 0.95)" : "rgba(250, 243, 222, 0.72)");
-    glow.addColorStop(1, "rgba(250, 243, 222, 0)");
-    ctx.fillStyle = glow;
+    const cx = size / 2;
+    const cy = size / 2;
+    const borderWidth = Math.max(4, size * 0.1);
+    const outerRadius = size / 2 - borderWidth / 2 - 1;
+    const innerRadius = outerRadius - borderWidth / 2;
+
+    // Dark filled disc — reads as a clear shape against any basemap.
+    ctx.fillStyle = isSelected ? "rgba(18, 36, 24, 0.96)" : "rgba(14, 24, 18, 0.94)";
     ctx.beginPath();
-    ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2);
+    ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2);
     ctx.fill();
 
+    // Inner glow so the sprout emoji pops above the disc fill.
+    const glow = ctx.createRadialGradient(cx, cy, innerRadius * 0.08, cx, cy, innerRadius);
+    glow.addColorStop(0, isSelected ? "rgba(236, 255, 220, 0.55)" : "rgba(220, 244, 208, 0.24)");
+    glow.addColorStop(1, "rgba(14, 24, 18, 0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Thick sage-green ring — the firm border that reads on mobile.
+    ctx.lineWidth = borderWidth;
+    ctx.strokeStyle = isSelected ? "rgba(196, 255, 210, 1)" : "rgba(166, 236, 170, 0.98)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Thin dark outer contour for separation from bright terrain (snow, sand).
+    ctx.lineWidth = Math.max(1.5, size * 0.022);
+    ctx.strokeStyle = "rgba(8, 14, 10, 0.78)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius + borderWidth / 2 + 0.5, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Sprout emoji with a dark stroke for legibility above the disc.
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = `${Math.round(size * 0.62)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+    ctx.font = `${Math.round(size * 0.54)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
     ctx.lineJoin = "round";
-    ctx.lineWidth = Math.max(3, size * 0.06);
-    ctx.strokeStyle = "rgba(16, 18, 14, 0.96)";
+    ctx.lineWidth = Math.max(2.5, size * 0.05);
+    ctx.strokeStyle = "rgba(10, 16, 12, 0.9)";
     ctx.strokeText("\uD83C\uDF31", size / 2, size * 0.56);
     ctx.fillText("\uD83C\uDF31", size / 2, size * 0.56);
 
@@ -548,10 +576,17 @@
           });
 
           if (entity.position) {
+            // Larger on coarse-pointer / narrow viewports so the sprout icons
+            // are a real touch target on phones; desktop keeps the prior size.
+            const isCoarse = window.matchMedia && (
+              window.matchMedia("(pointer: coarse)").matches ||
+              window.matchMedia("(max-width: 720px)").matches
+            );
+            const billboardPx = isCoarse ? 44 : 36;
             entity.billboard = new Cesium.BillboardGraphics({
               image: sproutIcons.default,
-              width: 34,
-              height: 34,
+              width: billboardPx,
+              height: billboardPx,
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
               scale: 1,
             });
