@@ -6,18 +6,26 @@
       "properties": {
         "id": "alb-001",
         "name": "Al Baydha Project",
-        "summary": "Desert regreening with low-tech water harvesting and native species.",
+        "summary": "Fifty kilometers south of Mecca, in the rocky Hijaz foothills, a permaculturist-led team transformed 2,400 hectares of overgrazed desert into a working savannah — without irrigation. Founded in 2009 by Neal Spackman, Princess Haifa Al-Faisal, and Mona Hamdy, Al Baydha reads the landscape for runoff and slows it down: rock terraces, gabion check dams, and swales catch rare rain and hold it in the soil long enough for native and drought-tolerant species to take root. Once the first generation of trees establishes, the cycle reinforces itself — more canopy means cooler soil, more infiltration, more seed bank, more canopy. Even after active work ended, the land has kept greening on its own.",
         "size": "2,400 ha",
         "images": [
           {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/9/97/Al_Baydha_terraces_before.jpg",
+            "url": "https://upload.wikimedia.org/wikipedia/commons/7/76/Al_Baydha_terraces_before.jpg",
             "credit": "Wikimedia Commons",
+            "alt": "Al Baydha rocky foothills before terracing — dry, bare slopes",
             "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_before.jpg"
           },
           {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Al_Baydha_terraces_after.jpg",
+            "url": "https://upload.wikimedia.org/wikipedia/commons/7/75/Al_Baydha_terraces_after.jpg",
             "credit": "Wikimedia Commons",
+            "alt": "Al Baydha terraces with early vegetation — after rainwater harvesting",
             "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_after.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Al_Baydha_terraces_green.jpg",
+            "credit": "Wikimedia Commons",
+            "alt": "Al Baydha site greened over — trees and groundcover established on the terraced slopes",
+            "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_green.jpg"
           }
         ],
         "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",

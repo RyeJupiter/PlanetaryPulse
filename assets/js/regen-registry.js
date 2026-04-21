@@ -117,6 +117,124 @@
     return canvas.toDataURL("image/png");
   }
 
+  function buildRotatingGallery(images, projectName) {
+    const gallery = document.createElement("div");
+    gallery.className = "galleryRotator";
+
+    const stage = document.createElement("div");
+    stage.className = "galleryStage";
+    gallery.appendChild(stage);
+
+    // Pre-render all frames so transitions are instant after first load.
+    const frames = images.map((item, idx) => {
+      const frame = document.createElement("figure");
+      frame.className = idx === 0 ? "galleryFrame galleryFrameActive" : "galleryFrame";
+
+      const img = document.createElement("img");
+      img.src = item.url;
+      img.alt = item.alt || `${projectName} — image ${idx + 1}`;
+      img.loading = idx === 0 ? "eager" : "lazy";
+      img.decoding = "async";
+      img.draggable = false;
+      // On broken image, hide the frame so we never show a 404 bitmap.
+      img.addEventListener("error", () => {
+        frame.classList.add("galleryFrameBroken");
+      });
+      frame.appendChild(img);
+
+      if (item.credit || item.source) {
+        const caption = document.createElement("figcaption");
+        caption.className = "galleryCaption";
+        if (item.credit) {
+          const c = document.createElement("span");
+          c.textContent = item.credit;
+          caption.appendChild(c);
+        }
+        if (item.source) {
+          const link = document.createElement("a");
+          link.className = "link";
+          link.href = item.source;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = "Source";
+          caption.appendChild(link);
+        }
+        frame.appendChild(caption);
+      }
+
+      stage.appendChild(frame);
+      return frame;
+    });
+
+    // Dots — one per image, clickable to jump.
+    const dots = document.createElement("div");
+    dots.className = "galleryDots";
+    const dotEls = images.map((_, idx) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = idx === 0 ? "galleryDot galleryDotActive" : "galleryDot";
+      dot.setAttribute("aria-label", `Show image ${idx + 1}`);
+      dot.addEventListener("click", () => {
+        showFrame(idx);
+        restartTimer();
+      });
+      dots.appendChild(dot);
+      return dot;
+    });
+    gallery.appendChild(dots);
+
+    let currentIdx = 0;
+    let timer = null;
+    const ROTATION_MS = 4500;
+
+    function showFrame(idx) {
+      if (idx === currentIdx) return;
+      frames[currentIdx].classList.remove("galleryFrameActive");
+      dotEls[currentIdx].classList.remove("galleryDotActive");
+      currentIdx = (idx + frames.length) % frames.length;
+      frames[currentIdx].classList.add("galleryFrameActive");
+      dotEls[currentIdx].classList.add("galleryDotActive");
+    }
+
+    function advance() {
+      // Skip any frames that failed to load so we never dwell on a broken tile.
+      let next = currentIdx;
+      for (let step = 0; step < frames.length; step += 1) {
+        next = (next + 1) % frames.length;
+        if (!frames[next].classList.contains("galleryFrameBroken")) break;
+      }
+      showFrame(next);
+    }
+
+    function startTimer() {
+      if (frames.length <= 1) return;
+      timer = window.setInterval(advance, ROTATION_MS);
+    }
+
+    function restartTimer() {
+      if (timer) window.clearInterval(timer);
+      startTimer();
+    }
+
+    if (frames.length > 1) {
+      startTimer();
+      // Pause on hover so viewers can read a caption.
+      gallery.addEventListener("mouseenter", () => {
+        if (timer) {
+          window.clearInterval(timer);
+          timer = null;
+        }
+      });
+      gallery.addEventListener("mouseleave", () => {
+        if (!timer) startTimer();
+      });
+    } else {
+      dots.hidden = true;
+    }
+
+    return gallery;
+  }
+
   function buildDetail(entity) {
     const wrapper = document.createElement("div");
     wrapper.className = "detailCard";
@@ -127,40 +245,8 @@
     wrapper.appendChild(title);
 
     if (entity._pp_images && entity._pp_images.length) {
-      const grid = document.createElement("div");
-      grid.className = "imageGrid";
-      entity._pp_images.slice(0, 3).forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "imageCard";
-
-        const img = document.createElement("img");
-        img.src = item.url;
-        img.alt = item.alt || `${entity.name} landscape`;
-        img.loading = "lazy";
-        card.appendChild(img);
-
-        if (item.credit || item.source) {
-          const caption = document.createElement("div");
-          caption.className = "imageCaption";
-          if (item.credit) {
-            caption.appendChild(document.createTextNode(item.credit));
-            if (item.source) caption.appendChild(document.createTextNode(" - "));
-          }
-          if (item.source) {
-            const link = document.createElement("a");
-            link.className = "link";
-            link.href = item.source;
-            link.target = "_blank";
-            link.rel = "noopener";
-            link.textContent = "Source";
-            caption.appendChild(link);
-          }
-          card.appendChild(caption);
-        }
-
-        grid.appendChild(card);
-      });
-      wrapper.appendChild(grid);
+      const gallery = buildRotatingGallery(entity._pp_images, entity.name);
+      wrapper.appendChild(gallery);
     }
 
     const summary = document.createElement("div");
