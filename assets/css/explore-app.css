@@ -1,96 +1,78 @@
+/* ── Explore: layout ─────────────────────────────────────────────────────── */
 .explorerApp {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .explorerTop {
   display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 18px;
 }
 
 .explorerCard {
   background:
-    radial-gradient(circle at top right, rgba(156, 186, 108, 0.16), transparent 34%),
-    linear-gradient(180deg, rgba(248, 243, 223, 0.96), rgba(235, 227, 196, 0.92));
-  border: 1px solid rgba(117, 143, 93, 0.24);
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 16px 34px rgba(118, 97, 46, 0.12);
+    radial-gradient(circle at top right, rgba(118, 255, 193, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(14, 22, 34, 0.88) 0%, rgba(10, 16, 26, 0.94) 100%);
+  border: 1px solid rgba(122, 172, 214, 0.18);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow:
+    0 24px 60px rgba(3, 6, 14, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.25) inset;
+  color: var(--text);
 }
 
 .explorerCardTitle {
-  margin: 0 0 10px;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  color: #284028;
+  margin: 0 0 12px;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(135, 236, 255, 0.75);
 }
 
 .explorerControlGrid {
   display: grid;
-  gap: 10px;
-}
-
-.explorerCredentialHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.explorerCredentialTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(120, 146, 83, 0.32);
-  background: linear-gradient(135deg, rgba(154, 184, 107, 0.16), rgba(214, 174, 102, 0.18));
-  color: var(--accent);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.explorerHelp {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--muted);
+  gap: 12px;
 }
 
 .explorerRow {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .explorerSplit {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .explorerLabel {
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(194, 211, 234, 0.6);
 }
 
 .explorerInput,
 .explorerSelect {
   width: 100%;
-  border-radius: 12px;
-  border: 1px solid rgba(117, 143, 93, 0.24);
-  background: rgba(250, 246, 229, 0.9);
+  border-radius: 10px;
+  border: 1px solid rgba(122, 172, 214, 0.22);
+  background: rgba(8, 14, 22, 0.72);
   color: var(--text);
-  padding: 8px 10px;
+  padding: 9px 11px;
   font-size: 13px;
-  box-shadow: inset 0 1px 0 rgba(255, 250, 236, 0.78);
+  font-family: var(--font-sans);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .explorerInput:focus,
 .explorerSelect:focus {
   outline: none;
-  border-color: rgba(111, 145, 84, 0.54);
-  box-shadow: 0 0 0 3px rgba(156, 186, 108, 0.18);
+  border-color: rgba(135, 236, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(135, 236, 255, 0.12);
 }
 
 .explorerMetricList {
@@ -102,43 +84,56 @@
 .explorerMetric {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 8px;
+  padding: 7px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(117, 143, 93, 0.22);
-  background: rgba(244, 238, 214, 0.88);
+  border: 1px solid rgba(122, 172, 214, 0.22);
+  background: rgba(8, 14, 22, 0.6);
   font-size: 12px;
-  color: var(--muted);
+  letter-spacing: 0.04em;
+  color: rgba(216, 230, 240, 0.88);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.explorerMetric:hover {
+  border-color: rgba(135, 236, 255, 0.42);
+}
+
+.explorerMetric input[type="checkbox"] {
+  accent-color: var(--accent-green, #90ffd1);
 }
 
 .explorerBtn {
-  border: 1px solid rgba(117, 143, 93, 0.34);
-  background: linear-gradient(135deg, rgba(111, 145, 84, 0.18), rgba(214, 174, 102, 0.2));
+  border: 1px solid rgba(118, 255, 193, 0.42);
+  background: linear-gradient(135deg, rgba(118, 255, 193, 0.18) 0%, rgba(135, 236, 255, 0.18) 100%);
   color: var(--text);
   border-radius: 12px;
-  padding: 9px 12px;
+  padding: 10px 14px;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 10px 24px rgba(118, 97, 46, 0.1);
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 12px;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
 .explorerBtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(111, 145, 84, 0.44);
-  box-shadow: 0 14px 28px rgba(118, 97, 46, 0.14);
+  background: linear-gradient(135deg, rgba(118, 255, 193, 0.28) 0%, rgba(135, 236, 255, 0.28) 100%);
+  border-color: rgba(118, 255, 193, 0.62);
+  box-shadow: 0 14px 28px rgba(3, 6, 14, 0.42);
 }
 
+/* ── Map viewer ─────────────────────────────────────────────────────────── */
 .viewerStage {
   position: relative;
-  min-height: 280px;
-  height: 280px;
-  border-radius: 18px;
+  min-height: 320px;
+  height: 100%;
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(117, 143, 93, 0.24);
-  background:
-    radial-gradient(circle at top, rgba(166, 193, 117, 0.16), transparent 32%),
-    linear-gradient(180deg, rgba(239, 232, 206, 0.88), rgba(221, 214, 183, 0.88));
+  border: 1px solid rgba(122, 172, 214, 0.18);
+  background: rgba(4, 8, 14, 0.72);
 }
 
 .viewerMap {
@@ -152,113 +147,39 @@
 
 .viewerHint {
   position: absolute;
-  left: 14px;
+  left: 12px;
   top: 12px;
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(216, 230, 240, 0.78);
   z-index: 2;
-  background: rgba(246, 239, 217, 0.82);
-  border: 1px solid rgba(117, 143, 93, 0.22);
+  background: rgba(8, 14, 22, 0.78);
+  border: 1px solid rgba(122, 172, 214, 0.3);
   border-radius: 999px;
-  padding: 4px 8px;
+  padding: 5px 10px;
+  backdrop-filter: blur(6px);
 }
 
 .viewerStatus {
   position: absolute;
-  right: 14px;
+  right: 12px;
   top: 12px;
   z-index: 2;
-  color: var(--muted);
+  color: rgba(216, 230, 240, 0.9);
   font-size: 11px;
-  background: rgba(246, 239, 217, 0.82);
-  border: 1px solid rgba(117, 143, 93, 0.22);
+  font-variant-numeric: tabular-nums;
+  background: rgba(8, 14, 22, 0.78);
+  border: 1px solid rgba(122, 172, 214, 0.3);
   border-radius: 999px;
-  padding: 4px 8px;
-}
-
-.explorerBottom {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-.chartCard {
-  background:
-    radial-gradient(circle at top right, rgba(152, 184, 103, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(248, 243, 223, 0.96), rgba(235, 227, 196, 0.92));
-  border: 1px solid rgba(117, 143, 93, 0.22);
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 16px 34px rgba(118, 97, 46, 0.1);
-}
-
-.chartHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.chartTitle {
-  margin: 0;
-  font-weight: 600;
-  font-size: 14px;
-  color: #284028;
-}
-
-.chartMeta {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.chartSvg {
-  width: 100%;
-  height: 180px;
-  display: block;
-}
-
-.chartEmpty {
-  color: var(--muted);
-  font-size: 12px;
-  padding: 24px 4px;
-}
-
-.explorerStatus {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.explorerBanner {
-  border-radius: 12px;
-  border: 1px solid rgba(117, 143, 93, 0.24);
-  background: rgba(246, 240, 219, 0.88);
-  padding: 10px 12px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.explorerBanner.warning {
-  border-color: rgba(181, 125, 56, 0.36);
-  background: rgba(242, 226, 195, 0.94);
-  color: #7b5224;
-}
-
-.explorerBanner.error {
-  border-color: rgba(163, 86, 65, 0.34);
-  background: rgba(245, 220, 212, 0.92);
-  color: #7c392d;
-}
-
-.explorerBanner.info {
-  border-color: rgba(117, 143, 93, 0.3);
-  background: rgba(230, 238, 212, 0.92);
-  color: #31513a;
+  padding: 5px 10px;
+  backdrop-filter: blur(6px);
 }
 
 .viewerMap .maplibregl-control-container .maplibregl-ctrl-group {
-  background: rgba(247, 241, 219, 0.92);
-  border: 1px solid rgba(117, 143, 93, 0.22);
-  box-shadow: 0 12px 28px rgba(118, 97, 46, 0.12);
+  background: rgba(10, 16, 26, 0.9);
+  border: 1px solid rgba(122, 172, 214, 0.24);
+  box-shadow: 0 12px 28px rgba(3, 6, 14, 0.5);
 }
 
 .viewerMap .maplibregl-ctrl button {
@@ -266,11 +187,249 @@
 }
 
 .viewerMap .maplibregl-ctrl button .maplibregl-ctrl-icon {
-  filter: sepia(0.3) hue-rotate(22deg) saturate(0.8);
+  filter: invert(1) brightness(1.2) hue-rotate(180deg) saturate(0.6);
 }
 
+/* ── Status + banner ─────────────────────────────────────────────────────── */
+.explorerStatus {
+  color: rgba(194, 211, 234, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.explorerBanner {
+  border-radius: 10px;
+  border: 1px solid rgba(122, 172, 214, 0.22);
+  background: rgba(10, 18, 28, 0.78);
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(216, 230, 240, 0.88);
+}
+
+.explorerBanner.warning {
+  border-color: rgba(255, 176, 112, 0.38);
+  background: rgba(60, 36, 18, 0.72);
+  color: rgba(255, 214, 170, 0.96);
+}
+
+.explorerBanner.error {
+  border-color: rgba(255, 120, 128, 0.42);
+  background: rgba(64, 18, 24, 0.72);
+  color: rgba(255, 200, 208, 0.96);
+}
+
+.explorerBanner.info {
+  border-color: rgba(118, 255, 193, 0.32);
+  background: rgba(12, 36, 32, 0.72);
+  color: rgba(216, 255, 238, 0.92);
+}
+
+/* ── Metric dashboard cards ─────────────────────────────────────────────── */
+.metricDashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 18px;
+}
+
+.metricCard {
+  position: relative;
+  padding: 18px 20px 20px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(118, 255, 193, 0.06), transparent 40%),
+    linear-gradient(180deg, rgba(12, 22, 34, 0.92) 0%, rgba(8, 14, 22, 0.96) 100%);
+  border: 1px solid rgba(122, 172, 214, 0.18);
+  box-shadow:
+    0 28px 60px rgba(3, 6, 14, 0.5),
+    0 0 0 1px rgba(0, 0, 0, 0.35) inset;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.metricCard[data-metric="lst"] {
+  background:
+    radial-gradient(circle at top right, rgba(255, 176, 112, 0.06), transparent 40%),
+    linear-gradient(180deg, rgba(12, 22, 34, 0.92) 0%, rgba(8, 14, 22, 0.96) 100%);
+}
+
+.metricCard.metricDisabled {
+  opacity: 0.55;
+  filter: grayscale(0.3);
+}
+
+.metricHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.metricEyebrow {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(135, 236, 255, 0.78);
+  font-weight: 500;
+}
+
+.metricCard[data-metric="lst"] .metricEyebrow {
+  color: rgba(255, 176, 112, 0.86);
+}
+
+.metricTitle {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.01em;
+  color: rgba(240, 250, 255, 0.98);
+}
+
+.metricBadge {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(194, 211, 234, 0.7);
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(122, 172, 214, 0.26);
+  background: rgba(8, 14, 22, 0.6);
+  white-space: nowrap;
+}
+
+.metricStatRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+  background: rgba(8, 14, 22, 0.55);
+  border: 1px solid rgba(122, 172, 214, 0.12);
+}
+
+.metricStat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.metricStatLabel {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(194, 211, 234, 0.62);
+}
+
+.metricStatValue {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  color: rgba(240, 250, 255, 0.98);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.metricStatFoot {
+  font-size: 11px;
+  color: rgba(194, 211, 234, 0.55);
+}
+
+.metricRangeArrow {
+  color: rgba(194, 211, 234, 0.45);
+  font-size: 14px;
+}
+
+.metricDelta {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+.metricDelta.up {
+  color: rgba(118, 255, 193, 0.98);
+  background: rgba(118, 255, 193, 0.12);
+  border: 1px solid rgba(118, 255, 193, 0.35);
+}
+
+.metricDelta.down {
+  color: rgba(255, 176, 135, 0.98);
+  background: rgba(255, 135, 152, 0.12);
+  border: 1px solid rgba(255, 135, 152, 0.35);
+}
+
+.metricDelta.flat {
+  color: rgba(216, 230, 240, 0.78);
+  background: rgba(122, 172, 214, 0.1);
+  border: 1px solid rgba(122, 172, 214, 0.28);
+}
+
+.metricChart {
+  position: relative;
+  width: 100%;
+}
+
+.metricSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.metricAxis {
+  fill: rgba(194, 211, 234, 0.58);
+  font-size: 10px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.06em;
+}
+
+.metricBaselineLabel {
+  fill: rgba(236, 255, 245, 0.55);
+  font-size: 9px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.metricFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: rgba(194, 211, 234, 0.55);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.metricEmpty {
+  padding: 26px 8px;
+  color: rgba(194, 211, 234, 0.6);
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 980px) {
   .explorerTop {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .metricStatRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .metricHeader {
+    flex-direction: column;
+    gap: 8px;
   }
 }

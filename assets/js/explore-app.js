@@ -78,33 +78,264 @@
     },
   };
 
-  function linePath(points, width, height, minY, maxY) {
-    if (!points.length) return "";
-    const xStep = width / Math.max(points.length - 1, 1);
-    return points
-      .map((p, i) => {
-        const x = i * xStep;
-        const yNorm = (p - minY) / Math.max(maxY - minY, 1e-9);
-        const y = height - yNorm * height;
-        return `${i === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`;
-      })
-      .join(" ");
+  const METRIC_META = {
+    ndvi: {
+      eyebrow: "Vegetation Productivity",
+      title: "NDVI",
+      unit: "",
+      format: (v) => v.toFixed(3),
+      formatAxis: (v) => v.toFixed(2),
+      deltaFormat: (absDelta, baseline) => {
+        if (!Number.isFinite(baseline) || Math.abs(baseline) < 1e-6) {
+          return `${absDelta >= 0 ? "+" : ""}${absDelta.toFixed(3)}`;
+        }
+        const pct = (absDelta / Math.abs(baseline)) * 100;
+        return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+      },
+      stroke: "var(--accent-green, #90ffd1)",
+      fillTop: "rgba(118, 255, 193, 0.32)",
+      fillBot: "rgba(118, 255, 193, 0)",
+      source: "MOD13Q1 · 250m · 16-day",
+      yFloor: 0,
+      yCeil: 1,
+    },
+    lst: {
+      eyebrow: "Thermal Regime",
+      title: "Land Surface Temperature",
+      unit: "°C",
+      format: (v) => `${v.toFixed(1)}°C`,
+      formatAxis: (v) => `${v.toFixed(0)}°`,
+      deltaFormat: (absDelta) => `${absDelta >= 0 ? "+" : ""}${absDelta.toFixed(1)}°C`,
+      stroke: "var(--accent-warm, #ffc28d)",
+      fillTop: "rgba(255, 176, 112, 0.32)",
+      fillBot: "rgba(255, 176, 112, 0)",
+      source: "MOD11A2 · 1km · 8-day",
+      yFloor: -20,
+      yCeil: 55,
+    },
+  };
+
+  function computeStats(series, key) {
+    const pairs = series
+      .map((d, idx) => ({ idx, month: d.month, value: d[key] }))
+      .filter((d) => typeof d.value === "number");
+    if (!pairs.length) return null;
+
+    const values = pairs.map((d) => d.value);
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const latest = pairs[pairs.length - 1];
+
+    // Baseline = mean of the first third of the series (fallback to overall mean if tiny).
+    const baselineWindow = Math.max(3, Math.ceil(pairs.length / 3));
+    const baselinePairs = pairs.slice(0, Math.min(baselineWindow, pairs.length));
+    const baseline =
+      baselinePairs.length >= 3
+        ? baselinePairs.reduce((a, b) => a + b.value, 0) / baselinePairs.length
+        : mean;
+
+    const coverage = pairs.length / Math.max(series.length, 1);
+    const delta = latest.value - baseline;
+
+    return {
+      pairs,
+      mean,
+      min,
+      max,
+      latest,
+      baseline,
+      delta,
+      coverage,
+    };
   }
 
-  function makeChartSvg(series, key, minY, maxY, stroke) {
-    const values = series.map((d) => d[key]).filter((v) => typeof v === "number");
-    if (!values.length) return `<div class="chartEmpty">No ${key.toUpperCase()} values for selected range.</div>`;
+  function renderChartCard(key) {
+    const meta = METRIC_META[key];
+    const stats = computeStats(state.series, key);
+    const selected = state.metrics.has(key);
+    const coverageLabel = `${state.provider.toUpperCase()} · ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
+    const rangeLabel = state.series.length
+      ? `${state.series[0].month} → ${state.series[state.series.length - 1].month}`
+      : "Awaiting data";
 
-    const width = 800;
-    const height = 180;
-    const gridLines = [0.2, 0.4, 0.6, 0.8]
-      .map((n) => `<line x1="0" y1="${height * n}" x2="${width}" y2="${height * n}" stroke="rgba(140,180,230,0.16)" stroke-width="1" />`)
-      .join("");
-    const path = linePath(values, width, height, minY, maxY);
+    if (!selected) {
+      return `
+        <section class="metricCard metricDisabled" data-metric="${key}">
+          <div class="metricHeader">
+            <div>
+              <div class="metricEyebrow">${meta.eyebrow}</div>
+              <h3 class="metricTitle">${meta.title}</h3>
+            </div>
+            <div class="metricBadge">${meta.source}</div>
+          </div>
+          <div class="metricEmpty">Enable ${meta.title} in the controls to include this signal.</div>
+        </section>
+      `;
+    }
+
+    if (!stats) {
+      return `
+        <section class="metricCard" data-metric="${key}">
+          <div class="metricHeader">
+            <div>
+              <div class="metricEyebrow">${meta.eyebrow}</div>
+              <h3 class="metricTitle">${meta.title}</h3>
+            </div>
+            <div class="metricBadge">${meta.source}</div>
+          </div>
+          <div class="metricEmpty">
+            ${state.series.length
+              ? `No QA-cleared ${meta.title} values for this location yet. Try widening the date range.`
+              : "Load a monthly series to see signal."}
+          </div>
+        </section>
+      `;
+    }
+
+    const deltaClass = stats.delta > 0 ? "up" : stats.delta < 0 ? "down" : "flat";
+    const deltaText = meta.deltaFormat(stats.delta, stats.baseline);
+
     return `
-      <svg class="chartSvg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${key} chart">
+      <section class="metricCard" data-metric="${key}">
+        <div class="metricHeader">
+          <div>
+            <div class="metricEyebrow">${meta.eyebrow}</div>
+            <h3 class="metricTitle">${meta.title}</h3>
+          </div>
+          <div class="metricBadge">${meta.source}</div>
+        </div>
+
+        <div class="metricStatRow">
+          <div class="metricStat">
+            <div class="metricStatLabel">Latest</div>
+            <div class="metricStatValue">
+              <span>${meta.format(stats.latest.value)}</span>
+              <span class="metricDelta ${deltaClass}">${deltaText}</span>
+            </div>
+            <div class="metricStatFoot">vs. ${meta.format(stats.baseline)} baseline</div>
+          </div>
+          <div class="metricStat">
+            <div class="metricStatLabel">Mean</div>
+            <div class="metricStatValue"><span>${meta.format(stats.mean)}</span></div>
+            <div class="metricStatFoot">across ${stats.pairs.length} months</div>
+          </div>
+          <div class="metricStat">
+            <div class="metricStatLabel">Range</div>
+            <div class="metricStatValue">
+              <span>${meta.format(stats.min)}</span>
+              <span class="metricRangeArrow">→</span>
+              <span>${meta.format(stats.max)}</span>
+            </div>
+            <div class="metricStatFoot">observed min / max</div>
+          </div>
+          <div class="metricStat">
+            <div class="metricStatLabel">QA coverage</div>
+            <div class="metricStatValue"><span>${Math.round(stats.coverage * 100)}%</span></div>
+            <div class="metricStatFoot">${stats.pairs.length} / ${state.series.length} months</div>
+          </div>
+        </div>
+
+        <div class="metricChart">
+          ${makeChartSvg(key, stats, meta)}
+        </div>
+
+        <div class="metricFooter">
+          <span>${rangeLabel}</span>
+          <span>${coverageLabel}</span>
+        </div>
+      </section>
+    `;
+  }
+
+  function makeChartSvg(key, stats, meta) {
+    const width = 960;
+    const height = 220;
+    const padLeft = 48;
+    const padRight = 16;
+    const padTop = 14;
+    const padBottom = 28;
+    const plotW = width - padLeft - padRight;
+    const plotH = height - padTop - padBottom;
+
+    const pairs = stats.pairs;
+    const nMonths = state.series.length;
+
+    // y-scale: pad min/max 10%, but also keep sane floor/ceil for the metric
+    const rawMin = Math.min(stats.min, stats.baseline);
+    const rawMax = Math.max(stats.max, stats.baseline);
+    const spread = Math.max(rawMax - rawMin, 0.05);
+    const yMin = Math.max(meta.yFloor, rawMin - spread * 0.15);
+    const yMax = Math.min(meta.yCeil, rawMax + spread * 0.15);
+
+    const xOf = (idx) => padLeft + (idx / Math.max(nMonths - 1, 1)) * plotW;
+    const yOf = (val) =>
+      padTop + plotH - ((val - yMin) / Math.max(yMax - yMin, 1e-9)) * plotH;
+
+    // Grid lines
+    const ticks = 4;
+    const gridLines = Array.from({ length: ticks + 1 }, (_, i) => {
+      const val = yMin + ((yMax - yMin) * i) / ticks;
+      const y = yOf(val);
+      return `
+        <line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}"
+              stroke="rgba(122, 172, 214, 0.08)" stroke-width="1" />
+        <text x="${padLeft - 6}" y="${y + 4}" text-anchor="end"
+              class="metricAxis">${meta.formatAxis(val)}</text>
+      `;
+    }).join("");
+
+    // Baseline reference
+    const baselineY = yOf(stats.baseline);
+    const baselineLine = `
+      <line x1="${padLeft}" y1="${baselineY}" x2="${width - padRight}" y2="${baselineY}"
+            stroke="rgba(236, 255, 245, 0.38)" stroke-width="1" stroke-dasharray="3 5" />
+      <text x="${width - padRight}" y="${baselineY - 6}" text-anchor="end"
+            class="metricBaselineLabel">baseline</text>
+    `;
+
+    // Build area path by bridging gaps (stats.pairs is already non-null values
+    // but in original series order via .idx — pairs may have gaps).
+    const pointD = pairs.map((p) => `${xOf(p.idx).toFixed(2)} ${yOf(p.value).toFixed(2)}`);
+    const line = pointD.length ? `M${pointD.join(" L")}` : "";
+    const area =
+      pointD.length >= 2
+        ? `M${xOf(pairs[0].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)}
+           L${pointD.join(" L")}
+           L${xOf(pairs[pairs.length - 1].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)} Z`
+        : "";
+
+    // Dot for latest
+    const latestDot = stats.latest
+      ? `<circle cx="${xOf(stats.latest.idx)}" cy="${yOf(stats.latest.value)}" r="4"
+                  fill="${meta.stroke}" stroke="#08101a" stroke-width="2" />`
+      : "";
+
+    // X-axis endpoints
+    const first = state.series[0];
+    const last = state.series[state.series.length - 1];
+    const xLabels = `
+      <text x="${padLeft}" y="${height - 8}" class="metricAxis">${first ? first.month : ""}</text>
+      <text x="${width - padRight}" y="${height - 8}" text-anchor="end"
+            class="metricAxis">${last ? last.month : ""}</text>
+    `;
+
+    const gradId = `grad-${key}`;
+    return `
+      <svg class="metricSvg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"
+           role="img" aria-label="${meta.title} monthly series">
+        <defs>
+          <linearGradient id="${gradId}" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="${meta.fillTop.replace("var(--accent-green, ", "").replace("var(--accent-warm, ", "").replace(")", "")}" />
+            <stop offset="100%" stop-color="${meta.fillBot.replace("var(--accent-green, ", "").replace("var(--accent-warm, ", "").replace(")", "")}" />
+          </linearGradient>
+        </defs>
         ${gridLines}
-        <path d="${path}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linecap="round" />
+        ${baselineLine}
+        ${area ? `<path d="${area}" fill="url(#${gradId})" />` : ""}
+        ${line ? `<path d="${line}" fill="none" stroke="${meta.stroke}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />` : ""}
+        ${latestDot}
+        ${xLabels}
       </svg>
     `;
   }
@@ -122,7 +353,7 @@
       <div class="explorerApp">
         <div class="explorerTop">
           <section class="explorerCard">
-            <h2 class="explorerCardTitle">Data Drawdown Controls</h2>
+            <h2 class="explorerCardTitle">Query</h2>
             <div class="explorerControlGrid">
               <div class="explorerSplit">
                 <div class="explorerRow">
@@ -157,7 +388,7 @@
             </div>
           </section>
           <section class="explorerCard">
-            <h2 class="explorerCardTitle">Viewer (MapLibre + deck.gl)</h2>
+            <h2 class="explorerCardTitle">Location</h2>
             <div id="viewer-stage" class="viewerStage" aria-label="Location picker map">
               <div id="viewer-map" class="viewerMap"></div>
               <div class="viewerHint">Click map to set location</div>
@@ -165,22 +396,7 @@
             </div>
           </section>
         </div>
-        <div class="explorerBottom">
-          <section class="chartCard">
-            <div class="chartHeader">
-              <h3 class="chartTitle">NDVI Monthly Series</h3>
-              <div id="chart-meta-ndvi" class="chartMeta"></div>
-            </div>
-            <div id="chart-ndvi"></div>
-          </section>
-          <section class="chartCard">
-            <div class="chartHeader">
-              <h3 class="chartTitle">LST Monthly Series (deg C)</h3>
-              <div id="chart-meta-lst" class="chartMeta"></div>
-            </div>
-            <div id="chart-lst"></div>
-          </section>
-        </div>
+        <div id="metric-dashboard" class="metricDashboard"></div>
       </div>
     `;
   }
@@ -212,21 +428,9 @@
   }
 
   function updateCharts() {
-    const ndvi = document.getElementById("chart-ndvi");
-    const lst = document.getElementById("chart-lst");
-    const ndviMeta = document.getElementById("chart-meta-ndvi");
-    const lstMeta = document.getElementById("chart-meta-lst");
-    if (ndvi) ndvi.innerHTML = makeChartSvg(state.series, "ndvi", 0, 1, "#76ffc1");
-    if (lst) lst.innerHTML = makeChartSvg(state.series, "lst", -10, 50, "#ffb070");
-    if (ndviMeta) {
-      ndviMeta.textContent = state.series.length
-        ? `${state.provider.toUpperCase()} | ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`
-        : "Awaiting live data request";
-    }
-    if (lstMeta) {
-      const suffix = state.warning ? ` | ${state.warning}` : state.series.length ? " | QA-filtered monthly series" : "";
-      lstMeta.textContent = `${state.provider.toUpperCase()}${suffix}`;
-    }
+    const dashboard = document.getElementById("metric-dashboard");
+    if (!dashboard) return;
+    dashboard.innerHTML = renderChartCard("ndvi") + renderChartCard("lst");
   }
 
   function syncMapMarker() {
