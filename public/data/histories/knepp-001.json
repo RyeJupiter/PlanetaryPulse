@@ -1,0 +1,2206 @@
+{
+  "projectId": "knepp-001",
+  "projectName": "Knepp Estate Rewilding",
+  "lat": 50.89,
+  "lon": -0.356,
+  "startMonth": "2000-03",
+  "endMonth": "2026-04",
+  "interventionStart": "2001-01",
+  "historyNote": "Knepp rewilding pivot began in 2001.",
+  "source": "ornl_daac",
+  "provider": "modis",
+  "metrics": [
+    "ndvi",
+    "lst"
+  ],
+  "generatedAt": "2026-04-21T23:54:30.365Z",
+  "series": [
+    {
+      "month": "2000-03",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.3031,
+      "lst": 9.09
+    },
+    {
+      "month": "2000-04",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6168,
+      "lst": 16.98
+    },
+    {
+      "month": "2000-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.8347,
+      "lst": 17.33
+    },
+    {
+      "month": "2000-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7991,
+      "lst": 20.67
+    },
+    {
+      "month": "2000-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5435,
+      "lst": 23.41
+    },
+    {
+      "month": "2000-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5304,
+      "lst": 22.57
+    },
+    {
+      "month": "2000-09",
+      "count": 2,
+      "qaScore": 0.75,
+      "ndvi": 0.6157,
+      "lst": 16.94
+    },
+    {
+      "month": "2000-10",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5821,
+      "lst": 10.05
+    },
+    {
+      "month": "2000-11",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5473,
+      "lst": 7.91
+    },
+    {
+      "month": "2000-12",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.545,
+      "lst": 7.15
+    },
+    {
+      "month": "2001-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4529,
+      "lst": 3.42
+    },
+    {
+      "month": "2001-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.291,
+      "lst": 7.65
+    },
+    {
+      "month": "2001-03",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.3862,
+      "lst": 12.04
+    },
+    {
+      "month": "2001-04",
+      "count": 1,
+      "qaScore": 0.417,
+      "ndvi": 0.5088,
+      "lst": 13.63
+    },
+    {
+      "month": "2001-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4487,
+      "lst": 21.5
+    },
+    {
+      "month": "2001-06",
+      "count": 2,
+      "qaScore": 0.333,
+      "lst": 18.73
+    },
+    {
+      "month": "2001-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6754,
+      "lst": 23.41
+    },
+    {
+      "month": "2001-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5933,
+      "lst": 21.88
+    },
+    {
+      "month": "2001-09",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4849,
+      "lst": 16.47
+    },
+    {
+      "month": "2001-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.4201,
+      "lst": 13.65
+    },
+    {
+      "month": "2001-11",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5413,
+      "lst": 5.95
+    },
+    {
+      "month": "2001-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4947,
+      "lst": 1.23
+    },
+    {
+      "month": "2002-01",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4225,
+      "lst": 5.82
+    },
+    {
+      "month": "2002-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4963,
+      "lst": 7.64
+    },
+    {
+      "month": "2002-03",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.4382,
+      "lst": 16.55
+    },
+    {
+      "month": "2002-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6179,
+      "lst": 15.73
+    },
+    {
+      "month": "2002-05",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.8608,
+      "lst": 16.27
+    },
+    {
+      "month": "2002-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.8589,
+      "lst": 21.81
+    },
+    {
+      "month": "2002-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7203,
+      "lst": 23.27
+    },
+    {
+      "month": "2002-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5688,
+      "lst": 23.01
+    },
+    {
+      "month": "2002-09",
+      "count": 3,
+      "qaScore": 0.375,
+      "lst": 15.87
+    },
+    {
+      "month": "2002-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.5659,
+      "lst": 10.72
+    },
+    {
+      "month": "2002-11",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5983,
+      "lst": 9.69
+    },
+    {
+      "month": "2002-12",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4571,
+      "lst": 3.61
+    },
+    {
+      "month": "2003-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4506,
+      "lst": 3.59
+    },
+    {
+      "month": "2003-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4284,
+      "lst": 4.13
+    },
+    {
+      "month": "2003-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.457,
+      "lst": 14.6
+    },
+    {
+      "month": "2003-04",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.6012,
+      "lst": 19.53
+    },
+    {
+      "month": "2003-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8031,
+      "lst": 18.4
+    },
+    {
+      "month": "2003-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8315,
+      "lst": 22.83
+    },
+    {
+      "month": "2003-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5279,
+      "lst": 26.81
+    },
+    {
+      "month": "2003-08",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5931,
+      "lst": 25.71
+    },
+    {
+      "month": "2003-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6037,
+      "lst": 20.13
+    },
+    {
+      "month": "2003-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6102,
+      "lst": 12.39
+    },
+    {
+      "month": "2003-11",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5024,
+      "lst": 10.83
+    },
+    {
+      "month": "2003-12",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.3353,
+      "lst": 4.47
+    },
+    {
+      "month": "2004-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.3454,
+      "lst": 5.88
+    },
+    {
+      "month": "2004-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.3868,
+      "lst": 5.07
+    },
+    {
+      "month": "2004-03",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4198,
+      "lst": 7.61
+    },
+    {
+      "month": "2004-04",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.455,
+      "lst": 17.85
+    },
+    {
+      "month": "2004-05",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.7638,
+      "lst": 21.95
+    },
+    {
+      "month": "2004-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.8083,
+      "lst": 19.71
+    },
+    {
+      "month": "2004-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6773,
+      "lst": 25.21
+    },
+    {
+      "month": "2004-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6458,
+      "lst": 20.5
+    },
+    {
+      "month": "2004-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7065,
+      "lst": 15.93
+    },
+    {
+      "month": "2004-10",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4742,
+      "lst": 12.93
+    },
+    {
+      "month": "2004-11",
+      "count": 1,
+      "qaScore": 0.167,
+      "lst": 7.39
+    },
+    {
+      "month": "2004-12",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4568,
+      "lst": 1.45
+    },
+    {
+      "month": "2005-01",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4247,
+      "lst": 5.36
+    },
+    {
+      "month": "2005-02",
+      "count": 2,
+      "qaScore": 0.75,
+      "ndvi": 0.4877,
+      "lst": 4.15
+    },
+    {
+      "month": "2005-03",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5252,
+      "lst": 14.23
+    },
+    {
+      "month": "2005-04",
+      "count": 2,
+      "qaScore": 0.583,
+      "ndvi": 0.7141,
+      "lst": 16.24
+    },
+    {
+      "month": "2005-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8347,
+      "lst": 16.98
+    },
+    {
+      "month": "2005-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8087,
+      "lst": 21.37
+    },
+    {
+      "month": "2005-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7068,
+      "lst": 24.99
+    },
+    {
+      "month": "2005-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6585,
+      "lst": 24.31
+    },
+    {
+      "month": "2005-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7192,
+      "lst": 18.32
+    },
+    {
+      "month": "2005-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5668,
+      "lst": 15.49
+    },
+    {
+      "month": "2005-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5594,
+      "lst": 6.1
+    },
+    {
+      "month": "2005-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4233,
+      "lst": 4.04
+    },
+    {
+      "month": "2006-01",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4331,
+      "lst": 3.03
+    },
+    {
+      "month": "2006-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4619,
+      "lst": 5.29
+    },
+    {
+      "month": "2006-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4752,
+      "lst": 11.74
+    },
+    {
+      "month": "2006-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6927,
+      "lst": 16.29
+    },
+    {
+      "month": "2006-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.797,
+      "lst": 16.72
+    },
+    {
+      "month": "2006-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.771,
+      "lst": 23.4
+    },
+    {
+      "month": "2006-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5324,
+      "lst": 27.29
+    },
+    {
+      "month": "2006-08",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.6376,
+      "lst": 19.91
+    },
+    {
+      "month": "2006-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7034,
+      "lst": 20.07
+    },
+    {
+      "month": "2006-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.653,
+      "lst": 15.69
+    },
+    {
+      "month": "2006-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6767,
+      "lst": 9.9
+    },
+    {
+      "month": "2006-12",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.5406,
+      "lst": 6.29
+    },
+    {
+      "month": "2007-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5635,
+      "lst": 6.79
+    },
+    {
+      "month": "2007-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4989,
+      "lst": 9.41
+    },
+    {
+      "month": "2007-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4499,
+      "lst": 14.03
+    },
+    {
+      "month": "2007-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6001,
+      "lst": 21.97
+    },
+    {
+      "month": "2007-05",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.722,
+      "lst": 20.95
+    },
+    {
+      "month": "2007-06",
+      "count": 4,
+      "qaScore": 0.5,
+      "lst": 15.87
+    },
+    {
+      "month": "2007-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7342,
+      "lst": 21.01
+    },
+    {
+      "month": "2007-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.649,
+      "lst": 22.21
+    },
+    {
+      "month": "2007-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5181,
+      "lst": 19.23
+    },
+    {
+      "month": "2007-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5797,
+      "lst": 13.09
+    },
+    {
+      "month": "2007-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5624,
+      "lst": 7.97
+    },
+    {
+      "month": "2007-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4118,
+      "lst": 3.87
+    },
+    {
+      "month": "2008-01",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.4806,
+      "lst": 4.71
+    },
+    {
+      "month": "2008-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5347,
+      "lst": 6.03
+    },
+    {
+      "month": "2008-03",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5286,
+      "lst": 8.45
+    },
+    {
+      "month": "2008-04",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7089,
+      "lst": 16.32
+    },
+    {
+      "month": "2008-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.8436,
+      "lst": 19.39
+    },
+    {
+      "month": "2008-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8489,
+      "lst": 21.22
+    },
+    {
+      "month": "2008-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6783,
+      "lst": 22.59
+    },
+    {
+      "month": "2008-08",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6104,
+      "lst": 20.63
+    },
+    {
+      "month": "2008-09",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6435,
+      "lst": 17.37
+    },
+    {
+      "month": "2008-10",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6266,
+      "lst": 9.87
+    },
+    {
+      "month": "2008-11",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.4821,
+      "lst": 4.85
+    },
+    {
+      "month": "2008-12",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4798,
+      "lst": 2.97
+    },
+    {
+      "month": "2009-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.384,
+      "lst": 5.25
+    },
+    {
+      "month": "2009-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.426,
+      "lst": 7.14
+    },
+    {
+      "month": "2009-03",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.4136,
+      "lst": 11.15
+    },
+    {
+      "month": "2009-04",
+      "count": 2,
+      "qaScore": 0.583,
+      "ndvi": 0.5885,
+      "lst": 18.79
+    },
+    {
+      "month": "2009-05",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.7605,
+      "lst": 19.75
+    },
+    {
+      "month": "2009-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7853,
+      "lst": 20.53
+    },
+    {
+      "month": "2009-07",
+      "count": 2,
+      "qaScore": 0.75,
+      "ndvi": 0.7192,
+      "lst": 20.36
+    },
+    {
+      "month": "2009-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6862,
+      "lst": 20.17
+    },
+    {
+      "month": "2009-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7111,
+      "lst": 20.17
+    },
+    {
+      "month": "2009-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.621,
+      "lst": 11.57
+    },
+    {
+      "month": "2009-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.584,
+      "lst": 9.3
+    },
+    {
+      "month": "2009-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4958,
+      "lst": 1.28
+    },
+    {
+      "month": "2010-01",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.444,
+      "lst": -0.57
+    },
+    {
+      "month": "2010-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4149,
+      "lst": 6.46
+    },
+    {
+      "month": "2010-03",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.354,
+      "lst": 10.71
+    },
+    {
+      "month": "2010-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5988,
+      "lst": 18.07
+    },
+    {
+      "month": "2010-05",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6849,
+      "lst": 18.49
+    },
+    {
+      "month": "2010-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6815,
+      "lst": 27.01
+    },
+    {
+      "month": "2010-07",
+      "count": 3,
+      "qaScore": 0.375,
+      "lst": 27.97
+    },
+    {
+      "month": "2010-08",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.62,
+      "lst": 19.79
+    },
+    {
+      "month": "2010-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6988,
+      "lst": 13.92
+    },
+    {
+      "month": "2010-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.742,
+      "lst": 10.83
+    },
+    {
+      "month": "2010-11",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5821,
+      "lst": 4.07
+    },
+    {
+      "month": "2010-12",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4521,
+      "lst": 1.66
+    },
+    {
+      "month": "2011-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5561,
+      "lst": 3.45
+    },
+    {
+      "month": "2011-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4618,
+      "lst": 7.73
+    },
+    {
+      "month": "2011-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5321,
+      "lst": 14.89
+    },
+    {
+      "month": "2011-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6638,
+      "lst": 21.73
+    },
+    {
+      "month": "2011-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7575,
+      "lst": 20.59
+    },
+    {
+      "month": "2011-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7165,
+      "lst": 21.83
+    },
+    {
+      "month": "2011-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7429,
+      "lst": 23.27
+    },
+    {
+      "month": "2011-08",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.724,
+      "lst": 19.49
+    },
+    {
+      "month": "2011-09",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7257,
+      "lst": 22.57
+    },
+    {
+      "month": "2011-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6996,
+      "lst": 13.53
+    },
+    {
+      "month": "2011-11",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6537,
+      "lst": 11.93
+    },
+    {
+      "month": "2011-12",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.6613,
+      "lst": 5.89
+    },
+    {
+      "month": "2012-01",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5747,
+      "lst": 5.18
+    },
+    {
+      "month": "2012-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5407,
+      "lst": 3.19
+    },
+    {
+      "month": "2012-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6399,
+      "lst": 16.63
+    },
+    {
+      "month": "2012-04",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.6779,
+      "lst": 11.91
+    },
+    {
+      "month": "2012-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.8439,
+      "lst": 21.91
+    },
+    {
+      "month": "2012-06",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.8556,
+      "lst": 18.25
+    },
+    {
+      "month": "2012-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6556,
+      "lst": 22.51
+    },
+    {
+      "month": "2012-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7341,
+      "lst": 21.23
+    },
+    {
+      "month": "2012-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6246,
+      "lst": 16.13
+    },
+    {
+      "month": "2012-10",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6296,
+      "lst": 9.01
+    },
+    {
+      "month": "2012-11",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.574,
+      "lst": 7.83
+    },
+    {
+      "month": "2012-12",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4637,
+      "lst": 4.21
+    },
+    {
+      "month": "2013-01",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5951,
+      "lst": 5.53
+    },
+    {
+      "month": "2013-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5127,
+      "lst": 6.65
+    },
+    {
+      "month": "2013-03",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.5095,
+      "lst": 8.87
+    },
+    {
+      "month": "2013-04",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.541,
+      "lst": 19.59
+    },
+    {
+      "month": "2013-05",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7024,
+      "lst": 18.31
+    },
+    {
+      "month": "2013-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7773,
+      "lst": 18.97
+    },
+    {
+      "month": "2013-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.673,
+      "lst": 26.47
+    },
+    {
+      "month": "2013-08",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7071,
+      "lst": 23.49
+    },
+    {
+      "month": "2013-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6519,
+      "lst": 17.82
+    },
+    {
+      "month": "2013-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.4234,
+      "lst": 14.21
+    },
+    {
+      "month": "2013-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.695,
+      "lst": 5.98
+    },
+    {
+      "month": "2013-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.636,
+      "lst": 6.15
+    },
+    {
+      "month": "2014-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6034,
+      "lst": 4.76
+    },
+    {
+      "month": "2014-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5618,
+      "lst": 7.76
+    },
+    {
+      "month": "2014-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.581,
+      "lst": 12.79
+    },
+    {
+      "month": "2014-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7803,
+      "lst": 17.15
+    },
+    {
+      "month": "2014-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8739,
+      "lst": 17.57
+    },
+    {
+      "month": "2014-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8341,
+      "lst": 21.15
+    },
+    {
+      "month": "2014-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6972,
+      "lst": 24.2
+    },
+    {
+      "month": "2014-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7154,
+      "lst": 20.1
+    },
+    {
+      "month": "2014-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7199,
+      "lst": 20.05
+    },
+    {
+      "month": "2014-10",
+      "count": 1,
+      "qaScore": 0.667,
+      "ndvi": 0.5981,
+      "lst": 16.35
+    },
+    {
+      "month": "2014-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4797,
+      "lst": 11.49
+    },
+    {
+      "month": "2014-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4335,
+      "lst": 4.21
+    },
+    {
+      "month": "2015-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.494,
+      "lst": 4.63
+    },
+    {
+      "month": "2015-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4579,
+      "lst": 7.23
+    },
+    {
+      "month": "2015-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4565,
+      "lst": 12.66
+    },
+    {
+      "month": "2015-04",
+      "count": 3,
+      "qaScore": 0.75,
+      "ndvi": 0.543,
+      "lst": 19.29
+    },
+    {
+      "month": "2015-05",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.8412,
+      "lst": 18.07
+    },
+    {
+      "month": "2015-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8675,
+      "lst": 21.84
+    },
+    {
+      "month": "2015-07",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6649,
+      "lst": 21.97
+    },
+    {
+      "month": "2015-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.784,
+      "lst": 21.51
+    },
+    {
+      "month": "2015-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6344,
+      "lst": 18.01
+    },
+    {
+      "month": "2015-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.61,
+      "lst": 14.63
+    },
+    {
+      "month": "2015-11",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.57,
+      "lst": 8.63
+    },
+    {
+      "month": "2015-12",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.7415,
+      "lst": 8.91
+    },
+    {
+      "month": "2016-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6032,
+      "lst": 3.53
+    },
+    {
+      "month": "2016-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5534,
+      "lst": 5.78
+    },
+    {
+      "month": "2016-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5291,
+      "lst": 11.72
+    },
+    {
+      "month": "2016-04",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5417,
+      "lst": 14.56
+    },
+    {
+      "month": "2016-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6876,
+      "lst": 18.71
+    },
+    {
+      "month": "2016-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.858,
+      "lst": 20.18
+    },
+    {
+      "month": "2016-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7682,
+      "lst": 21.28
+    },
+    {
+      "month": "2016-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7475,
+      "lst": 24.92
+    },
+    {
+      "month": "2016-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7246,
+      "lst": 21.16
+    },
+    {
+      "month": "2016-10",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5857,
+      "lst": 12.76
+    },
+    {
+      "month": "2016-11",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5363,
+      "lst": 7.91
+    },
+    {
+      "month": "2016-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5006,
+      "lst": 6.5
+    },
+    {
+      "month": "2017-01",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.4588,
+      "lst": 2.81
+    },
+    {
+      "month": "2017-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5215,
+      "lst": 8.27
+    },
+    {
+      "month": "2017-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6534,
+      "lst": 14
+    },
+    {
+      "month": "2017-04",
+      "count": 2,
+      "qaScore": 0.583,
+      "ndvi": 0.6954,
+      "lst": 16.23
+    },
+    {
+      "month": "2017-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8378,
+      "lst": 20.49
+    },
+    {
+      "month": "2017-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8158,
+      "lst": 22.36
+    },
+    {
+      "month": "2017-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7551,
+      "lst": 21.97
+    },
+    {
+      "month": "2017-08",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6814,
+      "lst": 20.45
+    },
+    {
+      "month": "2017-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7341,
+      "lst": 15.12
+    },
+    {
+      "month": "2017-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.7155,
+      "lst": 12.19
+    },
+    {
+      "month": "2017-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6813,
+      "lst": 9.43
+    },
+    {
+      "month": "2017-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6262,
+      "lst": 3.35
+    },
+    {
+      "month": "2018-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5858,
+      "lst": 6.51
+    },
+    {
+      "month": "2018-02",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4946,
+      "lst": 4.11
+    },
+    {
+      "month": "2018-03",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4381,
+      "lst": 9.1
+    },
+    {
+      "month": "2018-04",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.657,
+      "lst": 20
+    },
+    {
+      "month": "2018-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8398,
+      "lst": 21.38
+    },
+    {
+      "month": "2018-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8207,
+      "lst": 23.25
+    },
+    {
+      "month": "2018-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7153,
+      "lst": 28.94
+    },
+    {
+      "month": "2018-08",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.7073,
+      "lst": 22.11
+    },
+    {
+      "month": "2018-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6784,
+      "lst": 18.72
+    },
+    {
+      "month": "2018-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5924,
+      "lst": 15.73
+    },
+    {
+      "month": "2018-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5128,
+      "lst": 9.36
+    },
+    {
+      "month": "2018-12",
+      "count": 3,
+      "qaScore": 0.375,
+      "lst": 4.71
+    },
+    {
+      "month": "2019-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4839,
+      "lst": 4.03
+    },
+    {
+      "month": "2019-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4774,
+      "lst": 12.33
+    },
+    {
+      "month": "2019-03",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5197,
+      "lst": 15.67
+    },
+    {
+      "month": "2019-04",
+      "count": 2,
+      "qaScore": 0.583,
+      "ndvi": 0.6446,
+      "lst": 17.89
+    },
+    {
+      "month": "2019-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7269,
+      "lst": 19.92
+    },
+    {
+      "month": "2019-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7954,
+      "lst": 23.21
+    },
+    {
+      "month": "2019-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7146,
+      "lst": 24.03
+    },
+    {
+      "month": "2019-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7216,
+      "lst": 22.45
+    },
+    {
+      "month": "2019-09",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6182,
+      "lst": 21.25
+    },
+    {
+      "month": "2019-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.6735,
+      "lst": 9.85
+    },
+    {
+      "month": "2019-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6038,
+      "lst": 7
+    },
+    {
+      "month": "2019-12",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5607,
+      "lst": 6.16
+    },
+    {
+      "month": "2020-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5822,
+      "lst": 5.8
+    },
+    {
+      "month": "2020-02",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.544,
+      "lst": 7.37
+    },
+    {
+      "month": "2020-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5633,
+      "lst": 12.16
+    },
+    {
+      "month": "2020-04",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5648,
+      "lst": 20.63
+    },
+    {
+      "month": "2020-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7813,
+      "lst": 24.65
+    },
+    {
+      "month": "2020-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7248,
+      "lst": 26.09
+    },
+    {
+      "month": "2020-07",
+      "count": 2,
+      "qaScore": 0.75,
+      "ndvi": 0.6817,
+      "lst": 27.67
+    },
+    {
+      "month": "2020-08",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.4913,
+      "lst": 25.07
+    },
+    {
+      "month": "2020-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6178,
+      "lst": 19.36
+    },
+    {
+      "month": "2020-10",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5888,
+      "lst": 11.81
+    },
+    {
+      "month": "2020-11",
+      "count": 3,
+      "qaScore": 0.5,
+      "lst": 4.89
+    },
+    {
+      "month": "2020-12",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6781,
+      "lst": 2.05
+    },
+    {
+      "month": "2021-01",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5271,
+      "lst": 1.26
+    },
+    {
+      "month": "2021-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4767,
+      "lst": 9.86
+    },
+    {
+      "month": "2021-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4947,
+      "lst": 11.96
+    },
+    {
+      "month": "2021-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5416,
+      "lst": 19.99
+    },
+    {
+      "month": "2021-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7737,
+      "lst": 18.2
+    },
+    {
+      "month": "2021-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.853,
+      "lst": 21.39
+    },
+    {
+      "month": "2021-07",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.7703,
+      "lst": 26.77
+    },
+    {
+      "month": "2021-08",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.7995,
+      "lst": 21.63
+    },
+    {
+      "month": "2021-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6996,
+      "lst": 20.52
+    },
+    {
+      "month": "2021-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7463,
+      "lst": 13.05
+    },
+    {
+      "month": "2021-11",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.7608,
+      "lst": 8.81
+    },
+    {
+      "month": "2021-12",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.7108,
+      "lst": 5.21
+    },
+    {
+      "month": "2022-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6265,
+      "lst": 5.17
+    },
+    {
+      "month": "2022-02",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.6251,
+      "lst": 8.63
+    },
+    {
+      "month": "2022-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5674,
+      "lst": 11.59
+    },
+    {
+      "month": "2022-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7056,
+      "lst": 18.49
+    },
+    {
+      "month": "2022-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6941,
+      "lst": 20.07
+    },
+    {
+      "month": "2022-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6838,
+      "lst": 23.64
+    },
+    {
+      "month": "2022-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.681,
+      "lst": 28.4
+    },
+    {
+      "month": "2022-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7561,
+      "lst": 27.44
+    },
+    {
+      "month": "2022-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7524,
+      "lst": 15.55
+    },
+    {
+      "month": "2022-10",
+      "count": 2,
+      "qaScore": 0.833,
+      "ndvi": 0.7391,
+      "lst": 17.14
+    },
+    {
+      "month": "2022-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7264,
+      "lst": 9.57
+    },
+    {
+      "month": "2022-12",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.5789,
+      "lst": 3.77
+    },
+    {
+      "month": "2023-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.4677,
+      "lst": 5.98
+    },
+    {
+      "month": "2023-02",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.4556,
+      "lst": 8.13
+    },
+    {
+      "month": "2023-03",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.5346,
+      "lst": 13.98
+    },
+    {
+      "month": "2023-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.5991,
+      "lst": 15.97
+    },
+    {
+      "month": "2023-05",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5821,
+      "lst": 19.29
+    },
+    {
+      "month": "2023-06",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5779,
+      "lst": 25.79
+    },
+    {
+      "month": "2023-07",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.7763,
+      "lst": 20.21
+    },
+    {
+      "month": "2023-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8087,
+      "lst": 22.85
+    },
+    {
+      "month": "2023-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8344,
+      "lst": 21.28
+    },
+    {
+      "month": "2023-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.771,
+      "lst": 14.35
+    },
+    {
+      "month": "2023-11",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7165,
+      "lst": 10.44
+    },
+    {
+      "month": "2023-12",
+      "count": 2,
+      "qaScore": 0.25,
+      "lst": 7.24
+    },
+    {
+      "month": "2024-01",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.8077,
+      "lst": 3.65
+    },
+    {
+      "month": "2024-02",
+      "count": 1,
+      "qaScore": 0.375,
+      "ndvi": 0.6193,
+      "lst": 9.75
+    },
+    {
+      "month": "2024-03",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.5998,
+      "lst": 10.67
+    },
+    {
+      "month": "2024-04",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.6008,
+      "lst": 15.05
+    },
+    {
+      "month": "2024-05",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7314,
+      "lst": 17.87
+    },
+    {
+      "month": "2024-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7289,
+      "lst": 21.74
+    },
+    {
+      "month": "2024-07",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.8266,
+      "lst": 18.09
+    },
+    {
+      "month": "2024-08",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.7989,
+      "lst": 22.92
+    },
+    {
+      "month": "2024-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7454,
+      "lst": 13.18
+    },
+    {
+      "month": "2024-10",
+      "count": 2,
+      "qaScore": 0.75,
+      "ndvi": 0.7113,
+      "lst": 13.03
+    },
+    {
+      "month": "2024-11",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6487,
+      "lst": 6.11
+    },
+    {
+      "month": "2024-12",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.5834,
+      "lst": 6.01
+    },
+    {
+      "month": "2025-01",
+      "count": 3,
+      "qaScore": 0.625,
+      "ndvi": 0.5634,
+      "lst": 2.05
+    },
+    {
+      "month": "2025-02",
+      "count": 2,
+      "qaScore": 0.5,
+      "ndvi": 0.5104,
+      "lst": 5.83
+    },
+    {
+      "month": "2025-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.5537,
+      "lst": 12.19
+    },
+    {
+      "month": "2025-04",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.6376,
+      "lst": 16.47
+    },
+    {
+      "month": "2025-05",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.6951,
+      "lst": 20.49
+    },
+    {
+      "month": "2025-06",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7636,
+      "lst": 23.22
+    },
+    {
+      "month": "2025-07",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6688,
+      "lst": 23.48
+    },
+    {
+      "month": "2025-08",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6632,
+      "lst": 25.9
+    },
+    {
+      "month": "2025-09",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7325,
+      "lst": 15.55
+    },
+    {
+      "month": "2025-10",
+      "count": 3,
+      "qaScore": 1,
+      "ndvi": 0.7991,
+      "lst": 12.55
+    },
+    {
+      "month": "2025-11",
+      "count": 3,
+      "qaScore": 0.875,
+      "ndvi": 0.647,
+      "lst": 5.23
+    },
+    {
+      "month": "2025-12",
+      "count": 4,
+      "qaScore": 0.75,
+      "ndvi": 0.3819,
+      "lst": 5.24
+    },
+    {
+      "month": "2026-01",
+      "count": 3,
+      "qaScore": 0.375,
+      "lst": -0.31
+    },
+    {
+      "month": "2026-02",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.6432,
+      "lst": 8.78
+    },
+    {
+      "month": "2026-03",
+      "count": 4,
+      "qaScore": 1,
+      "ndvi": 0.7003,
+      "lst": 8.99
+    },
+    {
+      "month": "2026-04",
+      "count": 0,
+      "qaScore": null
+    }
+  ]
+}
