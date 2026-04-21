@@ -1394,13 +1394,19 @@ li,
 }
 
 .homeRegistryLayout {
-  align-items: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
   padding-top: 0;
 }
 
-.homeRegistryLayout .globeColumn {
-  position: sticky;
-  top: 94px;
+.homeRegistryLayout #atlas-detail {
+  width: 100%;
+  max-width: 820px;
+}
+
+.homeRegistryFilterHooks {
+  display: none !important;
 }
 
 .homeTagCard .cardBody {
@@ -1593,7 +1599,42 @@ html.welcomeLock body {
 }
 
 .welcomePanelCollapsed {
-  padding-block: clamp(16px, 2.2vw, 22px);
+  padding-block: clamp(12px, 1.6vw, 16px);
+}
+
+.welcomeOverlay.welcomeRevealStage .welcomeBackdrop {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  pointer-events: none;
+}
+
+.welcomeOverlay.welcomeRevealStage {
+  background: linear-gradient(180deg, transparent 0%, transparent 62%, rgba(4, 8, 14, 0.72) 100%);
+  pointer-events: none;
+}
+
+.welcomeOverlay.welcomeRevealStage .welcomePanel {
+  pointer-events: auto;
+  transform: translateY(0);
+  max-width: min(560px, 92%);
+}
+
+.welcomeOverlay.welcomeRevealStage .welcomeTitle {
+  font-size: clamp(16px, 1.9vw, 20px);
+}
+
+.welcomeOverlay.welcomeRevealStage .welcomeSubtitle,
+.welcomeOverlay.welcomeRevealStage .welcomeCopy {
+  font-size: clamp(12px, 1.05vw, 14px);
+}
+
+.welcomeOverlay.welcomeRevealStage .welcomeBody {
+  gap: 4px;
+}
+
+.welcomeAccent {
+  color: var(--accent-green, #90ffd1);
+  font-weight: 500;
 }
 
 .welcomeHeader {
@@ -1728,16 +1769,42 @@ html.welcomeLock body {
 
 @media (max-width: 640px) {
   .welcomeOverlay {
-    align-items: stretch;
+    padding: clamp(12px, 2vh, 18px);
+    align-items: flex-end;
   }
   .welcomePanel {
     border-radius: 16px;
+    padding: 18px 18px 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    width: 100%;
+  }
+  .welcomeTitle {
+    font-size: 24px;
+  }
+  .welcomeSubtitle {
+    font-size: 14px;
+  }
+  .welcomeCopy {
+    font-size: 13px;
   }
   .welcomeFooter {
     flex-direction: column-reverse;
     align-items: stretch;
+    margin-top: 16px;
   }
   .welcomeCta {
     width: 100%;
+  }
+  .welcomeOverlay.welcomeRevealStage .welcomePanel {
+    max-width: 100%;
+    padding: 12px 16px 14px;
+  }
+  .welcomeOverlay.welcomeRevealStage .welcomeTitle {
+    font-size: 16px;
+  }
+  .welcomeOverlay.welcomeRevealStage .welcomeSubtitle,
+  .welcomeOverlay.welcomeRevealStage .welcomeCopy {
+    font-size: 12px;
   }
 }

@@ -46,38 +46,22 @@
         </p>
       </section>
 
-      <section class="layout homeRegistryLayout">
-        <section class="copy">
-          <div class="stack">
-            <div class="card homeTagCard">
-              <div class="cardTitle">Tags</div>
-              <div class="cardBody">
-                <input
-                  id="atlas-tag-search"
-                  class="input"
-                  type="search"
-                  placeholder="Search the tag database"
-                  data-empty-tooltip="Type to search the full tag database."
-                  aria-label="Search the tag database"
-                />
-                <div class="sectionLabel">Top tags</div>
-                <div id="atlas-filters" class="filterList"></div>
-                <div class="sectionLabel">Search results</div>
-                <div id="atlas-search-results" class="filterList"></div>
-                <button id="clear-filters" class="btn secondary" type="button">Clear filters</button>
-              </div>
-            </div>
+      <section class="homeRegistryLayout">
+        <div class="card" id="atlas-detail">
+          <div class="cardTitle">Project detail</div>
+          <div class="cardBody muted">
+            Select a project pin or polygon on the globe.
           </div>
-        </section>
+        </div>
 
-        <section class="globeColumn">
-          <div class="card" id="atlas-detail">
-            <div class="cardTitle">Project detail</div>
-            <div class="cardBody muted">
-              Select a project pin or polygon on the globe.
-            </div>
-          </div>
-        </section>
+        <!-- Hidden filter hooks kept in the DOM so regen-registry.js still initializes.
+             Filters + tag search remain available on a future dedicated registry page. -->
+        <div class="homeRegistryFilterHooks" hidden>
+          <input id="atlas-tag-search" type="search" aria-label="Search the tag database" />
+          <div id="atlas-filters"></div>
+          <div id="atlas-search-results"></div>
+          <button id="clear-filters" type="button">Clear filters</button>
+        </div>
       </section>
     </section>
 

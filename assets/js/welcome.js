@@ -47,17 +47,21 @@
   });
 
   async function runSequence() {
-    await waitMs(350);
+    const beatMs = [900, 1200, 1500];
+    await waitMs(250);
     for (let i = 0; i < copyNodes.length; i += 1) {
       if (cancelled) return;
       copyNodes[i].classList.add("welcomeStepVisible");
       progress.style.width = `${((i + 1) / copyNodes.length) * 100}%`;
-      await waitMs(i === 0 ? 1400 : 2200);
+      await waitMs(beatMs[i] ?? 1200);
     }
 
     if (cancelled) return;
 
-    // Start the globe fly-to in parallel with the third-phase copy already on screen.
+    // Reveal the globe: shrink the panel to a bottom pill, fade the backdrop,
+    // and start the camera flight. We want the user to actually see the globe
+    // travel during this phase.
+    overlay.classList.add("welcomeRevealStage");
     panel.classList.add("welcomePanelCollapsed");
 
     const selected = await flyToAlBaydha();
@@ -159,18 +163,15 @@
 
         <div class="welcomeBody">
           <h1 id="welcome-title" class="welcomeTitle" data-welcome-step="1">
-            Welcome to EarthPulse
+            EarthPulse
           </h1>
 
           <p class="welcomeSubtitle" data-welcome-step="2">
-            A data visualization platform to understand planetary regeneration.
+            Planetary regeneration, <span class="welcomeAccent">made visible</span>.
           </p>
 
           <p class="welcomeCopy" data-welcome-step="3">
-            We uplift a network of regeneration projects that span the globe. To introduce you,
-            we'll take you to <strong>Saudi Arabia</strong>, where <strong>Neal Spackman</strong> and
-            the people of <strong>Al-Baydha</strong> transformed a degraded desert wasteland into a
-            thriving savannah.
+            Let's begin in <strong>Al-Baydha</strong> — where desert became savannah.
           </p>
         </div>
 
