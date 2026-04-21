@@ -18,22 +18,52 @@
         "size": "2,400 ha",
         "images": [
           {
+            "url": "/public/media/projects/al-baydha/1-bedouin-sparse-bush.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "Bedouin with camels on the sparse acacia bushland of the Hijaz foothills",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          },
+          {
             "url": "https://upload.wikimedia.org/wikipedia/commons/7/76/Al_Baydha_terraces_before.jpg",
             "credit": "Wikimedia Commons",
             "alt": "Al Baydha rocky foothills before terracing — dry, bare slopes",
             "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_before.jpg"
           },
           {
+            "url": "/public/media/projects/al-baydha/2-rock-terraces-built.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "Rock terraces and gabion check dams laid into the hillside to catch runoff",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          },
+          {
+            "url": "/public/media/projects/al-baydha/3-stonework-construction.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "Community stonemasons building the terrace walls by hand",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          },
+          {
+            "url": "/public/media/projects/al-baydha/4-seedling-watering.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "First seedlings planted into the newly terraced slopes",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          },
+          {
+            "url": "/public/media/projects/al-baydha/5-moringa-early-growth.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "Moringa and native species taking hold — the first generation of canopy",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
+          },
+          {
             "url": "https://upload.wikimedia.org/wikipedia/commons/7/75/Al_Baydha_terraces_after.jpg",
             "credit": "Wikimedia Commons",
-            "alt": "Al Baydha terraces with early vegetation — after rainwater harvesting",
+            "alt": "Al Baydha terraces with established vegetation — years after rainwater harvesting",
             "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_after.jpg"
           },
           {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Al_Baydha_terraces_green.jpg",
-            "credit": "Wikimedia Commons",
-            "alt": "Al Baydha site greened over — trees and groundcover established on the terraced slopes",
-            "source": "https://commons.wikimedia.org/wiki/File:Al_Baydha_terraces_green.jpg"
+            "url": "/public/media/projects/al-baydha/6-savannah-sunset.jpg",
+            "credit": "Al Baydha Project",
+            "alt": "A working savannah at sunset — 2,400 hectares regreened, continuing without irrigation",
+            "source": "https://www.youtube.com/watch?v=T39QHprz-x8"
           }
         ],
         "tags": "arid,water-harvesting,desert-regreening,rangeland,saudi-arabia",
@@ -62,19 +92,28 @@
         "size": "1,400 ha",
         "images": [
           {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg",
+            "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg",
             "credit": "Wikimedia Commons",
+            "alt": "Free-ranging longhorn cattle among scrub and mature oaks at Knepp",
             "source": "https://commons.wikimedia.org/wiki/File:Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg"
           },
           {
             "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Tamworth_sow_at_Knepp_Wildland.jpg",
             "credit": "Wikimedia Commons",
+            "alt": "Tamworth sow rooting in the rewilded landscape at Knepp",
             "source": "https://commons.wikimedia.org/wiki/File:Tamworth_sow_at_Knepp_Wildland.jpg"
           },
           {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Knepp_Castle.jpg",
+            "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Stork_nest_at_Knepp_Wildland.jpg",
             "credit": "Wikimedia Commons",
-            "source": "https://commons.wikimedia.org/wiki/File:Knepp_Castle.jpg"
+            "alt": "Returning white storks nesting at Knepp after a 600-year absence in Britain",
+            "source": "https://commons.wikimedia.org/wiki/File:Stork_nest_at_Knepp_Wildland.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/2/29/Deer_grazing_at_Knepp_Wildland.jpg",
+            "credit": "Wikimedia Commons",
+            "alt": "Fallow deer grazing in the dynamic habitat mosaic of Knepp",
+            "source": "https://commons.wikimedia.org/wiki/File:Deer_grazing_at_Knepp_Wildland.jpg"
           }
         ],
         "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
@@ -230,7 +269,32 @@
         "name": "Africa Centre for Holistic Management",
         "summary": "Allan Savory's flagship landscape restoration site using holistic planned grazing.",
         "size": "3,200 ha",
-        "images": [],
+        "images": [
+          {
+            "url": "https://savory.global/wp-content/uploads/2017/02/ACHM-Zimbabwe-Cover-1.jpg",
+            "credit": "Savory Institute / ACHM",
+            "alt": "Dimbangombe Ranch — the 3,200-hectare Africa Centre for Holistic Management in Zimbabwe",
+            "source": "https://savory.global/hubs/achm/"
+          },
+          {
+            "url": "https://savory.global/wp-content/uploads/2017/03/ACHM-Zimbabwe-Cover-2.jpg",
+            "credit": "Savory Institute / ACHM",
+            "alt": "Planned-grazing cattle herd at Dimbangombe restoring savanna grassland",
+            "source": "https://savory.global/hubs/achm/"
+          },
+          {
+            "url": "https://savory.global/wp-content/uploads/2018/07/zim2004-e1533804416414.png",
+            "credit": "Savory Institute / ACHM",
+            "alt": "Dimbangombe, 2004 — degraded baseline before holistic management",
+            "source": "https://savory.global/hubs/achm/"
+          },
+          {
+            "url": "https://savory.global/wp-content/uploads/2018/07/zim2007-e1533804385430.png",
+            "credit": "Savory Institute / ACHM",
+            "alt": "Dimbangombe, 2007 — same site three years later under holistic planned grazing",
+            "source": "https://savory.global/hubs/achm/"
+          }
+        ],
         "tags": "holistic-management,regenerative-grazing,zimbabwe,savanna,soil-restoration",
         "links": [
           {
