@@ -97,17 +97,23 @@ async function fetchBandChunked(config, band, lat, lon, startMonth, endMonth) {
   const endDate = monthToOrnlDate(endMonth, "end");
   const chunks = chunkOrnlDateRange(startDate, endDate, config.compositeDays);
   const merged = [];
+  let idx = 0;
   for (const [chunkStart, chunkEnd] of chunks) {
+    idx += 1;
+    const label = `${config.product} ${band} [${idx}/${chunks.length}] ${chunkStart}..${chunkEnd}`;
     try {
       const payload = await fetchBand(config.product, band, lat, lon, chunkStart, chunkEnd);
-      if (Array.isArray(payload?.subset)) merged.push(...payload.subset);
+      const n = Array.isArray(payload?.subset) ? payload.subset.length : 0;
+      if (n) merged.push(...payload.subset);
+      process.stdout.write(`      ${label} → ${n} rows\n`);
     } catch (err) {
-      if (/no data available/i.test(String(err?.message))) continue;
+      if (/no data available/i.test(String(err?.message))) {
+        process.stdout.write(`      ${label} → no data\n`);
+        continue;
+      }
+      process.stdout.write(`      ${label} → ERROR: ${err?.message}\n`);
       throw err;
     }
-    // Sequential within a band keeps us far under ORNL's 10-concurrent cap
-    // (we have 4 bands running in parallel max = data+qa × ndvi+lst); a small
-    // inter-call delay just keeps us from looking like a bot.
     await sleep(150);
   }
   return merged;

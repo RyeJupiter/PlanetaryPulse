@@ -772,9 +772,26 @@
     updateCharts();
 
     try {
-      const res = await fetch(`/public/data/histories/${projectId}.json`);
+      const res = await fetch(`/public/data/histories/${projectId}.json`, {
+        headers: { Accept: "application/json" },
+      });
       if (!res.ok) throw new Error(`history ${projectId} not found (${res.status})`);
-      const payload = await res.json();
+
+      // Cloudflare Pages rewrites unknown paths to index.html on some
+      // configurations, so a 200 + HTML body means the history isn't there.
+      const bodyText = await res.text();
+      if (bodyText.trim().startsWith("<")) {
+        throw new Error(
+          `No prefetched history yet for ${projectId} — press Load monthly series to fetch live.`
+        );
+      }
+
+      let payload;
+      try {
+        payload = JSON.parse(bodyText);
+      } catch {
+        throw new Error(`Prefetched history for ${projectId} returned unexpected content.`);
+      }
 
       state.lat = payload.lat;
       state.lon = payload.lon;
