@@ -2,5 +2,7 @@ name = "planetarypulse"
 pages_build_output_dir = "."
 compatibility_date = "2024-09-23"
 
-[[send_email]]
-name = "SEND_EMAIL"
+# Note: the SEND_EMAIL binding (used by functions/api/send-outreach.js) is
+# configured in the Cloudflare Pages dashboard, not here. Pages does not
+# accept [[send_email]] in wrangler.toml — keeping it here blocks every
+# production deploy.
