@@ -55,6 +55,23 @@ export async function onRequestPost(context) {
     const startDate = monthToOrnlDate(startMonth, "start");
     const endDate = monthToOrnlDate(endMonth, "end");
 
+    // Cloudflare Workers caps at 50 subrequests per invocation on the free
+    // plan. Each metric fetches data + QA bands separately, and each band
+    // must be chunked to stay under ORNL's 10-composite limit. Estimate
+    // before firing so we can refuse with a clear message instead of a
+    // silent "subrequest limit exceeded" 500.
+    const subrequestBudget = estimateSubrequests(metrics, startDate, endDate);
+    if (subrequestBudget > 45) {
+      return json(
+        {
+          error: `Requested range is too wide — needs ~${subrequestBudget} upstream calls, over the ${45}-per-request budget. Please narrow to ~3 years or fewer.`,
+          code: "range_too_wide",
+          subrequests: subrequestBudget,
+        },
+        413
+      );
+    }
+
     // Fetch both products in parallel — no auth needed
     const metricData = await Promise.all(
       metrics.map((metric) => fetchMetric(lat, lon, startDate, endDate, metric))
@@ -88,13 +105,18 @@ async function fetchMetric(lat, lon, startDate, endDate, metric) {
 }
 
 async function fetchBandChunked(config, band, lat, lon, startDate, endDate) {
+  // ORNL DAAC rejects more than 10 concurrent requests per host. Fetch the
+  // chunks for a single band sequentially — the data+QA bands and the two
+  // metrics already run in parallel at the caller, so we still get 4
+  // concurrent streams which keeps us under the 10-per-host limit with
+  // headroom for retries.
   const chunks = chunkOrnlDateRange(startDate, endDate, config.compositeDays);
-  const results = await Promise.all(
-    chunks.map(([chunkStart, chunkEnd]) =>
-      fetchBand(config.product, band, lat, lon, chunkStart, chunkEnd)
-    )
-  );
-  return results.flatMap((payload) => (Array.isArray(payload?.subset) ? payload.subset : []));
+  const merged = [];
+  for (const [chunkStart, chunkEnd] of chunks) {
+    const payload = await fetchBand(config.product, band, lat, lon, chunkStart, chunkEnd);
+    if (Array.isArray(payload?.subset)) merged.push(...payload.subset);
+  }
+  return merged;
 }
 
 async function fetchBand(product, band, lat, lon, startDate, endDate) {
@@ -125,6 +147,21 @@ function chunkOrnlDateRange(startDate, endDate, compositeDays) {
     cursor = chunkEnd + 1;
   }
   return chunks;
+}
+
+function estimateSubrequests(metrics, startDate, endDate) {
+  const startEpoch = ornlDateToEpochDays(startDate);
+  const endEpoch = ornlDateToEpochDays(endDate);
+  const days = Math.max(endEpoch - startEpoch + 1, 1);
+  let total = 0;
+  for (const m of metrics) {
+    const cfg = METRIC_CONFIG[m];
+    if (!cfg) continue;
+    const chunkSpanDays = ORNL_MAX_COMPOSITES * cfg.compositeDays;
+    const chunks = Math.ceil(days / chunkSpanDays);
+    total += chunks * 2; // data + QA per chunk
+  }
+  return total;
 }
 
 function ornlDateToEpochDays(ornlDate) {

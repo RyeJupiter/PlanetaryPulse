@@ -10,26 +10,29 @@
   gap: 18px;
 }
 
+/* Translucent forest-green card — matches the project detail panel */
 .explorerCard {
   background:
-    radial-gradient(circle at top right, rgba(118, 255, 193, 0.08), transparent 42%),
-    linear-gradient(180deg, rgba(14, 22, 34, 0.88) 0%, rgba(10, 16, 26, 0.94) 100%);
-  border: 1px solid rgba(122, 172, 214, 0.18);
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.1), transparent 46%),
+    linear-gradient(160deg, rgba(24, 38, 28, 0.68) 0%, rgba(14, 24, 18, 0.76) 100%);
+  border: 1px solid rgba(166, 236, 170, 0.32);
   border-radius: 18px;
   padding: 16px 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   box-shadow:
-    0 24px 60px rgba(3, 6, 14, 0.45),
-    0 0 0 1px rgba(0, 0, 0, 0.25) inset;
-  color: var(--text);
+    0 26px 52px rgba(4, 10, 6, 0.48),
+    0 0 0 1px rgba(0, 0, 0, 0.22) inset;
+  color: rgba(240, 245, 225, 0.96);
 }
 
 .explorerCardTitle {
   margin: 0 0 12px;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(135, 236, 255, 0.75);
+  color: rgba(196, 170, 108, 0.88);
 }
 
 .explorerControlGrid {
@@ -49,19 +52,19 @@
 }
 
 .explorerLabel {
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(194, 211, 234, 0.6);
+  color: rgba(196, 170, 108, 0.78);
 }
 
 .explorerInput,
 .explorerSelect {
   width: 100%;
   border-radius: 10px;
-  border: 1px solid rgba(122, 172, 214, 0.22);
-  background: rgba(8, 14, 22, 0.72);
-  color: var(--text);
+  border: 1px solid rgba(166, 236, 170, 0.28);
+  background: rgba(14, 22, 16, 0.72);
+  color: rgba(240, 245, 225, 0.98);
   padding: 9px 11px;
   font-size: 13px;
   font-family: var(--font-sans);
@@ -71,8 +74,8 @@
 .explorerInput:focus,
 .explorerSelect:focus {
   outline: none;
-  border-color: rgba(135, 236, 255, 0.55);
-  box-shadow: 0 0 0 3px rgba(135, 236, 255, 0.12);
+  border-color: rgba(166, 236, 170, 0.65);
+  box-shadow: 0 0 0 3px rgba(166, 236, 170, 0.14);
 }
 
 .explorerMetricList {
@@ -87,27 +90,27 @@
   gap: 8px;
   padding: 7px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(122, 172, 214, 0.22);
-  background: rgba(8, 14, 22, 0.6);
+  border: 1px solid rgba(166, 236, 170, 0.28);
+  background: rgba(14, 22, 16, 0.6);
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: rgba(216, 230, 240, 0.88);
+  color: rgba(236, 248, 220, 0.9);
   cursor: pointer;
   transition: border-color 160ms ease, background 160ms ease;
 }
 
 .explorerMetric:hover {
-  border-color: rgba(135, 236, 255, 0.42);
+  border-color: rgba(166, 236, 170, 0.55);
 }
 
 .explorerMetric input[type="checkbox"] {
-  accent-color: var(--accent-green, #90ffd1);
+  accent-color: rgba(166, 236, 170, 0.95);
 }
 
 .explorerBtn {
-  border: 1px solid rgba(118, 255, 193, 0.42);
-  background: linear-gradient(135deg, rgba(118, 255, 193, 0.18) 0%, rgba(135, 236, 255, 0.18) 100%);
-  color: var(--text);
+  border: 1px solid rgba(166, 236, 170, 0.5);
+  background: linear-gradient(135deg, rgba(120, 200, 140, 0.24) 0%, rgba(196, 170, 108, 0.24) 100%);
+  color: rgba(236, 255, 220, 0.98);
   border-radius: 12px;
   padding: 10px 14px;
   cursor: pointer;
@@ -120,9 +123,9 @@
 
 .explorerBtn:hover {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, rgba(118, 255, 193, 0.28) 0%, rgba(135, 236, 255, 0.28) 100%);
-  border-color: rgba(118, 255, 193, 0.62);
-  box-shadow: 0 14px 28px rgba(3, 6, 14, 0.42);
+  background: linear-gradient(135deg, rgba(120, 200, 140, 0.36) 0%, rgba(196, 170, 108, 0.36) 100%);
+  border-color: rgba(166, 236, 170, 0.72);
+  box-shadow: 0 14px 28px rgba(4, 10, 6, 0.42);
 }
 
 /* ── Map viewer ─────────────────────────────────────────────────────────── */
@@ -132,8 +135,8 @@
   height: 100%;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(122, 172, 214, 0.18);
-  background: rgba(4, 8, 14, 0.72);
+  border: 1px solid rgba(166, 236, 170, 0.22);
+  background: rgba(10, 16, 12, 0.78);
 }
 
 .viewerMap {
@@ -152,10 +155,10 @@
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(216, 230, 240, 0.78);
+  color: rgba(236, 248, 220, 0.88);
   z-index: 2;
-  background: rgba(8, 14, 22, 0.78);
-  border: 1px solid rgba(122, 172, 214, 0.3);
+  background: rgba(14, 22, 16, 0.78);
+  border: 1px solid rgba(166, 236, 170, 0.32);
   border-radius: 999px;
   padding: 5px 10px;
   backdrop-filter: blur(6px);
@@ -166,20 +169,20 @@
   right: 12px;
   top: 12px;
   z-index: 2;
-  color: rgba(216, 230, 240, 0.9);
+  color: rgba(236, 248, 220, 0.95);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  background: rgba(8, 14, 22, 0.78);
-  border: 1px solid rgba(122, 172, 214, 0.3);
+  background: rgba(14, 22, 16, 0.78);
+  border: 1px solid rgba(166, 236, 170, 0.32);
   border-radius: 999px;
   padding: 5px 10px;
   backdrop-filter: blur(6px);
 }
 
 .viewerMap .maplibregl-control-container .maplibregl-ctrl-group {
-  background: rgba(10, 16, 26, 0.9);
-  border: 1px solid rgba(122, 172, 214, 0.24);
-  box-shadow: 0 12px 28px rgba(3, 6, 14, 0.5);
+  background: rgba(14, 22, 16, 0.9);
+  border: 1px solid rgba(166, 236, 170, 0.28);
+  box-shadow: 0 12px 28px rgba(4, 10, 6, 0.5);
 }
 
 .viewerMap .maplibregl-ctrl button {
@@ -187,42 +190,42 @@
 }
 
 .viewerMap .maplibregl-ctrl button .maplibregl-ctrl-icon {
-  filter: invert(1) brightness(1.2) hue-rotate(180deg) saturate(0.6);
+  filter: invert(1) brightness(1.2) hue-rotate(70deg) saturate(0.7);
 }
 
 /* ── Status + banner ─────────────────────────────────────────────────────── */
 .explorerStatus {
-  color: rgba(194, 211, 234, 0.75);
+  color: rgba(236, 248, 220, 0.78);
   font-size: 12px;
   letter-spacing: 0.02em;
 }
 
 .explorerBanner {
   border-radius: 10px;
-  border: 1px solid rgba(122, 172, 214, 0.22);
-  background: rgba(10, 18, 28, 0.78);
+  border: 1px solid rgba(166, 236, 170, 0.26);
+  background: rgba(14, 24, 18, 0.78);
   padding: 10px 12px;
   font-size: 12px;
   line-height: 1.5;
-  color: rgba(216, 230, 240, 0.88);
+  color: rgba(236, 248, 220, 0.92);
 }
 
 .explorerBanner.warning {
-  border-color: rgba(255, 176, 112, 0.38);
-  background: rgba(60, 36, 18, 0.72);
-  color: rgba(255, 214, 170, 0.96);
+  border-color: rgba(196, 170, 108, 0.45);
+  background: rgba(46, 32, 16, 0.76);
+  color: rgba(255, 228, 170, 0.98);
 }
 
 .explorerBanner.error {
-  border-color: rgba(255, 120, 128, 0.42);
-  background: rgba(64, 18, 24, 0.72);
-  color: rgba(255, 200, 208, 0.96);
+  border-color: rgba(220, 130, 112, 0.5);
+  background: rgba(56, 22, 18, 0.78);
+  color: rgba(255, 210, 196, 0.98);
 }
 
 .explorerBanner.info {
-  border-color: rgba(118, 255, 193, 0.32);
-  background: rgba(12, 36, 32, 0.72);
-  color: rgba(216, 255, 238, 0.92);
+  border-color: rgba(166, 236, 170, 0.4);
+  background: rgba(16, 40, 26, 0.76);
+  color: rgba(216, 255, 228, 0.96);
 }
 
 /* ── Metric dashboard cards ─────────────────────────────────────────────── */
@@ -237,22 +240,27 @@
   padding: 18px 20px 20px;
   border-radius: 20px;
   background:
-    radial-gradient(circle at top right, rgba(118, 255, 193, 0.06), transparent 40%),
-    linear-gradient(180deg, rgba(12, 22, 34, 0.92) 0%, rgba(8, 14, 22, 0.96) 100%);
-  border: 1px solid rgba(122, 172, 214, 0.18);
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.1), transparent 46%),
+    linear-gradient(160deg, rgba(24, 38, 28, 0.72) 0%, rgba(14, 24, 18, 0.8) 100%);
+  border: 1px solid rgba(166, 236, 170, 0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   box-shadow:
-    0 28px 60px rgba(3, 6, 14, 0.5),
-    0 0 0 1px rgba(0, 0, 0, 0.35) inset;
+    0 28px 56px rgba(4, 10, 6, 0.5),
+    0 0 0 1px rgba(0, 0, 0, 0.25) inset;
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow: hidden;
+  color: rgba(240, 245, 225, 0.96);
 }
 
+/* Warm-brown wash for LST card so it reads differently without going harsh */
 .metricCard[data-metric="lst"] {
   background:
-    radial-gradient(circle at top right, rgba(255, 176, 112, 0.06), transparent 40%),
-    linear-gradient(180deg, rgba(12, 22, 34, 0.92) 0%, rgba(8, 14, 22, 0.96) 100%);
+    radial-gradient(ellipse at top right, rgba(196, 170, 108, 0.12), transparent 46%),
+    linear-gradient(160deg, rgba(36, 28, 20, 0.72) 0%, rgba(22, 16, 10, 0.8) 100%);
+  border: 1px solid rgba(196, 170, 108, 0.38);
 }
 
 .metricCard.metricDisabled {
@@ -271,12 +279,12 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(135, 236, 255, 0.78);
+  color: rgba(166, 236, 170, 0.92);
   font-weight: 500;
 }
 
 .metricCard[data-metric="lst"] .metricEyebrow {
-  color: rgba(255, 176, 112, 0.86);
+  color: rgba(220, 196, 140, 0.92);
 }
 
 .metricTitle {
@@ -285,18 +293,18 @@
   font-weight: 500;
   font-size: 20px;
   letter-spacing: 0.01em;
-  color: rgba(240, 250, 255, 0.98);
+  color: rgba(240, 250, 225, 0.98);
 }
 
 .metricBadge {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(194, 211, 234, 0.7);
+  color: rgba(220, 196, 140, 0.82);
   padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(122, 172, 214, 0.26);
-  background: rgba(8, 14, 22, 0.6);
+  border: 1px solid rgba(196, 170, 108, 0.36);
+  background: rgba(14, 22, 16, 0.55);
   white-space: nowrap;
 }
 
@@ -306,8 +314,13 @@
   gap: 12px;
   padding: 14px 14px 12px;
   border-radius: 14px;
-  background: rgba(8, 14, 22, 0.55);
-  border: 1px solid rgba(122, 172, 214, 0.12);
+  background: rgba(14, 24, 18, 0.55);
+  border: 1px solid rgba(166, 236, 170, 0.18);
+}
+
+.metricCard[data-metric="lst"] .metricStatRow {
+  background: rgba(26, 20, 12, 0.55);
+  border: 1px solid rgba(196, 170, 108, 0.22);
 }
 
 .metricStat {
@@ -321,7 +334,7 @@
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(194, 211, 234, 0.62);
+  color: rgba(220, 196, 140, 0.72);
 }
 
 .metricStatValue {
@@ -331,18 +344,18 @@
   font-family: var(--font-display);
   font-size: 19px;
   font-weight: 500;
-  color: rgba(240, 250, 255, 0.98);
+  color: rgba(240, 250, 225, 0.98);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .metricStatFoot {
   font-size: 11px;
-  color: rgba(194, 211, 234, 0.55);
+  color: rgba(220, 196, 140, 0.66);
 }
 
 .metricRangeArrow {
-  color: rgba(194, 211, 234, 0.45);
+  color: rgba(220, 196, 140, 0.5);
   font-size: 14px;
 }
 
@@ -356,21 +369,21 @@
 }
 
 .metricDelta.up {
-  color: rgba(118, 255, 193, 0.98);
-  background: rgba(118, 255, 193, 0.12);
-  border: 1px solid rgba(118, 255, 193, 0.35);
+  color: rgba(166, 236, 170, 0.98);
+  background: rgba(120, 200, 140, 0.14);
+  border: 1px solid rgba(166, 236, 170, 0.42);
 }
 
 .metricDelta.down {
-  color: rgba(255, 176, 135, 0.98);
-  background: rgba(255, 135, 152, 0.12);
-  border: 1px solid rgba(255, 135, 152, 0.35);
+  color: rgba(255, 190, 150, 0.98);
+  background: rgba(196, 130, 90, 0.14);
+  border: 1px solid rgba(220, 160, 120, 0.42);
 }
 
 .metricDelta.flat {
-  color: rgba(216, 230, 240, 0.78);
-  background: rgba(122, 172, 214, 0.1);
-  border: 1px solid rgba(122, 172, 214, 0.28);
+  color: rgba(236, 248, 220, 0.78);
+  background: rgba(166, 236, 170, 0.08);
+  border: 1px solid rgba(196, 170, 108, 0.32);
 }
 
 .metricChart {
@@ -385,14 +398,14 @@
 }
 
 .metricAxis {
-  fill: rgba(194, 211, 234, 0.58);
+  fill: rgba(220, 196, 140, 0.62);
   font-size: 10px;
   font-family: var(--font-sans);
   letter-spacing: 0.06em;
 }
 
 .metricBaselineLabel {
-  fill: rgba(236, 255, 245, 0.55);
+  fill: rgba(236, 248, 220, 0.58);
   font-size: 9px;
   font-family: var(--font-sans);
   letter-spacing: 0.12em;
@@ -404,14 +417,14 @@
   justify-content: space-between;
   gap: 12px;
   font-size: 11px;
-  color: rgba(194, 211, 234, 0.55);
+  color: rgba(220, 196, 140, 0.62);
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .metricEmpty {
   padding: 26px 8px;
-  color: rgba(194, 211, 234, 0.6);
+  color: rgba(236, 248, 220, 0.7);
   font-size: 13px;
   line-height: 1.55;
   text-align: center;

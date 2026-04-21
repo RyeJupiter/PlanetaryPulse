@@ -7,11 +7,20 @@
   const now = new Date();
   const currentMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 
+  // Default to a ~2-year window so the backend stays comfortably under
+  // Cloudflare Workers' 50-subrequest cap. Wider ranges are still selectable
+  // from the controls, and the user sees a warning if they cross the budget.
+  const defaultStart = (() => {
+    const d = new Date(Date.UTC(now.getUTCFullYear() - 2, now.getUTCMonth(), 1));
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  })();
+  const MIN_MONTH = "2015-01";
+
   const state = {
     provider: "modis",
     lat: 36.9529,
     lon: -122.0253,
-    startMonth: "2020-01",
+    startMonth: defaultStart,
     endMonth: currentMonth,
     metrics: new Set(["ndvi", "lst"]),
     series: [],
@@ -70,6 +79,7 @@
           if (!res.ok) {
             const err = new Error(payload.error || "Backend request failed.");
             err.status = res.status;
+            err.code = payload.code || "backend_error";
             throw err;
           }
           return payload;
@@ -92,9 +102,9 @@
         const pct = (absDelta / Math.abs(baseline)) * 100;
         return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
       },
-      stroke: "var(--accent-green, #90ffd1)",
-      fillTop: "rgba(118, 255, 193, 0.32)",
-      fillBot: "rgba(118, 255, 193, 0)",
+      stroke: "#a6ecaa",
+      fillTop: "rgba(166, 236, 170, 0.36)",
+      fillBot: "rgba(166, 236, 170, 0)",
       source: "MOD13Q1 · 250m · 16-day",
       yFloor: 0,
       yCeil: 1,
@@ -106,9 +116,9 @@
       format: (v) => `${v.toFixed(1)}°C`,
       formatAxis: (v) => `${v.toFixed(0)}°`,
       deltaFormat: (absDelta) => `${absDelta >= 0 ? "+" : ""}${absDelta.toFixed(1)}°C`,
-      stroke: "var(--accent-warm, #ffc28d)",
-      fillTop: "rgba(255, 176, 112, 0.32)",
-      fillBot: "rgba(255, 176, 112, 0)",
+      stroke: "#dcaa70",
+      fillTop: "rgba(220, 170, 112, 0.36)",
+      fillBot: "rgba(220, 170, 112, 0)",
       source: "MOD11A2 · 1km · 8-day",
       yFloor: -20,
       yCeil: 55,
@@ -326,8 +336,8 @@
            role="img" aria-label="${meta.title} monthly series">
         <defs>
           <linearGradient id="${gradId}" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stop-color="${meta.fillTop.replace("var(--accent-green, ", "").replace("var(--accent-warm, ", "").replace(")", "")}" />
-            <stop offset="100%" stop-color="${meta.fillBot.replace("var(--accent-green, ", "").replace("var(--accent-warm, ", "").replace(")", "")}" />
+            <stop offset="0%" stop-color="${meta.fillTop}" />
+            <stop offset="100%" stop-color="${meta.fillBot}" />
           </linearGradient>
         </defs>
         ${gridLines}
@@ -341,7 +351,7 @@
   }
 
   function renderShell() {
-    const months = monthRange("2020-01", currentMonth);
+    const months = monthRange(MIN_MONTH, currentMonth);
     const monthOptions = months
       .map((m) => `<option value="${m}"${m === state.startMonth ? " selected" : ""}>${m}</option>`)
       .join("");
@@ -551,7 +561,10 @@
         state.source = "";
         state.hasLoaded = true;
         state.warning = `Request failed (${error?.status || "request error"})`;
-        if (error?.status === 503) {
+        if (error?.code === "range_too_wide" || error?.status === 413) {
+          state.banner = error?.message || "The selected date range is too wide — narrow it to about 3 years.";
+          state.bannerLevel = "warning";
+        } else if (error?.status === 503) {
           state.banner = "NASA ORNL DAAC is temporarily unavailable (503). Try again later.";
           state.bannerLevel = "warning";
         } else {
