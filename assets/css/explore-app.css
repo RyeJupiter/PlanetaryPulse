@@ -603,3 +603,164 @@
     gap: 12px;
   }
 }
+
+/* ── Data provenance panel ─────────────────────────────────────────────── */
+.dataProvenance {
+  margin-top: 22px;
+  padding: 28px 30px 26px;
+  background:
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.06), transparent 46%),
+    linear-gradient(160deg, rgba(24, 38, 28, 0.62) 0%, rgba(14, 24, 18, 0.72) 100%);
+  border: 1px solid rgba(166, 236, 170, 0.24);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(240, 245, 225, 0.94);
+}
+
+.dataProvenance .sectionLabel {
+  color: rgba(196, 170, 108, 0.88);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.dataProvenanceTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: rgba(236, 248, 220, 0.98);
+  margin: 0 0 18px;
+}
+
+.provenanceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.provenanceCard {
+  position: relative;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: rgba(8, 14, 10, 0.45);
+  border: 1px solid rgba(166, 236, 170, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.provenanceEyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(166, 236, 170, 0.85);
+}
+
+.provenanceCard:nth-child(2) .provenanceEyebrow {
+  color: rgba(220, 196, 140, 0.88);
+}
+
+.provenanceProduct {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: rgba(240, 250, 225, 0.98);
+}
+
+.provenanceMeta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 14px;
+  row-gap: 6px;
+  margin: 4px 0 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.provenanceMeta dt {
+  color: rgba(220, 196, 140, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  align-self: center;
+}
+
+.provenanceMeta dd {
+  margin: 0;
+  color: rgba(236, 248, 220, 0.92);
+}
+
+.provenanceCard .link {
+  color: rgba(166, 236, 170, 0.98);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(166, 236, 170, 0.38);
+  padding-bottom: 1px;
+  align-self: flex-start;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.provenanceCard .link:hover {
+  color: rgba(206, 255, 200, 1);
+  border-bottom-color: rgba(206, 255, 200, 0.72);
+}
+
+.provenanceProcessing,
+.provenanceCaveats {
+  border-top: 1px solid rgba(166, 236, 170, 0.18);
+  padding-top: 16px;
+  margin-top: 10px;
+}
+
+.provenanceProcessingList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(240, 245, 225, 0.92);
+}
+
+.provenanceProcessingList li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.provenanceProcessingList li::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(166, 236, 170, 0.98) 0%, rgba(196, 170, 108, 0.9) 100%);
+}
+
+.provenanceCaveats p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(220, 196, 140, 0.88);
+}
+
+@media (max-width: 720px) {
+  .dataProvenance {
+    padding: 22px 18px 20px;
+    border-radius: 16px;
+  }
+  .dataProvenanceTitle {
+    font-size: 19px;
+  }
+  .provenanceCard {
+    padding: 14px 14px 16px;
+  }
+}
