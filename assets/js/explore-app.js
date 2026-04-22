@@ -30,6 +30,10 @@
     warning: "",
     banner: "",
     bannerLevel: "info",
+    // Shared viewport across both metric charts so panning/zooming NDVI
+    // also moves LST and they stay aligned in time. Stored as fractional
+    // month indices. null = show the full series.
+    viewport: null,
   };
 
   let map;
@@ -162,23 +166,13 @@
 
   function renderChartCard(key) {
     const meta = METRIC_META[key];
-    const stats = computeStats(state.series, key);
     const selected = state.metrics.has(key);
-    const coverageLabel = `${state.provider.toUpperCase()} · ${state.lat.toFixed(2)}, ${state.lon.toFixed(2)}`;
-    const rangeLabel = state.series.length
-      ? `${state.series[0].month} → ${state.series[state.series.length - 1].month}`
-      : "Awaiting data";
+    const stats = computeStats(state.series, key);
 
     if (!selected) {
       return `
         <section class="metricCard metricDisabled" data-metric="${key}">
-          <div class="metricHeader">
-            <div>
-              <div class="metricEyebrow">${meta.eyebrow}</div>
-              <h3 class="metricTitle">${meta.title}</h3>
-            </div>
-            <div class="metricBadge">${meta.source}</div>
-          </div>
+          <div class="metricLabel">${meta.title}</div>
           <div class="metricEmpty">Enable ${meta.title} in the controls to include this signal.</div>
         </section>
       `;
@@ -198,144 +192,101 @@
            </div>`;
       return `
         <section class="metricCard" data-metric="${key}">
-          <div class="metricHeader">
-            <div>
-              <div class="metricEyebrow">${meta.eyebrow}</div>
-              <h3 class="metricTitle">${meta.title}</h3>
-            </div>
-            <div class="metricBadge">${meta.source}</div>
-          </div>
+          <div class="metricLabel">${meta.title}</div>
           ${emptyBody}
         </section>
       `;
     }
 
-    const deltaClass = stats.delta > 0 ? "up" : stats.delta < 0 ? "down" : "flat";
-    const deltaText = meta.deltaFormat(stats.delta, stats.baseline);
-
     return `
-      <section class="metricCard" data-metric="${key}">
-        <div class="metricHeader">
-          <div>
-            <div class="metricEyebrow">${meta.eyebrow}</div>
-            <h3 class="metricTitle">${meta.title}</h3>
-          </div>
-          <div class="metricBadge">${meta.source}</div>
-        </div>
-
-        <div class="metricStatRow">
-          <div class="metricStat">
-            <div class="metricStatLabel">Latest</div>
-            <div class="metricStatValue">
-              <span>${meta.format(stats.latest.value)}</span>
-              <span class="metricDelta ${deltaClass}">${deltaText}</span>
-            </div>
-            <div class="metricStatFoot">vs. ${meta.format(stats.baseline)} baseline</div>
-          </div>
-          <div class="metricStat">
-            <div class="metricStatLabel">Mean</div>
-            <div class="metricStatValue"><span>${meta.format(stats.mean)}</span></div>
-            <div class="metricStatFoot">across ${stats.pairs.length} months</div>
-          </div>
-          <div class="metricStat">
-            <div class="metricStatLabel">Range</div>
-            <div class="metricStatValue">
-              <span>${meta.format(stats.min)}</span>
-              <span class="metricRangeArrow">→</span>
-              <span>${meta.format(stats.max)}</span>
-            </div>
-            <div class="metricStatFoot">observed min / max</div>
-          </div>
-          <div class="metricStat">
-            <div class="metricStatLabel">QA coverage</div>
-            <div class="metricStatValue"><span>${Math.round(stats.coverage * 100)}%</span></div>
-            <div class="metricStatFoot">${stats.pairs.length} / ${state.series.length} months</div>
-          </div>
-        </div>
-
-        <div class="metricChart">
+      <section class="metricCard metricInteractive" data-metric="${key}">
+        <div class="metricLabel">${meta.title}</div>
+        <div class="metricChart" data-chart="${key}">
           ${makeChartSvg(key, stats, meta)}
-        </div>
-
-        <div class="metricFooter">
-          <span>${rangeLabel}</span>
-          <span>${coverageLabel}</span>
         </div>
       </section>
     `;
   }
 
+  function viewportBounds() {
+    const n = state.series.length;
+    if (n === 0) return { start: 0, end: 0, count: 0 };
+    if (!state.viewport) return { start: 0, end: n - 1, count: n };
+    const clampedStart = Math.max(0, Math.min(state.viewport.start, n - 1.01));
+    const clampedEnd = Math.max(clampedStart + 0.5, Math.min(state.viewport.end, n - 1));
+    return { start: clampedStart, end: clampedEnd, count: clampedEnd - clampedStart + 1 };
+  }
+
   function makeChartSvg(key, stats, meta) {
     const width = 960;
     const height = 220;
-    const padLeft = 48;
-    const padRight = 16;
+    const padLeft = 44;
+    const padRight = 14;
     const padTop = 14;
-    const padBottom = 28;
+    const padBottom = 26;
     const plotW = width - padLeft - padRight;
     const plotH = height - padTop - padBottom;
 
+    const { start, end } = viewportBounds();
     const pairs = stats.pairs;
-    const nMonths = state.series.length;
 
-    // y-scale: pad min/max 10%, but also keep sane floor/ceil for the metric
-    const rawMin = Math.min(stats.min, stats.baseline);
-    const rawMax = Math.max(stats.max, stats.baseline);
+    // y-scale: compute from visible points only so zooming also zooms Y range.
+    const visiblePairs = pairs.filter((p) => p.idx >= start - 0.5 && p.idx <= end + 0.5);
+    const valuesForScale = visiblePairs.length ? visiblePairs.map((p) => p.value) : [stats.min, stats.max];
+    const rawMin = Math.min(...valuesForScale);
+    const rawMax = Math.max(...valuesForScale);
     const spread = Math.max(rawMax - rawMin, 0.05);
     const yMin = Math.max(meta.yFloor, rawMin - spread * 0.15);
     const yMax = Math.min(meta.yCeil, rawMax + spread * 0.15);
 
-    const xOf = (idx) => padLeft + (idx / Math.max(nMonths - 1, 1)) * plotW;
+    const xOf = (idx) => padLeft + ((idx - start) / Math.max(end - start, 1e-9)) * plotW;
     const yOf = (val) =>
       padTop + plotH - ((val - yMin) / Math.max(yMax - yMin, 1e-9)) * plotH;
 
-    // Grid lines
-    const ticks = 4;
-    const gridLines = Array.from({ length: ticks + 1 }, (_, i) => {
-      const val = yMin + ((yMax - yMin) * i) / ticks;
+    // y grid + labels
+    const yTicks = 4;
+    const yGrid = Array.from({ length: yTicks + 1 }, (_, i) => {
+      const val = yMin + ((yMax - yMin) * i) / yTicks;
       const y = yOf(val);
       return `
         <line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}"
-              stroke="rgba(122, 172, 214, 0.08)" stroke-width="1" />
+              stroke="rgba(166, 236, 170, 0.08)" stroke-width="1" />
         <text x="${padLeft - 6}" y="${y + 4}" text-anchor="end"
               class="metricAxis">${meta.formatAxis(val)}</text>
       `;
     }).join("");
 
-    // Baseline reference
-    const baselineY = yOf(stats.baseline);
-    const baselineLine = `
-      <line x1="${padLeft}" y1="${baselineY}" x2="${width - padRight}" y2="${baselineY}"
-            stroke="rgba(236, 255, 245, 0.38)" stroke-width="1" stroke-dasharray="3 5" />
-      <text x="${width - padRight}" y="${baselineY - 6}" text-anchor="end"
-            class="metricBaselineLabel">baseline</text>
-    `;
+    // x grid: adaptive year ticks based on visible span
+    const xGrid = buildXAxis(start, end, xOf, padTop, plotH, height);
 
-    // Build area path by bridging gaps (stats.pairs is already non-null values
-    // but in original series order via .idx — pairs may have gaps).
-    const pointD = pairs.map((p) => `${xOf(p.idx).toFixed(2)} ${yOf(p.value).toFixed(2)}`);
+    // Clip path so panning doesn't draw outside the plot area
+    const clipId = `clip-${key}`;
+
+    // Line + area paths from visible pairs (drawn using full pair coords to
+    // keep the shape stable; the clip mask handles off-screen portions).
+    const visibleWithEdges = pairs.filter(
+      (p) => p.idx >= start - 2 && p.idx <= end + 2
+    );
+    const pointD = visibleWithEdges.map((p) => `${xOf(p.idx).toFixed(2)} ${yOf(p.value).toFixed(2)}`);
     const line = pointD.length ? `M${pointD.join(" L")}` : "";
     const area =
       pointD.length >= 2
-        ? `M${xOf(pairs[0].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)}
-           L${pointD.join(" L")}
-           L${xOf(pairs[pairs.length - 1].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)} Z`
+        ? `M${xOf(visibleWithEdges[0].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)} L${pointD.join(" L")} L${xOf(visibleWithEdges[visibleWithEdges.length - 1].idx).toFixed(2)} ${(padTop + plotH).toFixed(2)} Z`
         : "";
 
-    // Dot for latest
-    const latestDot = stats.latest
-      ? `<circle cx="${xOf(stats.latest.idx)}" cy="${yOf(stats.latest.value)}" r="4"
-                  fill="${meta.stroke}" stroke="#08101a" stroke-width="2" />`
+    // Sample dots — only drawn when zoomed in enough that they're readable
+    const spanMonths = end - start;
+    const showDots = spanMonths < 60;
+    const dots = showDots
+      ? visibleWithEdges
+          .map(
+            (p) =>
+              `<circle cx="${xOf(p.idx).toFixed(2)}" cy="${yOf(p.value).toFixed(2)}" r="${
+                spanMonths < 24 ? 2.6 : 1.8
+              }" fill="${meta.stroke}" fill-opacity="0.9" />`
+          )
+          .join("")
       : "";
-
-    // X-axis endpoints
-    const first = state.series[0];
-    const last = state.series[state.series.length - 1];
-    const xLabels = `
-      <text x="${padLeft}" y="${height - 8}" class="metricAxis">${first ? first.month : ""}</text>
-      <text x="${width - padRight}" y="${height - 8}" text-anchor="end"
-            class="metricAxis">${last ? last.month : ""}</text>
-    `;
 
     const gradId = `grad-${key}`;
     return `
@@ -346,15 +297,241 @@
             <stop offset="0%" stop-color="${meta.fillTop}" />
             <stop offset="100%" stop-color="${meta.fillBot}" />
           </linearGradient>
+          <clipPath id="${clipId}">
+            <rect x="${padLeft}" y="${padTop}" width="${plotW}" height="${plotH}" />
+          </clipPath>
         </defs>
-        ${gridLines}
-        ${baselineLine}
-        ${area ? `<path d="${area}" fill="url(#${gradId})" />` : ""}
-        ${line ? `<path d="${line}" fill="none" stroke="${meta.stroke}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />` : ""}
-        ${latestDot}
-        ${xLabels}
+        ${yGrid}
+        ${xGrid}
+        <g clip-path="url(#${clipId})">
+          ${area ? `<path d="${area}" fill="url(#${gradId})" />` : ""}
+          ${line ? `<path d="${line}" fill="none" stroke="${meta.stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />` : ""}
+          ${dots}
+        </g>
       </svg>
     `;
+  }
+
+  function buildXAxis(start, end, xOf, padTop, plotH, height) {
+    const n = state.series.length;
+    if (n === 0) return "";
+    const spanMonths = end - start;
+    // Pick a label cadence in months that leaves room
+    const cadence =
+      spanMonths > 240 ? 60 :
+      spanMonths > 120 ? 24 :
+      spanMonths > 48 ? 12 :
+      spanMonths > 24 ? 6 :
+      spanMonths > 12 ? 3 : 1;
+
+    const firstIdx = Math.max(0, Math.floor(start));
+    const lastIdx = Math.min(n - 1, Math.ceil(end));
+    const lines = [];
+    for (let i = firstIdx; i <= lastIdx; i += 1) {
+      const month = state.series[i]?.month;
+      if (!month) continue;
+      const [y, m] = month.split("-");
+      // Anchor ticks on Jan (cadence >= 12) or every `cadence` months from Jan.
+      const monthNum = Number(m);
+      const yearNum = Number(y);
+      if (cadence >= 12) {
+        if (monthNum !== 1) continue;
+        if ((yearNum - Math.floor(Number(state.series[firstIdx].month.split("-")[0]))) % (cadence / 12) !== 0) {
+          // align to nearest multiple from start year
+        }
+      } else {
+        if ((monthNum - 1) % cadence !== 0) continue;
+      }
+      const x = xOf(i);
+      const label = cadence >= 12 ? y : `${y}-${m}`;
+      lines.push(`
+        <line x1="${x}" y1="${padTop}" x2="${x}" y2="${padTop + plotH}"
+              stroke="rgba(196, 170, 108, 0.08)" stroke-width="1" />
+        <text x="${x}" y="${height - 8}" text-anchor="middle" class="metricAxis">${label}</text>
+      `);
+    }
+    return lines.join("");
+  }
+
+  function attachChartInteractions() {
+    const dash = document.getElementById("metric-dashboard");
+    if (!dash) return;
+    dash.querySelectorAll(".metricChart[data-chart]").forEach((chart) => {
+      bindChartInteraction(chart);
+    });
+  }
+
+  function bindChartInteraction(el) {
+    if (el.__pp_bound) return;
+    el.__pp_bound = true;
+
+    const getViewBoxPx = (clientX) => {
+      const rect = el.getBoundingClientRect();
+      if (!rect.width) return 0;
+      return ((clientX - rect.left) / rect.width) * 960; // viewBox width
+    };
+    const px2idx = (px) => {
+      const { start, end } = viewportBounds();
+      const padLeft = 44;
+      const plotW = 960 - padLeft - 14;
+      const local = Math.max(0, Math.min(plotW, px - padLeft));
+      return start + (local / plotW) * (end - start);
+    };
+
+    // Pan with mouse drag
+    let dragStartClientX = null;
+    let dragStartViewport = null;
+    el.addEventListener("mousedown", (ev) => {
+      if (ev.button !== 0) return;
+      dragStartClientX = ev.clientX;
+      dragStartViewport = { ...viewportBounds() };
+      el.classList.add("metricChartPanning");
+      ev.preventDefault();
+    });
+    window.addEventListener("mousemove", (ev) => {
+      if (dragStartClientX == null) return;
+      const rect = el.getBoundingClientRect();
+      if (!rect.width) return;
+      const dxPx = ev.clientX - dragStartClientX;
+      const span = dragStartViewport.end - dragStartViewport.start;
+      const dxIdx = -(dxPx / rect.width) * span;
+      setViewport(dragStartViewport.start + dxIdx, dragStartViewport.end + dxIdx);
+    });
+    window.addEventListener("mouseup", () => {
+      if (dragStartClientX == null) return;
+      dragStartClientX = null;
+      dragStartViewport = null;
+      el.classList.remove("metricChartPanning");
+    });
+
+    // Zoom with wheel around cursor
+    el.addEventListener(
+      "wheel",
+      (ev) => {
+        ev.preventDefault();
+        const cursorPx = getViewBoxPx(ev.clientX);
+        const cursorIdx = px2idx(cursorPx);
+        const { start, end } = viewportBounds();
+        const factor = ev.deltaY > 0 ? 1.2 : 1 / 1.2;
+        const newStart = cursorIdx - (cursorIdx - start) * factor;
+        const newEnd = cursorIdx + (end - cursorIdx) * factor;
+        setViewport(newStart, newEnd);
+      },
+      { passive: false }
+    );
+
+    // Touch: one-finger pan, two-finger pinch-zoom.
+    let touchState = null;
+    el.addEventListener(
+      "touchstart",
+      (ev) => {
+        if (ev.touches.length === 1) {
+          touchState = {
+            mode: "pan",
+            startX: ev.touches[0].clientX,
+            startViewport: { ...viewportBounds() },
+          };
+        } else if (ev.touches.length === 2) {
+          const t1 = ev.touches[0];
+          const t2 = ev.touches[1];
+          touchState = {
+            mode: "pinch",
+            startDist: Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY),
+            midPx: getViewBoxPx((t1.clientX + t2.clientX) / 2),
+            startViewport: { ...viewportBounds() },
+          };
+        }
+      },
+      { passive: true }
+    );
+    el.addEventListener(
+      "touchmove",
+      (ev) => {
+        if (!touchState) return;
+        if (touchState.mode === "pan" && ev.touches.length === 1) {
+          const rect = el.getBoundingClientRect();
+          if (!rect.width) return;
+          const dxPx = ev.touches[0].clientX - touchState.startX;
+          const span = touchState.startViewport.end - touchState.startViewport.start;
+          const dxIdx = -(dxPx / rect.width) * span;
+          setViewport(
+            touchState.startViewport.start + dxIdx,
+            touchState.startViewport.end + dxIdx
+          );
+          ev.preventDefault();
+        } else if (touchState.mode === "pinch" && ev.touches.length === 2) {
+          const t1 = ev.touches[0];
+          const t2 = ev.touches[1];
+          const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          const factor = touchState.startDist / Math.max(dist, 1);
+          const padLeft = 44;
+          const plotW = 960 - padLeft - 14;
+          const midIdx =
+            touchState.startViewport.start +
+            (Math.max(0, Math.min(plotW, touchState.midPx - padLeft)) / plotW) *
+              (touchState.startViewport.end - touchState.startViewport.start);
+          setViewport(
+            midIdx - (midIdx - touchState.startViewport.start) * factor,
+            midIdx + (touchState.startViewport.end - midIdx) * factor
+          );
+          ev.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+    el.addEventListener("touchend", () => {
+      touchState = null;
+    });
+    el.addEventListener("touchcancel", () => {
+      touchState = null;
+    });
+
+    // Double click / double tap resets
+    el.addEventListener("dblclick", () => resetViewport());
+  }
+
+  function setViewport(nextStart, nextEnd) {
+    const n = state.series.length;
+    if (n === 0) return;
+    let start = nextStart;
+    let end = nextEnd;
+    // Enforce minimum span of 3 months so we don't get a dot
+    if (end - start < 3) {
+      const mid = (start + end) / 2;
+      start = mid - 1.5;
+      end = mid + 1.5;
+    }
+    // Clamp to series bounds
+    if (start < 0) {
+      end += -start;
+      start = 0;
+    }
+    if (end > n - 1) {
+      start -= end - (n - 1);
+      end = n - 1;
+    }
+    start = Math.max(0, start);
+    state.viewport = { start, end };
+    refreshChartsOnly();
+  }
+
+  function resetViewport() {
+    state.viewport = null;
+    refreshChartsOnly();
+  }
+
+  function refreshChartsOnly() {
+    // Only redraw the SVGs so pan/zoom feels smooth.
+    for (const key of ["ndvi", "lst"]) {
+      const chartEl = document.querySelector(
+        `.metricCard[data-metric="${key}"] .metricChart[data-chart="${key}"]`
+      );
+      if (!chartEl) continue;
+      const meta = METRIC_META[key];
+      const stats = computeStats(state.series, key);
+      if (!stats) continue;
+      chartEl.innerHTML = makeChartSvg(key, stats, meta);
+    }
   }
 
   function renderShell() {
@@ -448,6 +625,7 @@
     const dashboard = document.getElementById("metric-dashboard");
     if (!dashboard) return;
     dashboard.innerHTML = renderChartCard("ndvi") + renderChartCard("lst");
+    attachChartInteractions();
   }
 
   function syncMapMarker() {
@@ -535,6 +713,7 @@
     // Clear prior series so the chart cards re-render into the empty
     // (spinner) state instead of sticking on the last successful load.
     state.series = [];
+    state.viewport = null;
     updateStatus();
     updateCharts();
 
@@ -819,6 +998,7 @@
       state.startMonth = payload.startMonth;
       state.endMonth = payload.endMonth;
       state.series = Array.isArray(payload.series) ? payload.series : [];
+      state.viewport = null;
       state.source = `ornl_daac (prefetched for ${payload.projectName || projectId})`;
       state.hasLoaded = true;
       const interventionTag = payload.interventionStart
