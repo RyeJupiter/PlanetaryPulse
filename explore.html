@@ -31,81 +31,68 @@
 
     <section class="panel dataProvenance">
       <div class="sectionLabel">Data provenance</div>
-      <h2 class="dataProvenanceTitle">Where these numbers come from</h2>
+      <h2 class="dataProvenanceTitle">The numbers above come from NASA</h2>
+      <p class="dataProvenanceLede">
+        Two MODIS products on NASA's Terra satellite, delivered through Oak Ridge National
+        Laboratory — public, free, no login.
+      </p>
 
-      <div class="provenanceGrid">
-        <article class="provenanceCard">
-          <div class="provenanceEyebrow">Vegetation · NDVI</div>
-          <div class="provenanceProduct">MOD13Q1.061</div>
-          <dl class="provenanceMeta">
-            <dt>Sensor</dt><dd>MODIS on NASA Terra</dd>
-            <dt>Resolution</dt><dd>250 m pixel · 16-day composite</dd>
-            <dt>Record</dt><dd>2000-02-18 — present</dd>
-            <dt>QA</dt><dd>pixel_reliability 0 / 1 only</dd>
-          </dl>
-          <a class="link" target="_blank" rel="noopener"
-             href="https://lpdaac.usgs.gov/products/mod13q1v061/">
-            Product page at LP DAAC →
-          </a>
-        </article>
+      <div class="provenanceRows">
+        <div class="provenanceRow">
+          <div class="provenanceRowMain">
+            <span class="provenanceRowTag">Vegetation</span>
+            <span class="provenanceRowName">MOD13Q1.061</span>
+            <span class="provenanceRowMeta">NDVI · 250 m · 16-day composite · 2000–present</span>
+          </div>
+          <a class="provenanceRowLink" target="_blank" rel="noopener"
+             href="https://lpdaac.usgs.gov/products/mod13q1v061/">LP DAAC ↗</a>
+        </div>
 
-        <article class="provenanceCard">
-          <div class="provenanceEyebrow">Thermal · LST</div>
-          <div class="provenanceProduct">MOD11A2.061</div>
-          <dl class="provenanceMeta">
-            <dt>Sensor</dt><dd>MODIS on NASA Terra</dd>
-            <dt>Resolution</dt><dd>1 km pixel · 8-day composite</dd>
-            <dt>Record</dt><dd>2000-03-05 — present</dd>
-            <dt>QA</dt><dd>QC_Day mandatory bits 0-1 ≤ 1</dd>
-          </dl>
-          <a class="link" target="_blank" rel="noopener"
-             href="https://lpdaac.usgs.gov/products/mod11a2v061/">
-            Product page at LP DAAC →
-          </a>
-        </article>
+        <div class="provenanceRow">
+          <div class="provenanceRowMain">
+            <span class="provenanceRowTag provenanceRowTagWarm">Thermal</span>
+            <span class="provenanceRowName">MOD11A2.061</span>
+            <span class="provenanceRowMeta">LST · 1 km · 8-day composite · 2000–present</span>
+          </div>
+          <a class="provenanceRowLink" target="_blank" rel="noopener"
+             href="https://lpdaac.usgs.gov/products/mod11a2v061/">LP DAAC ↗</a>
+        </div>
 
-        <article class="provenanceCard">
-          <div class="provenanceEyebrow">Delivery</div>
-          <div class="provenanceProduct">ORNL DAAC MODIS REST</div>
-          <dl class="provenanceMeta">
-            <dt>Operated by</dt><dd>Oak Ridge National Laboratory</dd>
-            <dt>Funded by</dt><dd>NASA Earth Science Data Systems</dd>
-            <dt>Access</dt><dd>Public, free, no login</dd>
-            <dt>Citation</dt>
-            <dd>ORNL DAAC. 2018. MODIS and VIIRS Land Products Global Subsetting and Visualization Tool.</dd>
-          </dl>
-          <a class="link" target="_blank" rel="noopener"
-             href="https://modis.ornl.gov/documentation.html">
-            Web service docs →
-          </a>
-        </article>
+        <div class="provenanceRow">
+          <div class="provenanceRowMain">
+            <span class="provenanceRowTag provenanceRowTagMuted">Delivery</span>
+            <span class="provenanceRowName">ORNL DAAC REST</span>
+            <span class="provenanceRowMeta">Operated by Oak Ridge National Laboratory · funded by NASA Earth Science Data Systems</span>
+          </div>
+          <a class="provenanceRowLink" target="_blank" rel="noopener"
+             href="https://modis.ornl.gov/documentation.html">Docs ↗</a>
+        </div>
       </div>
 
-      <div class="provenanceProcessing">
-        <div class="sectionLabel">How EarthPulse processes these signals</div>
-        <ul class="provenanceProcessingList">
+      <details class="provenanceDetails">
+        <summary>How EarthPulse processes these signals</summary>
+        <ol class="provenanceProcessingList">
           <li>Pull every available MODIS composite for the selected point and window.</li>
-          <li>Apply NASA's own QA flags — drop pixels marked as snow, cloud, or not produced.</li>
-          <li>Take the monthly median of surviving values so single bad composites don't dominate.</li>
-          <li>Overlay a 12-month centred rolling mean to remove seasonal cycles.</li>
-          <li>Fit linear trends to the smoothed series before and after the intervention date.</li>
-        </ul>
-      </div>
+          <li>Apply NASA's QA flags — drop pixels marked as snow, cloud, or not produced.</li>
+          <li>Take the monthly median so a single bad composite doesn't dominate.</li>
+          <li>Overlay a 12-month centred rolling mean to strip seasonal cycles.</li>
+          <li>Fit linear trends to the smoothed series before and after the intervention.</li>
+        </ol>
+      </details>
 
-      <div class="provenanceCaveats">
-        <div class="sectionLabel">What we're not doing yet</div>
+      <details class="provenanceDetails">
+        <summary>What we're not doing yet</summary>
         <p>
-          Measurements come from a single 250 m pixel at the project centroid — a patch the
-          size of a small farm, not the entire project. A pixel at the centroid may or may not
-          fall on the restored land, so a flat NDVI can mean the intervention worked at scale
-          but missed this specific pixel, not that the land is unchanged. Pre-intervention
-          windows are sometimes short (4 years at Al Baydha) which makes the fitted slope
-          noisy, and we don't yet report confidence intervals, p-values, or an interrupted
-          time-series significance test. We also don't compare to a climatically-matched
-          control site. Treat the direction of the slope inflection as a suggestive signal,
-          not a peer-reviewed attribution.
+          Sampling is a single 250 m pixel at the project centroid — a patch the size of a
+          small farm, not the entire project. A flat NDVI can mean the intervention worked
+          at scale but missed this specific pixel. Pre-intervention windows are sometimes
+          short (4 years at Al Baydha) or pre-date the MODIS record entirely (Loess
+          Plateau, White Oak Pastures). We don't yet report confidence intervals, p-values,
+          or an interrupted time-series significance test, and there's no
+          climatically-matched control site. Treat the slope inflection as a suggestive
+          signal, not a peer-reviewed attribution.
         </p>
-      </div>
+      </details>
     </section>
   </main>
 

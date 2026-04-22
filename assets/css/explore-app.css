@@ -607,11 +607,11 @@
 /* ── Data provenance panel ─────────────────────────────────────────────── */
 .dataProvenance {
   margin-top: 22px;
-  padding: 28px 30px 26px;
+  padding: 26px 28px 22px;
   background:
-    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.06), transparent 46%),
-    linear-gradient(160deg, rgba(24, 38, 28, 0.62) 0%, rgba(14, 24, 18, 0.72) 100%);
-  border: 1px solid rgba(166, 236, 170, 0.24);
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.05), transparent 46%),
+    linear-gradient(160deg, rgba(24, 38, 28, 0.58) 0%, rgba(14, 24, 18, 0.68) 100%);
+  border: 1px solid rgba(166, 236, 170, 0.22);
   border-radius: 22px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -623,144 +623,197 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .dataProvenanceTitle {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 22px;
+  font-size: 20px;
   letter-spacing: 0.01em;
   color: rgba(236, 248, 220, 0.98);
-  margin: 0 0 18px;
+  margin: 0;
 }
 
-.provenanceGrid {
+.dataProvenanceLede {
+  margin: 6px 0 16px;
+  color: rgba(220, 240, 200, 0.78);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.provenanceRows {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: 16px;
-  margin-bottom: 22px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
-.provenanceCard {
-  position: relative;
-  padding: 16px 18px 18px;
-  border-radius: 16px;
-  background: rgba(8, 14, 10, 0.45);
-  border: 1px solid rgba(166, 236, 170, 0.18);
+.provenanceRow {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(8, 14, 10, 0.45);
+  border: 1px solid rgba(166, 236, 170, 0.14);
+  flex-wrap: wrap;
+}
+
+.provenanceRowMain {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1 1 280px;
+  flex-wrap: wrap;
   min-width: 0;
 }
 
-.provenanceEyebrow {
+.provenanceRowTag {
   font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(166, 236, 170, 0.85);
+  color: rgba(166, 236, 170, 0.92);
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(166, 236, 170, 0.34);
+  background: rgba(120, 200, 140, 0.1);
+  flex-shrink: 0;
+}
+.provenanceRowTagWarm {
+  color: rgba(220, 196, 140, 0.95);
+  border-color: rgba(196, 170, 108, 0.4);
+  background: rgba(196, 170, 108, 0.08);
+}
+.provenanceRowTagMuted {
+  color: rgba(236, 248, 220, 0.68);
+  border-color: rgba(166, 236, 170, 0.18);
+  background: rgba(14, 22, 16, 0.5);
 }
 
-.provenanceCard:nth-child(2) .provenanceEyebrow {
-  color: rgba(220, 196, 140, 0.88);
-}
-
-.provenanceProduct {
+.provenanceRowName {
   font-family: var(--font-display);
-  font-size: 18px;
-  letter-spacing: 0.02em;
+  font-size: 15px;
   color: rgba(240, 250, 225, 0.98);
+  flex-shrink: 0;
 }
 
-.provenanceMeta {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  column-gap: 14px;
-  row-gap: 6px;
-  margin: 4px 0 10px;
+.provenanceRowMeta {
   font-size: 12.5px;
-  line-height: 1.45;
+  color: rgba(220, 240, 200, 0.72);
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.provenanceMeta dt {
-  color: rgba(220, 196, 140, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 10px;
-  align-self: center;
-}
-
-.provenanceMeta dd {
-  margin: 0;
-  color: rgba(236, 248, 220, 0.92);
-}
-
-.provenanceCard .link {
-  color: rgba(166, 236, 170, 0.98);
+.provenanceRowLink {
   font-size: 12px;
   letter-spacing: 0.04em;
+  color: rgba(166, 236, 170, 0.92);
   text-decoration: none;
-  border-bottom: 1px solid rgba(166, 236, 170, 0.38);
+  border-bottom: 1px solid rgba(166, 236, 170, 0.32);
   padding-bottom: 1px;
-  align-self: flex-start;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: color 160ms ease, border-color 160ms ease;
 }
-
-.provenanceCard .link:hover {
+.provenanceRowLink:hover {
   color: rgba(206, 255, 200, 1);
   border-bottom-color: rgba(206, 255, 200, 0.72);
 }
 
-.provenanceProcessing,
-.provenanceCaveats {
-  border-top: 1px solid rgba(166, 236, 170, 0.18);
-  padding-top: 16px;
+/* Collapsible processing / caveats sections */
+.provenanceDetails {
+  margin-top: 8px;
+  border-top: 1px solid rgba(166, 236, 170, 0.15);
+  padding-top: 10px;
+}
+.provenanceDetails summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(196, 170, 108, 0.88);
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.provenanceDetails summary::before {
+  content: "+";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  text-align: center;
+  border-radius: 4px;
+  background: rgba(166, 236, 170, 0.12);
+  border: 1px solid rgba(166, 236, 170, 0.28);
+  color: rgba(236, 248, 220, 0.9);
+  font-size: 12px;
+  transition: transform 180ms ease;
+}
+.provenanceDetails[open] summary::before {
+  content: "−";
+}
+.provenanceDetails summary::-webkit-details-marker {
+  display: none;
+}
+.provenanceDetails > ol,
+.provenanceDetails > p {
   margin-top: 10px;
 }
-
 .provenanceProcessingList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
-  font-size: 13.5px;
+  gap: 6px;
+  counter-reset: provstep;
+  font-size: 13px;
   line-height: 1.55;
-  color: rgba(240, 245, 225, 0.92);
+  color: rgba(240, 245, 225, 0.9);
 }
-
 .provenanceProcessingList li {
   position: relative;
-  padding-left: 22px;
+  padding-left: 26px;
+  counter-increment: provstep;
 }
-
 .provenanceProcessingList li::before {
-  content: "";
+  content: counter(provstep);
   position: absolute;
-  left: 6px;
-  top: 9px;
-  width: 6px;
-  height: 6px;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(166, 236, 170, 0.98) 0%, rgba(196, 170, 108, 0.9) 100%);
+  text-align: center;
+  font-size: 10px;
+  line-height: 18px;
+  font-family: var(--font-display);
+  background: rgba(166, 236, 170, 0.14);
+  border: 1px solid rgba(166, 236, 170, 0.34);
+  color: rgba(236, 248, 220, 0.95);
 }
-
-.provenanceCaveats p {
-  margin: 6px 0 0;
+.provenanceDetails p {
+  margin: 0;
   font-size: 13px;
   line-height: 1.6;
-  color: rgba(220, 196, 140, 0.88);
+  color: rgba(220, 196, 140, 0.85);
 }
 
 @media (max-width: 720px) {
   .dataProvenance {
-    padding: 22px 18px 20px;
+    padding: 20px 18px 18px;
     border-radius: 16px;
   }
   .dataProvenanceTitle {
-    font-size: 19px;
+    font-size: 18px;
   }
-  .provenanceCard {
-    padding: 14px 14px 16px;
+  .provenanceRow {
+    padding: 10px 12px;
+  }
+  .provenanceRowLink {
+    flex: 1 1 100%;
+    padding-top: 6px;
   }
 }

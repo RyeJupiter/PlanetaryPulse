@@ -79,7 +79,8 @@
         ],
         "intervention_start": "2009-01",
         "history_start": "2005-01",
-        "history_note": "Al Baydha ground work began in 2009."
+        "history_note": "Al Baydha ground work began in 2009.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Point",
@@ -139,7 +140,8 @@
         ],
         "intervention_start": "2001-01",
         "history_start": "2000-03",
-        "history_note": "Knepp rewilding pivot began in 2001."
+        "history_note": "Knepp rewilding pivot began in 2001.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Polygon",
@@ -206,7 +208,8 @@
         ],
         "intervention_start": "2011-01",
         "history_start": "2005-01",
-        "history_note": "Apricot Lane Farms regenerative transition began in 2011."
+        "history_note": "Apricot Lane Farms regenerative transition began in 2011.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Point",
@@ -237,9 +240,10 @@
         ],
         "tags": "landscape-restoration,soil-conservation,china,watershed,documentary",
         "links": [],
-        "intervention_start": "2000-01",
+        "intervention_start": "1999-01",
         "history_start": "2000-03",
-        "history_note": "Loess Plateau Watershed Rehabilitation Project launched 1999-2000."
+        "history_note": "The Loess Plateau Watershed Rehabilitation Project launched in 1999, with prior small-scale terracing dating to the 1970s-80s. MODIS starts Feb 2000, so pre-intervention baseline is unobservable from space — EarthPulse shows the post-intervention trajectory only.",
+        "pre_intervention_observable": false
       },
       "geometry": {
         "type": "Polygon",
@@ -306,7 +310,8 @@
         ],
         "intervention_start": "1995-01",
         "history_start": "2000-03",
-        "history_note": "White Oak Pastures transition under Will Harris began in the 1990s; satellite record starts 2000."
+        "history_note": "White Oak Pastures began its regenerative transition under Will Harris in the mid-1990s. MODIS starts Feb 2000, so EarthPulse shows only the post-transition trajectory.",
+        "pre_intervention_observable": false
       },
       "geometry": {
         "type": "Point",
@@ -358,7 +363,8 @@
         ],
         "intervention_start": "2005-01",
         "history_start": "2001-01",
-        "history_note": "Africa Centre for Holistic Management founded at Dimbangombe in the early 2000s."
+        "history_note": "Africa Centre for Holistic Management founded at Dimbangombe in the early 2000s.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Point",
@@ -430,7 +436,8 @@
         ],
         "intervention_start": "2016-04",
         "history_start": "2012-01",
-        "history_note": "Paani Foundation Water Cup launched in 2016."
+        "history_note": "Paani Foundation Water Cup launched in 2016.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Point",
@@ -475,7 +482,8 @@
         ],
         "intervention_start": "2014-01",
         "history_start": "2010-01",
-        "history_note": "WFP Integrated Resilience programme in the Sahel scaled from 2014."
+        "history_note": "WFP Integrated Resilience programme in the Sahel scaled from 2014.",
+        "pre_intervention_observable": true
       },
       "geometry": {
         "type": "Point",

@@ -287,21 +287,35 @@
   }
 
   function renderTrendPill(trend, meta) {
-    if (!trend) return "";
-    if (!trend.preFit || !trend.postFit) return "";
+    if (!trend || !trend.postFit) return "";
 
-    // Convert per-month slopes to per-year for readability
-    const preYr = trend.preFit.slope * 12;
-    const postYr = trend.postFit.slope * 12;
-    const accel = postYr - preYr;
-    // "Positive toward modulation" means the slope moved in the direction
-    // of a healthy ecosystem: upward for NDVI, downward (cooler) for LST.
-    const favourable =
-      meta.title === "Land Surface Temperature" ? accel < 0 : accel > 0;
-    const cls = favourable ? "up" : accel === 0 ? "flat" : "down";
     const sign = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(3)}`;
     const signLst = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(2)}°C`;
     const fmtSlope = meta.title === "Land Surface Temperature" ? signLst : sign;
+    const postYr = trend.postFit.slope * 12;
+
+    // Post-only case: no pre-intervention data observable (intervention
+    // pre-dates the MODIS record). Still show the direction of the
+    // post-intervention trajectory, honestly labelled.
+    if (!trend.preFit) {
+      const favourable =
+        meta.title === "Land Surface Temperature" ? postYr < 0 : postYr > 0;
+      const cls = favourable ? "up" : postYr === 0 ? "flat" : "down";
+      return `
+        <div class="metricTrendPill">
+          <span class="metricTrendLabel">post-intervention trend</span>
+          <span class="metricTrendValue ${cls}">${fmtSlope(postYr)}/yr</span>
+          <span class="metricTrendNote" title="Pre-intervention baseline pre-dates the MODIS record">pre-MODIS</span>
+        </div>
+      `;
+    }
+
+    // Full inflection case: both pre and post slopes available.
+    const preYr = trend.preFit.slope * 12;
+    const accel = postYr - preYr;
+    const favourable =
+      meta.title === "Land Surface Temperature" ? accel < 0 : accel > 0;
+    const cls = favourable ? "up" : accel === 0 ? "flat" : "down";
     return `
       <div class="metricTrendPill">
         <span class="metricTrendLabel">pre</span>
@@ -763,14 +777,20 @@
     const coords = document.getElementById("viewer-coords");
     const banner = document.getElementById("explorer-banner");
     if (status) {
+      // Hide the plain status line whenever we have a richer banner to
+      // avoid the duplicate "Loaded 314 months from..." + banner stack.
+      const hasBanner = Boolean(state.banner);
       if (state.loading) {
+        status.hidden = hasBanner;
         status.textContent = "Loading MODIS monthly series from NASA ORNL DAAC...";
       } else if (!state.hasLoaded) {
+        status.hidden = hasBanner;
         status.textContent = "Ready to load MODIS monthly series.";
       } else if (state.series.length) {
-        const sourceTag = state.source ? ` Source: ${state.source}.` : "";
-        status.textContent = `Loaded ${state.series.length} months from ${state.startMonth} to ${state.endMonth}.${sourceTag}`;
+        status.hidden = true;
+        status.textContent = "";
       } else {
+        status.hidden = hasBanner;
         status.textContent = "No live series loaded.";
       }
     }

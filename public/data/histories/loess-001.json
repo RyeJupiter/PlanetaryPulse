@@ -5,8 +5,8 @@
   "lon": 109.1,
   "startMonth": "2000-03",
   "endMonth": "2026-04",
-  "interventionStart": "2000-01",
-  "historyNote": "Loess Plateau Watershed Rehabilitation Project launched 1999-2000.",
+  "interventionStart": "1999-01",
+  "historyNote": "The Loess Plateau Watershed Rehabilitation Project launched in 1999, with prior small-scale terracing dating to the 1970s-80s. MODIS starts Feb 2000, so pre-intervention baseline is unobservable from space — EarthPulse shows the post-intervention trajectory only.",
   "source": "ornl_daac",
   "provider": "modis",
   "metrics": [
@@ -2210,5 +2210,6 @@
       "count": 0,
       "qaScore": null
     }
-  ]
+  ],
+  "preInterventionObservable": false
 }
