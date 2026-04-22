@@ -34,6 +34,9 @@
     // also moves LST and they stay aligned in time. Stored as fractional
     // month indices. null = show the full series.
     viewport: null,
+    // Optional YYYY-MM marker set when loading a project history — drawn as
+    // a vertical line so the user can see the before/after arc.
+    interventionStart: null,
   };
 
   let map;
@@ -168,6 +171,7 @@
     const meta = METRIC_META[key];
     const selected = state.metrics.has(key);
     const stats = computeStats(state.series, key);
+    const trend = computeTrend(state.series, key, state.interventionStart);
 
     if (!selected) {
       return `
@@ -201,10 +205,112 @@
     return `
       <section class="metricCard metricInteractive" data-metric="${key}">
         <div class="metricLabel">${meta.title}</div>
+        ${renderTrendPill(trend, meta)}
         <div class="metricChart" data-chart="${key}">
-          ${makeChartSvg(key, stats, meta)}
+          ${makeChartSvg(key, stats, meta, trend)}
         </div>
       </section>
+    `;
+  }
+
+  function computeTrend(series, key, interventionStart) {
+    if (!Array.isArray(series) || series.length === 0) return null;
+
+    // 12-month centred rolling mean — visually removes seasonality.
+    const rolling = new Array(series.length).fill(null);
+    const window = 12;
+    for (let i = 0; i < series.length; i += 1) {
+      const lo = Math.max(0, i - Math.floor(window / 2));
+      const hi = Math.min(series.length - 1, i + Math.ceil(window / 2));
+      const vals = [];
+      for (let j = lo; j <= hi; j += 1) {
+        const v = series[j]?.[key];
+        if (typeof v === "number") vals.push(v);
+      }
+      if (vals.length >= 6) {
+        rolling[i] = vals.reduce((a, b) => a + b, 0) / vals.length;
+      }
+    }
+
+    // Locate the intervention month.
+    let interventionIdx = null;
+    if (interventionStart && /^\d{4}-\d{2}$/.test(interventionStart)) {
+      for (let i = 0; i < series.length; i += 1) {
+        if (series[i]?.month >= interventionStart) {
+          interventionIdx = i;
+          break;
+        }
+      }
+    }
+
+    // Linear regression on the rolling-mean series for each side of the
+    // intervention. The SHAPE a regeneration project should show is a
+    // change in slope: flat/declining before, accelerating upward
+    // (NDVI) or downward/stabilising (LST) after.
+    const fitLine = (startIdx, endIdx) => {
+      const xs = [];
+      const ys = [];
+      for (let i = startIdx; i <= endIdx && i < rolling.length; i += 1) {
+        if (typeof rolling[i] === "number") {
+          xs.push(i);
+          ys.push(rolling[i]);
+        }
+      }
+      if (xs.length < 6) return null;
+      const n = xs.length;
+      const meanX = xs.reduce((a, b) => a + b, 0) / n;
+      const meanY = ys.reduce((a, b) => a + b, 0) / n;
+      let num = 0;
+      let den = 0;
+      for (let i = 0; i < n; i += 1) {
+        num += (xs[i] - meanX) * (ys[i] - meanY);
+        den += (xs[i] - meanX) ** 2;
+      }
+      if (den === 0) return null;
+      const slope = num / den; // per month
+      const intercept = meanY - slope * meanX;
+      return { slope, intercept, startIdx: xs[0], endIdx: xs[xs.length - 1] };
+    };
+
+    let preFit = null;
+    let postFit = null;
+    if (interventionIdx != null) {
+      preFit = fitLine(0, Math.max(0, interventionIdx - 1));
+      postFit = fitLine(interventionIdx, series.length - 1);
+    } else {
+      // No intervention given — still fit the whole series so we can show
+      // an overall direction.
+      postFit = fitLine(0, series.length - 1);
+    }
+
+    return { rolling, interventionIdx, preFit, postFit };
+  }
+
+  function renderTrendPill(trend, meta) {
+    if (!trend) return "";
+    if (!trend.preFit || !trend.postFit) return "";
+
+    // Convert per-month slopes to per-year for readability
+    const preYr = trend.preFit.slope * 12;
+    const postYr = trend.postFit.slope * 12;
+    const accel = postYr - preYr;
+    // "Positive toward modulation" means the slope moved in the direction
+    // of a healthy ecosystem: upward for NDVI, downward (cooler) for LST.
+    const favourable =
+      meta.title === "Land Surface Temperature" ? accel < 0 : accel > 0;
+    const cls = favourable ? "up" : accel === 0 ? "flat" : "down";
+    const sign = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(3)}`;
+    const signLst = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(2)}°C`;
+    const fmtSlope = meta.title === "Land Surface Temperature" ? signLst : sign;
+    return `
+      <div class="metricTrendPill">
+        <span class="metricTrendLabel">pre</span>
+        <span class="metricTrendValue">${fmtSlope(preYr)}/yr</span>
+        <span class="metricTrendArrow" aria-hidden="true">→</span>
+        <span class="metricTrendLabel">post</span>
+        <span class="metricTrendValue">${fmtSlope(postYr)}/yr</span>
+        <span class="metricTrendDelta ${cls}">Δ ${fmtSlope(accel)}/yr</span>
+      </div>
     `;
   }
 
@@ -217,7 +323,7 @@
     return { start: clampedStart, end: clampedEnd, count: clampedEnd - clampedStart + 1 };
   }
 
-  function makeChartSvg(key, stats, meta) {
+  function makeChartSvg(key, stats, meta, trend) {
     const width = 960;
     const height = 220;
     const padLeft = 44;
@@ -230,9 +336,15 @@
     const { start, end } = viewportBounds();
     const pairs = stats.pairs;
 
-    // y-scale: compute from visible points only so zooming also zooms Y range.
+    // y-scale: compute from visible points AND rolling mean so zooming also
+    // zooms Y range without clipping the smoothed overlay.
     const visiblePairs = pairs.filter((p) => p.idx >= start - 0.5 && p.idx <= end + 0.5);
     const valuesForScale = visiblePairs.length ? visiblePairs.map((p) => p.value) : [stats.min, stats.max];
+    if (trend?.rolling) {
+      for (let i = Math.max(0, Math.floor(start)); i <= Math.min(trend.rolling.length - 1, Math.ceil(end)); i += 1) {
+        if (typeof trend.rolling[i] === "number") valuesForScale.push(trend.rolling[i]);
+      }
+    }
     const rawMin = Math.min(...valuesForScale);
     const rawMax = Math.max(...valuesForScale);
     const spread = Math.max(rawMax - rawMin, 0.05);
@@ -283,10 +395,57 @@
             (p) =>
               `<circle cx="${xOf(p.idx).toFixed(2)}" cy="${yOf(p.value).toFixed(2)}" r="${
                 spanMonths < 24 ? 2.6 : 1.8
-              }" fill="${meta.stroke}" fill-opacity="0.9" />`
+              }" fill="${meta.stroke}" fill-opacity="0.6" />`
           )
           .join("")
       : "";
+
+    // 12-month rolling mean — the bold overlay that cuts through seasonal
+    // noise and makes multi-year trends visible.
+    let rollingPath = "";
+    if (trend?.rolling?.length) {
+      const rollingPoints = [];
+      const firstIdx = Math.max(0, Math.floor(start) - 2);
+      const lastIdx = Math.min(trend.rolling.length - 1, Math.ceil(end) + 2);
+      for (let i = firstIdx; i <= lastIdx; i += 1) {
+        const v = trend.rolling[i];
+        if (typeof v !== "number") continue;
+        rollingPoints.push(`${xOf(i).toFixed(2)} ${yOf(v).toFixed(2)}`);
+      }
+      if (rollingPoints.length >= 2) {
+        rollingPath = `<path d="M${rollingPoints.join(" L")}" fill="none" stroke="${meta.stroke}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.96" />`;
+      }
+    }
+
+    // Intervention marker — vertical line + small label
+    let interventionMarker = "";
+    if (trend?.interventionIdx != null) {
+      const ix = xOf(trend.interventionIdx);
+      const label = state.interventionStart || "";
+      interventionMarker = `
+        <line x1="${ix}" y1="${padTop}" x2="${ix}" y2="${padTop + plotH}"
+              stroke="rgba(236, 255, 245, 0.42)" stroke-width="1.2" stroke-dasharray="4 4" />
+        <text x="${ix + 6}" y="${padTop + 14}" class="metricInterventionLabel">intervention ${label}</text>
+      `;
+    }
+
+    // Pre/post linear trend lines — the "slope change" shape a regeneration
+    // project should produce. Flat or declining before, inflecting toward
+    // modulation after.
+    const trendLineFor = (fit, opacity) => {
+      if (!fit) return "";
+      const x1 = fit.startIdx;
+      const x2 = fit.endIdx;
+      const y1 = fit.intercept + fit.slope * x1;
+      const y2 = fit.intercept + fit.slope * x2;
+      return `<line x1="${xOf(x1)}" y1="${yOf(y1)}" x2="${xOf(x2)}" y2="${yOf(y2)}"
+                    stroke="${meta.stroke}" stroke-width="1.3" stroke-dasharray="6 5"
+                    opacity="${opacity}" />`;
+    };
+    const meanRefs = `
+      ${trendLineFor(trend?.preFit, 0.55)}
+      ${trendLineFor(trend?.postFit, 0.95)}
+    `;
 
     const gradId = `grad-${key}`;
     return `
@@ -304,8 +463,11 @@
         ${yGrid}
         ${xGrid}
         <g clip-path="url(#${clipId})">
-          ${area ? `<path d="${area}" fill="url(#${gradId})" />` : ""}
-          ${line ? `<path d="${line}" fill="none" stroke="${meta.stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />` : ""}
+          ${area ? `<path d="${area}" fill="url(#${gradId})" opacity="0.55" />` : ""}
+          ${line ? `<path d="${line}" fill="none" stroke="${meta.stroke}" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" opacity="0.42" />` : ""}
+          ${meanRefs}
+          ${interventionMarker}
+          ${rollingPath}
           ${dots}
         </g>
       </svg>
@@ -530,7 +692,8 @@
       const meta = METRIC_META[key];
       const stats = computeStats(state.series, key);
       if (!stats) continue;
-      chartEl.innerHTML = makeChartSvg(key, stats, meta);
+      const trend = computeTrend(state.series, key, state.interventionStart);
+      chartEl.innerHTML = makeChartSvg(key, stats, meta, trend);
     }
   }
 
@@ -999,6 +1162,7 @@
       state.endMonth = payload.endMonth;
       state.series = Array.isArray(payload.series) ? payload.series : [];
       state.viewport = null;
+      state.interventionStart = payload.interventionStart || null;
       state.source = `ornl_daac (prefetched for ${payload.projectName || projectId})`;
       state.hasLoaded = true;
       const interventionTag = payload.interventionStart
