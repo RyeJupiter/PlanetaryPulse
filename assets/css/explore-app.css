@@ -258,10 +258,36 @@
   color: rgba(220, 196, 140, 0.85);
 }
 
+.metricExpandBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(166, 236, 170, 0.26);
+  background: rgba(14, 22, 16, 0.6);
+  color: rgba(236, 248, 220, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.metricExpandBtn:hover {
+  background: rgba(18, 30, 22, 0.78);
+  border-color: rgba(166, 236, 170, 0.5);
+  color: rgba(236, 255, 220, 0.98);
+}
+.metricCard[data-metric="lst"] .metricExpandBtn {
+  border-color: rgba(196, 170, 108, 0.28);
+}
+
 .metricTrendPill {
   position: absolute;
   top: 12px;
-  right: 14px;
+  right: 48px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -815,5 +841,133 @@
   .provenanceRowLink {
     flex: 1 1 100%;
     padding-top: 6px;
+  }
+}
+
+/* ── Fullscreen chart modal ─────────────────────────────────────────── */
+html.metricModalOpen,
+html.metricModalOpen body {
+  overflow: hidden;
+}
+
+.metricModal {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vh, 36px);
+}
+
+.metricModalBackdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(16, 30, 22, 0.72) 0%, rgba(4, 10, 6, 0.92) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.metricModalShell {
+  position: relative;
+  width: min(1400px, 100%);
+  height: min(90vh, 900px);
+  background:
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.08), transparent 46%),
+    linear-gradient(160deg, rgba(24, 38, 28, 0.92) 0%, rgba(14, 24, 18, 0.96) 100%);
+  border: 1px solid rgba(166, 236, 170, 0.32);
+  border-radius: 22px;
+  padding: 20px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow:
+    0 50px 120px rgba(3, 8, 4, 0.7),
+    0 0 0 1px rgba(0, 0, 0, 0.35) inset;
+  color: rgba(240, 245, 225, 0.95);
+}
+
+.metricModalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.metricModalEyebrow {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(166, 236, 170, 0.85);
+}
+.metricModal [data-chart="lst"] ~ .metricModalHeader .metricModalEyebrow,
+.metricModalShell:has([data-chart="lst"]) .metricModalEyebrow {
+  color: rgba(220, 196, 140, 0.88);
+}
+
+.metricModalTitle {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: 0.01em;
+  color: rgba(240, 250, 225, 0.98);
+}
+
+.metricModalClose {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(166, 236, 170, 0.32);
+  background: rgba(14, 22, 16, 0.8);
+  color: rgba(236, 248, 220, 0.9);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.metricModalClose:hover {
+  background: rgba(22, 34, 26, 0.92);
+  border-color: rgba(166, 236, 170, 0.58);
+}
+
+.metricModalChart {
+  flex: 1 1 auto;
+  min-height: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.metricModalChart .metricSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.metricModalHint {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(220, 196, 140, 0.55);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .metricModalShell {
+    padding: 16px 16px 12px;
+    border-radius: 18px;
+    height: calc(100vh - 24px);
+  }
+  .metricModalTitle {
+    font-size: 20px;
+  }
+  .metricModalClose {
+    width: 34px;
+    height: 34px;
+    font-size: 20px;
   }
 }

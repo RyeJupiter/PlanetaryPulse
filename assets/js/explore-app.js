@@ -97,8 +97,8 @@
 
   const METRIC_META = {
     ndvi: {
-      eyebrow: "Vegetation Productivity",
-      title: "NDVI",
+      eyebrow: "NDVI",
+      title: "Vegetation coverage",
       unit: "",
       format: (v) => v.toFixed(3),
       formatAxis: (v) => v.toFixed(2),
@@ -117,8 +117,8 @@
       yCeil: 1,
     },
     lst: {
-      eyebrow: "Thermal Regime",
-      title: "Land Surface Temperature",
+      eyebrow: "LST",
+      title: "Land temperature",
       unit: "°C",
       format: (v) => `${v.toFixed(1)}°C`,
       formatAxis: (v) => `${v.toFixed(0)}°`,
@@ -206,6 +206,13 @@
       <section class="metricCard metricInteractive" data-metric="${key}">
         <div class="metricLabel">${meta.title}</div>
         ${renderTrendPill(trend, meta)}
+        <button type="button" class="metricExpandBtn" data-expand="${key}"
+                aria-label="Enlarge ${meta.title} chart">
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+            <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" fill="none"
+                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
         <div class="metricChart" data-chart="${key}">
           ${makeChartSvg(key, stats, meta, trend)}
         </div>
@@ -291,7 +298,7 @@
 
     const sign = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(3)}`;
     const signLst = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(2)}°C`;
-    const fmtSlope = meta.title === "Land Surface Temperature" ? signLst : sign;
+    const fmtSlope = meta.eyebrow === "LST" ? signLst : sign;
     const postYr = trend.postFit.slope * 12;
 
     // Post-only case: no pre-intervention data observable (intervention
@@ -299,7 +306,7 @@
     // post-intervention trajectory, honestly labelled.
     if (!trend.preFit) {
       const favourable =
-        meta.title === "Land Surface Temperature" ? postYr < 0 : postYr > 0;
+        meta.eyebrow === "LST" ? postYr < 0 : postYr > 0;
       const cls = favourable ? "up" : postYr === 0 ? "flat" : "down";
       return `
         <div class="metricTrendPill">
@@ -314,7 +321,7 @@
     const preYr = trend.preFit.slope * 12;
     const accel = postYr - preYr;
     const favourable =
-      meta.title === "Land Surface Temperature" ? accel < 0 : accel > 0;
+      meta.eyebrow === "LST" ? accel < 0 : accel > 0;
     const cls = favourable ? "up" : accel === 0 ? "flat" : "down";
     return `
       <div class="metricTrendPill">
@@ -535,6 +542,75 @@
     dash.querySelectorAll(".metricChart[data-chart]").forEach((chart) => {
       bindChartInteraction(chart);
     });
+    dash.querySelectorAll(".metricExpandBtn").forEach((btn) => {
+      if (btn.__pp_bound) return;
+      btn.__pp_bound = true;
+      btn.addEventListener("click", () => openChartModal(btn.dataset.expand));
+    });
+  }
+
+  function openChartModal(key) {
+    const meta = METRIC_META[key];
+    const stats = computeStats(state.series, key);
+    if (!stats) return;
+
+    // Build a fresh modal DOM every time so the chart's pan/zoom binding
+    // starts clean. Dismisses on backdrop click, close button, or Esc.
+    const existing = document.getElementById("metric-modal");
+    if (existing) existing.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "metric-modal";
+    modal.className = "metricModal";
+    modal.innerHTML = `
+      <div class="metricModalBackdrop"></div>
+      <div class="metricModalShell" role="dialog" aria-label="${meta.title} — enlarged">
+        <div class="metricModalHeader">
+          <div>
+            <div class="metricModalEyebrow">${meta.eyebrow}</div>
+            <h2 class="metricModalTitle">${meta.title}</h2>
+          </div>
+          <button type="button" class="metricModalClose" aria-label="Close enlarged chart">×</button>
+        </div>
+        <div class="metricModalChart metricChart" data-chart="${key}" data-chart-modal="1">
+          ${makeChartSvg(key, stats, meta, computeTrend(state.series, key, state.interventionStart))}
+        </div>
+        <div class="metricModalHint">drag to pan · scroll / pinch to zoom · double-click or Esc to close</div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.documentElement.classList.add("metricModalOpen");
+
+    const chartEl = modal.querySelector(".metricChart");
+    bindChartInteraction(chartEl);
+
+    const close = () => {
+      modal.remove();
+      document.documentElement.classList.remove("metricModalOpen");
+      document.removeEventListener("keydown", onKey);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    modal.querySelector(".metricModalClose").addEventListener("click", close);
+    modal.querySelector(".metricModalBackdrop").addEventListener("click", close);
+    // Re-render the modal chart on viewport change so pan/zoom redraws inside it.
+    const renderModalChart = () => {
+      const fresh = makeChartSvg(
+        key,
+        computeStats(state.series, key),
+        meta,
+        computeTrend(state.series, key, state.interventionStart)
+      );
+      chartEl.innerHTML = fresh;
+    };
+    // Override refreshChartsOnly behaviour for the modal instance by
+    // hooking into the viewport setter's redraw path: the modal chart
+    // re-renders on the same refresh tick because refreshChartsOnly also
+    // iterates all .metricChart[data-chart].
+    // (refreshChartsOnly picks up the modal element through the selector.)
+    chartEl.__pp_renderModal = renderModalChart;
   }
 
   function bindChartInteraction(el) {
@@ -697,17 +773,18 @@
   }
 
   function refreshChartsOnly() {
-    // Only redraw the SVGs so pan/zoom feels smooth.
+    // Only redraw the SVGs so pan/zoom feels smooth. Matches both the
+    // inline dashboard charts and the modal chart when it's open.
     for (const key of ["ndvi", "lst"]) {
-      const chartEl = document.querySelector(
-        `.metricCard[data-metric="${key}"] .metricChart[data-chart="${key}"]`
-      );
-      if (!chartEl) continue;
       const meta = METRIC_META[key];
       const stats = computeStats(state.series, key);
       if (!stats) continue;
       const trend = computeTrend(state.series, key, state.interventionStart);
-      chartEl.innerHTML = makeChartSvg(key, stats, meta, trend);
+      document
+        .querySelectorAll(`.metricChart[data-chart="${key}"]`)
+        .forEach((chartEl) => {
+          chartEl.innerHTML = makeChartSvg(key, stats, meta, trend);
+        });
     }
   }
 
