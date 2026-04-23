@@ -1764,9 +1764,9 @@ html.welcomeLock body {
   inset: 0;
   z-index: 1000;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
-  padding: clamp(24px, 6vh, 72px);
+  padding: clamp(16px, 4vh, 48px) clamp(16px, 5vw, 56px);
   opacity: 0;
   transition: opacity 0.55s ease;
   pointer-events: auto;
@@ -1785,24 +1785,32 @@ html.welcomeLock body {
 .welcomeBackdrop {
   position: absolute;
   inset: 0;
+  /* Strong wash at the top where the panel sits, fading to transparent
+     over the bottom half so the globe stays visible and the fly-to
+     camera pan is legible even on a short viewport. */
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(25, 60, 85, 0.72) 0%, rgba(8, 15, 24, 0.92) 55%, rgba(4, 8, 14, 0.97) 100%);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+    linear-gradient(180deg, rgba(4, 8, 14, 0.82) 0%, rgba(4, 8, 14, 0.68) 28%, rgba(4, 8, 14, 0.28) 55%, rgba(4, 8, 14, 0) 80%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /* Clip blur to the top so the globe isn't smeared. */
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
 }
 
 .welcomePanel {
   position: relative;
   width: min(720px, 100%);
-  padding: clamp(22px, 3.2vw, 36px) clamp(26px, 3.6vw, 44px);
+  padding: clamp(18px, 2.6vw, 28px) clamp(22px, 3vw, 36px);
   border-radius: 20px;
-  background: linear-gradient(180deg, rgba(12, 22, 32, 0.92) 0%, rgba(8, 14, 22, 0.94) 100%);
+  background:
+    radial-gradient(ellipse at top right, rgba(166, 236, 170, 0.08), transparent 46%),
+    linear-gradient(180deg, rgba(12, 22, 32, 0.92) 0%, rgba(8, 14, 22, 0.94) 100%);
   border: 1px solid rgba(118, 255, 193, 0.22);
   box-shadow:
     0 28px 80px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(0, 0, 0, 0.45) inset,
     0 0 60px rgba(118, 255, 193, 0.08) inset;
-  transform: translateY(12px);
+  transform: translateY(-12px);
   transition: transform 0.7s ease, padding 0.55s ease;
 }
 
@@ -1981,13 +1989,13 @@ html.welcomeLock body {
 
 @media (max-width: 640px) {
   .welcomeOverlay {
-    padding: clamp(12px, 2vh, 18px);
-    align-items: flex-end;
+    padding: clamp(10px, 2vh, 16px);
+    align-items: flex-start;
   }
   .welcomePanel {
     border-radius: 16px;
-    padding: 18px 18px 20px;
-    max-height: 70vh;
+    padding: 16px 16px 18px;
+    max-height: 55vh;
     overflow-y: auto;
     width: 100%;
   }

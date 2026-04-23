@@ -100,14 +100,18 @@
 
     try {
       await new Promise((resolve) => {
-        viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(41.02, 19.82, 180000),
-          orientation: {
-            heading: Cesium.Math.toRadians(0),
-            pitch: Cesium.Math.toRadians(-55),
-            roll: 0,
-          },
+        // Frame Al-Baydha inside a bounding sphere so it lands dead-centre
+        // in the viewport (rather than offset below the horizon, which the
+        // previous plain flyTo + tilt produced).
+        const target = Cesium.Cartesian3.fromDegrees(41.02, 19.82, 0);
+        const sphere = new Cesium.BoundingSphere(target, 60000); // ~60 km
+        viewer.camera.flyToBoundingSphere(sphere, {
           duration: 5.5,
+          offset: new Cesium.HeadingPitchRange(
+            Cesium.Math.toRadians(0),
+            Cesium.Math.toRadians(-50),
+            220000
+          ),
           easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
           complete: () => resolve(),
           cancel: () => resolve(),
