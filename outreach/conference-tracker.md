@@ -11,6 +11,20 @@ Status legend: 🟢 open & applyable now · 🟡 verify before investing · 🔵
 
 ---
 
+## Tier 0 — SF climate community / meetups (best near-term stage — apply now, low barrier)
+
+Get the talk on its feet in front of a real climate-tech room this summer, sharpen it, build
+relationships → then aim the polished version at the big CFPs.
+
+| Group | Format | Why / fit | Action |
+|---|---|---|---|
+| **ClimateLink SF** ⭐ | Monthly (2nd/3rd Wed), 90–120 min, **1–2 presenters show what they built + results** | Tailor-made: demo EarthPulse + the flood model results to founders/investors/scientists | DM organizers via Meetup or climatelink.co to pitch a presenter slot. https://www.meetup.com/climatelink-sanfrancisco/ |
+| **Climate Tech Club (SF)** | Durable SF community: founders, engineers, researchers, investors | Audience that'll engage the technical thesis | Find their events/Luma, ask about lightning-talk slots |
+| **MCJ Collective (My Climate Journey)** | Climate tech meetups (Luma) | Large, well-networked climate community | Watch Luma for SF events; many take speakers |
+| **9Zero Climate Innovation Hub** | SF climate hub, hosts member events | Physical venue + member talks | Check membership/event hosting |
+| **climatetechcities / SF Bay Climate Tech** (Turnbull & Velani) | Newsletter listing monthly SF events | Discovery channel for open slots | Subscribe; scan monthly event lists. https://sf.climatetechcities.com/ |
+| **GarysGuide — SF Climate Tech** | SF tech event calendar | Find events with open CFPs | https://www.garysguide.com/ |
+
 ## Tier 1 — Apply now
 
 | Event | When / Where | Why it fits | CFP status | Action |
@@ -47,6 +61,23 @@ Links:
 - EDF Climate Tech Convening — was a one-off invite-only event in 2022.
 
 ---
+
+## The "killer-demo" model ambition (the edge that makes the thesis bankable)
+
+Beyond the static before/after satellite story, the ambition is a **live flood-response +
+counterfactual river-flow model**:
+- **Live response:** pull real-time river discharge during a storm — **USGS NWIS / Water Services**
+  stream gauges (discharge in cfs, gage height; free API) + **NOAA National Water Model (NWM)**
+  operational streamflow.
+- **Counterfactual:** model the same storm's hydrograph *as if* the upstream watershed had
+  regenerated soil (higher infiltration / lower runoff curve number, driven by EarthPulse's
+  NDVI + soil-moisture signal). Show the gap = flood-peak reduction attributable to regeneration.
+- **Monetize it:** overlay **FEMA National Flood Hazard Layer (NFHL)** flood zones + **OpenFEMA
+  NFIP claims/payout** data to translate the avoided flood peak into avoided $ payouts.
+- _Note: "SCFM" (Rye's term) ≈ real-time river streamflow in cfs (USGS) — confirm exact source._
+
+This is the live demo that turns the talk from "interesting" into "fund this." Same NASA-style
+data-pipeline pattern EarthPulse already uses (ORNL/AppEEARS), extended to USGS/NOAA/FEMA.
 
 ## Notes / next checks
 - [ ] Confirm Regenerative Agriculture 2026 Summit date + whether it's in SF (email IQ-Hub).
