@@ -16,6 +16,17 @@ Links:
 - ClimateLink: https://www.meetup.com/climatelink-sanfrancisco/
 - SF Bay Climate Tech: https://sf.climatetechcities.com/
 
+## Connect-request notes (≤300 chars — LinkedIn's hard limit)
+
+**Ami Zou** _(259 chars)_
+> Hi Ami — big fan of SF Climate Tech Club. I built EarthPulse (earthpulse.dev): NASA satellites showing degraded land measurably green up + cool down as it regenerates, now extending into a flood/FEMA model. Would love to present to the Club sometime. Connect?
+
+**Ravi Mikkelsen** _(254 chars)_
+> Hi Ravi — love the ClimateLink mission. I built EarthPulse (earthpulse.dev): satellite proof of land regeneration, now a flood model funded by avoided FEMA payouts that pays farmers to hold water. Given Atmos, figured you'd find it interesting — connect?
+
+**Generic (Turnbull / Velani / MCJ)** _(~245 chars — swap [name])_
+> Hi [name] — I built EarthPulse (earthpulse.dev): NASA satellites showing land measurably regenerate — greening + cooling — now extending into a flood model funded by avoided FEMA payouts. Looking for the right SF climate stage to share it. Connect?
+
 ## Notes
 - Lead with Ami Zou (#1) and Ravi (#2) — both clearly active and format-fit.
 - LinkedIn MCP was still initializing as of this writing — pull each profile to confirm
