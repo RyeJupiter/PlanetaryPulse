@@ -319,7 +319,55 @@
       .fnCardTitle { font-size: 20px; }
       .fnCardSummary { font-size: 15px; }
     }
+
+    /* ── Image lightbox ── */
+    .fnCardHeroImg { cursor: zoom-in; }
+
+    .fnLightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(10, 18, 10, 0.94);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+      backdrop-filter: blur(6px);
+    }
+    .fnLightbox.open {
+      opacity: 1;
+      pointer-events: all;
+      cursor: zoom-out;
+    }
+    .fnLightbox img {
+      max-width: 92vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+      transform: scale(0.94);
+      transition: transform 240ms ease;
+    }
+    .fnLightbox.open img { transform: scale(1); }
+    .fnLbClose {
+      position: absolute;
+      top: 18px; right: 22px;
+      color: rgba(220,240,220,0.8);
+      font-size: 28px; line-height: 1;
+      cursor: pointer;
+      background: none; border: none;
+      transition: color 150ms;
+    }
+    .fnLbClose:hover { color: #fff; }
   </style>
+
+  <!-- Lightbox overlay (one, shared across all cards) -->
+  <div class="fnLightbox" id="fn-lightbox" role="dialog" aria-modal="true">
+    <button class="fnLbClose" id="fn-lb-close" aria-label="Close">&times;</button>
+    <img id="fn-lb-img" src="" alt="" />
+  </div>
 </head>
 
 <body data-page="blog">

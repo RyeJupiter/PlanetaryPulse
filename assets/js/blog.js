@@ -182,6 +182,34 @@
     tagBar.querySelector('[data-tag="all"]').addEventListener("click", () => setTag("all"));
   }
 
+  // ── Lightbox ──────────────────────────────────────────────────────────────
+  const lightbox = document.getElementById("fn-lightbox");
+  const lbImg    = document.getElementById("fn-lb-img");
+  const lbClose  = document.getElementById("fn-lb-close");
+
+  function openLightbox(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || "";
+    lightbox.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeLightbox() {
+    lightbox.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  if (lightbox) {
+    lightbox.addEventListener("click", e => { if (e.target === lightbox) closeLightbox(); });
+    lbClose.addEventListener("click", closeLightbox);
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
+  }
+
+  // Delegate click on any hero image in the list
+  list.addEventListener("click", e => {
+    const img = e.target.closest(".fnCardHeroImg");
+    if (img) openLightbox(img.src, img.alt);
+  });
+
   fetch("assets/data/blog-posts.json")
     .then(r => r.json())
     .then(posts => {

@@ -12,7 +12,7 @@
     { href: "/signals.html", label: "Earth Metrics", key: "signals" },
     { href: "/blog.html", label: "Field Notes", key: "blog" },
     { href: "/hydro.html", label: "Hydro Model", key: "hydro" },
-    { href: "/watershed.html", label: "3D Watershed", key: "watershed" },
+    { href: "/rain-in-the-valley.html", label: "Rain In The Valley", key: "rain-valley" },
     { href: "/future-plans.html", label: "Plans & Vibes", key: "future-plans" },
     { href: "/why.html", label: "Why", key: "why" },
     { href: "/about.html", label: "About", key: "about" },
