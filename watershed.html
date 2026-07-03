@@ -3,652 +3,491 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>3D Watershed — EarthPulse</title>
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-  <title>Watershed Viewer — EarthPulse</title>
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/nav.js" defer></script>
-
   <script type="importmap">
-  {
-    "imports": {
-      "three":          "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
-      "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
-    }
-  }
-  </script>
-
+  {"imports":{
+    "three":         "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+  }}</script>
   <style>
     body { overflow: hidden; }
-
-    .wsShell {
+    .shell {
+      height: calc(100vh - 74px);
       display: grid;
       grid-template-rows: 1fr auto;
-      height: calc(100vh - 74px);
-      gap: 0;
-      padding: 16px 20px 12px;
+      padding: 12px 16px 10px;
       box-sizing: border-box;
     }
-
-    .wsViewport {
+    .viewport {
       position: relative;
-      border-radius: 20px;
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(117, 143, 93, 0.28);
-      box-shadow: 0 24px 60px rgba(10, 30, 10, 0.5);
+      border: 1px solid rgba(100,140,80,.3);
+      box-shadow: 0 16px 48px rgba(0,20,0,.55);
       min-height: 0;
     }
+    canvas { width:100%; height:100%; display:block; }
 
-    #ws-canvas { width: 100%; height: 100%; display: block; }
+    /* ── HUD ── */
+    .hud { position:absolute; inset:0; pointer-events:none; }
 
-    /* HUD overlays */
-    .wsHud {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
+    #status {
+      position:absolute; top:12px; left:50%; transform:translateX(-50%);
+      background:rgba(5,18,8,.85); border:1px solid rgba(80,200,100,.3);
+      color:rgba(140,240,155,.95); font-size:11px; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase;
+      padding:5px 14px; border-radius:999px; backdrop-filter:blur(8px);
+      white-space:nowrap;
     }
 
-    .wsStatusBadge {
-      position: absolute;
-      top: 16px; left: 50%; transform: translateX(-50%);
-      padding: 7px 18px;
-      border-radius: 999px;
-      background: rgba(10, 22, 12, 0.78);
-      border: 1px solid rgba(100, 200, 100, 0.3);
-      color: rgba(160, 240, 160, 0.92);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      backdrop-filter: blur(8px);
+    .stats {
+      position:absolute; top:12px; right:12px;
+      display:grid; gap:5px; text-align:right;
     }
-
-    .wsLegend {
-      position: absolute;
-      bottom: 16px; left: 16px;
-      display: grid;
-      gap: 5px;
+    .stat {
+      background:rgba(5,18,8,.82); border:1px solid rgba(80,200,100,.18);
+      color:rgba(160,235,175,.9); font-size:11px; font-family:monospace;
+      padding:4px 10px; border-radius:8px; backdrop-filter:blur(6px);
     }
+    .val { color:#70ffaa; font-weight:700; }
 
-    .wsLegendRow {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 10px;
-      border-radius: 8px;
-      background: rgba(10, 22, 12, 0.72);
-      backdrop-filter: blur(6px);
-      font-size: 11px;
-      color: rgba(200, 230, 200, 0.88);
+    .legend {
+      position:absolute; bottom:12px; left:12px;
+      display:grid; gap:4px;
     }
-
-    .wsLegendSwatch {
-      width: 24px;
-      height: 8px;
-      border-radius: 3px;
-      flex-shrink: 0;
+    .leg-row {
+      display:flex; align-items:center; gap:7px;
+      background:rgba(5,18,8,.76); padding:3px 9px;
+      border-radius:6px; font-size:10px; color:rgba(190,230,200,.9);
+      backdrop-filter:blur(6px);
     }
+    .swatch { width:18px; height:6px; border-radius:2px; flex-shrink:0; }
 
-    .wsStats {
-      position: absolute;
-      top: 16px; right: 16px;
-      display: grid;
-      gap: 6px;
-      text-align: right;
+    /* ── Controls ── */
+    .controls {
+      display:flex; align-items:center; gap:8px;
+      flex-wrap:wrap; padding:9px 0 0;
     }
-
-    .wsStat {
-      padding: 6px 12px;
-      border-radius: 10px;
-      background: rgba(10, 22, 12, 0.78);
-      border: 1px solid rgba(100, 200, 100, 0.2);
-      backdrop-filter: blur(6px);
-      color: rgba(180, 240, 180, 0.88);
-      font-size: 12px;
-      font-family: monospace;
+    .btn {
+      padding:7px 16px; border-radius:999px; cursor:pointer; font-size:13px; font-weight:600;
+      border:1px solid rgba(100,140,80,.4); background:rgba(248,244,228,.92); color:#1e3020;
+      transition:background 140ms, transform 110ms;
     }
+    .btn:hover { background:#ede7cc; transform:translateY(-1px); }
+    .btn.go   { background:#2d7a4f; border-color:#2d7a4f; color:#fff; }
+    .btn.go:hover { background:#389962; }
+    .btn.rst  { background:rgba(160,70,55,.1); border-color:rgba(160,70,55,.38); color:#7a3018; }
 
-    .wsStatVal { color: #90ffb0; font-weight: 700; }
-
-    /* Control bar */
-    .wsControls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 10px 4px 0;
+    .scen-group { display:flex; gap:5px; }
+    .scen {
+      padding:6px 13px; border-radius:999px; cursor:pointer; font-size:12px; font-weight:600;
+      border:1px solid rgba(100,140,80,.28); background:rgba(248,243,222,.85); color:rgba(30,50,28,.88);
+      transition:all 140ms;
     }
+    .scen:hover { transform:translateY(-1px); }
+    .scen.on { color:#fff; }
+    .scen[data-s="concrete"].on { background:#b03020; border-color:#b03020; }
+    .scen[data-s="degraded"].on { background:#b87010; border-color:#b87010; }
+    .scen[data-s="regen"].on    { background:#2d7a4f; border-color:#2d7a4f; }
 
-    .wsBtn {
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(117, 143, 93, 0.38);
-      background: rgba(249, 245, 229, 0.88);
-      color: #1e3020;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+    .div { width:1px; height:22px; background:rgba(100,140,80,.28); flex-shrink:0; }
+
+    .speed-group { display:flex; gap:4px; align-items:center; }
+    .sp-lbl { font-size:11px; color:rgba(30,50,28,.6); margin-right:2px; }
+    .sp {
+      padding:4px 9px; border-radius:7px; cursor:pointer; font-size:11px;
+      border:1px solid rgba(100,140,80,.26); background:rgba(248,243,222,.84); color:rgba(30,50,28,.86);
+      transition:all 120ms;
     }
-
-    .wsBtn:hover { background: rgba(240, 235, 210, 1); border-color: rgba(117, 143, 93, 0.6); transform: translateY(-1px); }
-    .wsBtn.primary { background: #2d7a4f; border-color: #2d7a4f; color: #fff; }
-    .wsBtn.primary:hover { background: #3a9060; }
-    .wsBtn.danger  { background: rgba(163, 86, 65, 0.12); border-color: rgba(163, 86, 65, 0.4); color: #8a3a20; }
-
-    .wsScenarios { display: flex; gap: 6px; }
-
-    .wsScenBtn {
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(117, 143, 93, 0.28);
-      background: rgba(248, 243, 222, 0.82);
-      color: rgba(40, 60, 38, 0.88);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 160ms ease;
-    }
-
-    .wsScenBtn:hover { transform: translateY(-1px); }
-    .wsScenBtn.active { color: #fff; }
-    .wsScenBtn[data-s="concrete"].active  { background: #c0392b; border-color: #c0392b; }
-    .wsScenBtn[data-s="degraded"].active  { background: #c87820; border-color: #c87820; }
-    .wsScenBtn[data-s="regen"].active     { background: #2d7a4f; border-color: #2d7a4f; }
-
-    .wsDivider {
-      width: 1px; height: 24px;
-      background: rgba(117, 143, 93, 0.3);
-      flex-shrink: 0;
-    }
-
-    .wsSpeedGroup { display: flex; gap: 4px; align-items: center; }
-    .wsSpeedLabel { font-size: 12px; color: rgba(40,60,38,0.7); margin-right: 2px; }
-    .wsSpeedBtn {
-      padding: 5px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(117, 143, 93, 0.28);
-      background: rgba(248, 243, 222, 0.8);
-      font-size: 12px;
-      color: rgba(40,60,38,0.88);
-      cursor: pointer;
-      transition: all 140ms ease;
-    }
-    .wsSpeedBtn.active { background: rgba(111, 145, 84, 0.22); border-color: rgba(111, 145, 84, 0.5); font-weight: 700; }
-
-    @media (max-width: 640px) {
-      .wsShell { padding: 10px 12px 8px; }
-      .wsControls { gap: 7px; }
-      .wsBtn { padding: 7px 13px; font-size: 12px; }
-    }
+    .sp.on { background:rgba(100,140,80,.22); border-color:rgba(100,140,80,.5); font-weight:700; }
   </style>
 </head>
+<body data-page="watershed">
+<div id="site-nav"></div>
 
-<body data-page="hydro">
-  <div id="site-nav"></div>
-
-  <main class="wsShell">
-
-    <div class="wsViewport">
-      <canvas id="ws-canvas"></canvas>
-
-      <div class="wsHud">
-        <div class="wsStatusBadge" id="ws-status">Ready — press Run Storm</div>
-
-        <div class="wsStats">
-          <div class="wsStat">Time &nbsp;<span class="wsStatVal" id="ws-time">0.0 hr</span></div>
-          <div class="wsStat">Runoff &nbsp;<span class="wsStatVal" id="ws-runoff">0 mm</span></div>
-          <div class="wsStat">Max depth &nbsp;<span class="wsStatVal" id="ws-depth">0.0 mm</span></div>
-        </div>
-
-        <div class="wsLegend">
-          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#1a6aaa"></div>Deep water</div>
-          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#4a9ed8"></div>Shallow water</div>
-          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#3a6030"></div>Valley floor</div>
-          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#7a5c38"></div>Slopes</div>
-          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#8a8070"></div>Ridgeline</div>
-        </div>
+<main class="shell">
+  <div class="viewport">
+    <canvas id="c"></canvas>
+    <div class="hud">
+      <div id="status">Select a scenario · press Run Storm</div>
+      <div class="stats">
+        <div class="stat">Time &nbsp;<span class="val" id="t">0.0 hr</span></div>
+        <div class="stat">Runoff &nbsp;<span class="val" id="ro">0 mm</span></div>
+        <div class="stat">Max depth &nbsp;<span class="val" id="d">0.0 mm</span></div>
+      </div>
+      <div class="legend">
+        <div class="leg-row"><div class="swatch" style="background:#1050a0"></div>Deep water</div>
+        <div class="leg-row"><div class="swatch" style="background:#50a0e0"></div>Surface flow</div>
+        <div class="leg-row"><div class="swatch" style="background:#2d5c20"></div>Valley floor</div>
+        <div class="leg-row"><div class="swatch" style="background:#705030"></div>Slopes</div>
+        <div class="leg-row"><div class="swatch" style="background:#807870"></div>Ridge</div>
       </div>
     </div>
+  </div>
 
-    <div class="wsControls">
-      <button class="wsBtn primary" id="ws-play">▶ Run Storm</button>
-      <button class="wsBtn danger"  id="ws-reset">↺ Reset</button>
-
-      <div class="wsDivider"></div>
-
-      <div class="wsScenarios">
-        <button class="wsScenBtn" data-s="concrete">Concrete</button>
-        <button class="wsScenBtn active" data-s="degraded">Degraded Soil</button>
-        <button class="wsScenBtn" data-s="regen">Regenerative</button>
-      </div>
-
-      <div class="wsDivider"></div>
-
-      <div class="wsSpeedGroup">
-        <span class="wsSpeedLabel">Speed:</span>
-        <button class="wsSpeedBtn" data-sp="0.5">½×</button>
-        <button class="wsSpeedBtn active" data-sp="1">1×</button>
-        <button class="wsSpeedBtn" data-sp="2">2×</button>
-        <button class="wsSpeedBtn" data-sp="4">4×</button>
-      </div>
+  <div class="controls">
+    <button class="btn go"  id="play">▶ Run Storm</button>
+    <button class="btn rst" id="reset">↺ Reset</button>
+    <div class="div"></div>
+    <div class="scen-group">
+      <button class="scen"    data-s="concrete">Concrete</button>
+      <button class="scen on" data-s="degraded">Degraded Soil</button>
+      <button class="scen"    data-s="regen">Regenerative</button>
     </div>
+    <div class="div"></div>
+    <div class="speed-group">
+      <span class="sp-lbl">Speed:</span>
+      <button class="sp"    data-v="0.5">½×</button>
+      <button class="sp on" data-v="1">1×</button>
+      <button class="sp"    data-v="2">2×</button>
+      <button class="sp"    data-v="4">4×</button>
+    </div>
+  </div>
+</main>
 
-  </main>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+// ─── Grid & world dims ────────────────────────────────────────────────────────
+const G = 48;        // cells per side
+const W = 10;        // world units across grid
+const ES = 0.40;     // elevation scale: DEM unit → Three.js Y
+const WS = 0.055;    // water scale: mm → Three.js Y
 
-    // ── Constants ──────────────────────────────────────────────────────────
-    const GRID   = 72;
-    const WORLD  = 12;
-    const ELEV_SCALE  = 0.46;
-    const WATER_SCALE = 0.07;
-    const DT_HR  = 5 / 60;   // 5-minute timestep in hours
-    const STORM_HR  = 3;
-    const TOTAL_HR  = 6;
-    const RAIN_RATE = 30;     // mm/hr
-    const ROUTING_FRAC = 0.46;
-    const N_DROPS = 1600;
+// ─── Soil scenarios ───────────────────────────────────────────────────────────
+const SOIL = {
+  concrete: { ksat:  0, cap:   0 },
+  degraded: { ksat:  8, cap:  20 },
+  regen:    { ksat: 95, cap: 115 },
+};
 
-    const SOIL = {
-      concrete: { ksat: 0,   storage: 0   },
-      degraded: { ksat: 8,   storage: 20  },
-      regen:    { ksat: 100, storage: 120 },
-    };
+// ─── DEM — pure math, no libraries ───────────────────────────────────────────
+// xn ∈ [-1,1]  (west→east),  yn ∈ [0,1]  (south/outlet → north/headwaters)
+//
+// Verified heights (no noise):
+//   ridge corners  (xn=±1, yn=1): 5.5 + 4.0        = 9.5
+//   headwaters channel (xn=0, yn=1): 0 + 4.0 - 2.4 = 1.6
+//   outlet walls   (xn=±1, yn=0): 5.5               = 5.5
+//   outlet channel (xn= 0, yn=0): 0 - 2.4           → clamped 0  ← water exits here
+//
+// With ES=0.40: max visual height = 9.5 × 0.40 = 3.8 Three.js units  (camera at y=8 sees it fine)
 
-    const STATUS = {
-      idle:     'Ready — press Run Storm',
-      rain:     '🌧  Storm in progress…',
-      recession:'⛅  Storm passed — water receding',
-      done:     '✓  Simulation complete',
-    };
+function hash(x, y) {
+  // deterministic integer hash → float [0,1)
+  let h = Math.imul(x + 1, 2747636419) ^ Math.imul(y + 1, 2654435761);
+  h ^= h >>> 16; h = Math.imul(h, 2246822519); h ^= h >>> 13;
+  return (h >>> 0) / 0xffffffff;
+}
+function vnoise(xf, yf) {
+  const xi = Math.floor(xf), yi = Math.floor(yf);
+  const u  = xf - xi, v = yf - yi;
+  const su = u*u*(3-2*u), sv = v*v*(3-2*v);   // smoothstep
+  return (hash(xi,yi)  *(1-su) + hash(xi+1,yi)  *su)*(1-sv) +
+         (hash(xi,yi+1)*(1-su) + hash(xi+1,yi+1)*su)*sv;
+}
+function microNoise(xn, yn) {
+  // two octaves of value noise; scale chosen so highest freq < 0.5 cells/sample
+  const x = xn * 2.5 + 4, y = yn * 2.5 + 7;
+  return (vnoise(x, y) - 0.5) * 0.55
+       + (vnoise(x*2, y*2) - 0.5) * 0.28;
+}
 
-    // ── DEM — Conical Catchment Bowl + Fluvial Incised Wedge ──────────────
-    // Proper permutation-table Perlin noise (no periodic stripe artifacts)
-    const _perm = (() => {
-      const p = Array.from({length: 256}, (_, i) => i);
-      let s = 12345;
-      const rng = () => { s = (Math.imul(1664525, s) + 1013904223) | 0; return (s >>> 0) / 4294967296; };
-      for (let i = 255; i > 0; i--) { const j = Math.floor(rng()*(i+1)); [p[i],p[j]]=[p[j],p[i]]; }
-      return new Uint8Array([...p, ...p]);
-    })();
-    const _fade = t => t*t*t*(t*(t*6-15)+10);
-    const _grad = (h, x, y) => { h &= 3; const u=h<2?x:y, v=h<2?y:x; return ((h&1)?-u:u)+((h&2)?-v:v); };
-    const _l    = (a, b, t) => a + (b-a)*t;
+const dem    = new Float32Array(G * G);
+let   maxDEM = 0;
+for (let r = 0; r < G; r++) {
+  for (let c = 0; c < G; c++) {
+    const xn = (c / (G-1)) * 2 - 1;
+    const yn =  r / (G-1);
+    const z  = Math.max(0,
+      5.5 * xn * xn                          // valley walls (parabolic)
+    + 4.0 * yn                               // drainage slope N→S
+    - 2.4 * Math.max(0, 1-(xn/0.28)**2)     // central channel (parabolic notch)
+    + microNoise(xn, yn)                     // subtle texture
+    );
+    dem[r*G+c] = z;
+    if (z > maxDEM) maxDEM = z;
+  }
+}
 
-    function perlin2(x, y) {
-      const X=Math.floor(x)&255, Y=Math.floor(y)&255;
-      x-=Math.floor(x); y-=Math.floor(y);
-      const u=_fade(x), v=_fade(y);
-      const a=_perm[X]+Y, b=_perm[X+1]+Y;
-      return _l(v,
-        _l(u, _grad(_perm[a],   x,   y), _grad(_perm[b],   x-1, y)),
-        _l(u, _grad(_perm[a+1], x, y-1), _grad(_perm[b+1], x-1, y-1))
-      );
-    }
+// ─── Sim state ────────────────────────────────────────────────────────────────
+const DT    = 5/60;   // hours per step (5 min)
+const RAIN  = 30;     // mm / hr during storm
+const STORM = 3;      // storm lasts 3 hr
+const TOTAL = 6;      // sim runs 6 hr
 
-    function fbm(x, y, oct) {
-      let v=0, amp=1, freq=1, m=0;
-      for (let o=0; o<oct; o++) { v+=perlin2(x*freq,y*freq)*amp; m+=amp; amp*=0.5; freq*=2.1; }
-      return v/m;
-    }
+let surf, cap, wNext;
+let tSim=0, outflow=0, running=false, done=false;
+let scenario = 'degraded', spf = 1;  // spf = steps per frame
 
-    // Gemini formula: Z = Z_plateau − Z_cone(convergence bowl) − Z_wedge(channel) + fbm
-    // yn=0→outlet/south, yn=1→headwaters/north; yd flips to Gemini's downstream direction
-    // FBM scale 1.4 keeps highest octave (freq≈9.3) well below the aliasing threshold for 72-cell grid
-    function calculateElevation(xn, yn) {
-      const yd  = 1 - yn;
-      const zc  = 4.5 * Math.sqrt(xn*xn + (yd + 0.3)*(yd + 0.3));  // convergence cone
-      const sig = 0.15 + 0.48 * yd;                                   // narrow gorge → wide valley
-      const zw  = 3.8 * Math.exp(-(xn/sig)*(xn/sig));               // incised channel
-      const n   = fbm(xn * 1.4 + 5, yn * 1.4 + 5, 4) * 0.5;
-      return Math.max(0, 11 - zc - zw + n);
-    }
+function reset() {
+  surf  = new Float32Array(G*G);
+  cap   = new Float32Array(G*G).fill(SOIL[scenario].cap);
+  wNext = new Float32Array(G*G);
+  tSim=0; outflow=0; done=false;
+}
+reset();
 
-    const dem = new Float32Array(GRID * GRID);
-    let maxH = 0;
-    for (let i = 0; i < GRID; i++) {
-      for (let j = 0; j < GRID; j++) {
-        const xn = (j / (GRID-1)) * 2 - 1;
-        const yn = i / (GRID-1);
-        dem[i*GRID+j] = calculateElevation(xn, yn);
-        if (dem[i*GRID+j] > maxH) maxH = dem[i*GRID+j];
+const DIRS = [[-1,0],[1,0],[0,-1],[0,1]];
+
+function simStep() {
+  const { ksat } = SOIL[scenario];
+
+  // 1. Rain
+  if (tSim < STORM)
+    for (let i = 0; i < G*G; i++) surf[i] += RAIN * DT;
+
+  // 2. Infiltration
+  for (let i = 0; i < G*G; i++) {
+    const inf = Math.min(surf[i], ksat * DT, cap[i]);
+    surf[i] -= inf;
+    cap[i]  -= inf;
+  }
+
+  // 3. D8 routing with normalised fracs (prevents over-drain)
+  wNext.set(surf);
+  for (let r = 0; r < G; r++) {
+    for (let c = 0; c < G; c++) {
+      const i   = r*G+c;
+      const hi  = dem[i] + surf[i];
+      let tot = 0;
+      const f = [0,0,0,0];
+      for (let d = 0; d < 4; d++) {
+        const nr = r+DIRS[d][0], nc = c+DIRS[d][1];
+        if (nr<0||nr>=G||nc<0||nc>=G) continue;
+        const dh = hi - (dem[nr*G+nc] + surf[nr*G+nc]);
+        if (dh > 0) { f[d] = 0.42 * Math.min(dh/(dh+0.6), 1); tot += f[d]; }
+      }
+      if (tot === 0) continue;
+      if (tot > 1) { const s=1/tot; for (let d=0;d<4;d++) f[d]*=s; }
+      for (let d = 0; d < 4; d++) {
+        if (!f[d]) continue;
+        const nr = r+DIRS[d][0], nc = c+DIRS[d][1];
+        if (nr<0||nr>=G||nc<0||nc>=G) continue;
+        const tr = surf[i] * f[d];
+        wNext[i]       -= tr;
+        wNext[nr*G+nc] += tr;
       }
     }
+  }
 
-    // ── Sim state ──────────────────────────────────────────────────────────
-    let wSurface, remStorage, headArr, rawFracs, wNew;
-    let simTime = 0, totalOutflow = 0, running = false, done = false;
-    let scenario = 'degraded';
+  // 4. South edge outlet drain
+  for (let c = 0; c < G; c++) {
+    const o = wNext[c] * 0.28;
+    outflow   += o;
+    wNext[c]  -= o;
+  }
 
-    function allocSim() {
-      wSurface    = new Float32Array(GRID * GRID);
-      remStorage  = new Float32Array(GRID * GRID).fill(SOIL[scenario].storage);
-      headArr     = new Float32Array(GRID * GRID);
-      rawFracs    = Array.from({length: 4}, () => new Float32Array(GRID * GRID));
-      wNew        = new Float32Array(GRID * GRID);
-      simTime     = 0;
-      totalOutflow = 0;
-      done        = false;
+  for (let i = 0; i < G*G; i++) surf[i] = Math.max(0, wNext[i]);
+  tSim += DT;
+  if (tSim >= TOTAL) { running=false; done=true; }
+}
+
+// ─── Three.js ─────────────────────────────────────────────────────────────────
+const canvas   = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+renderer.toneMapping       = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x08140a);
+scene.fog        = new THREE.Fog(0x08140a, 20, 40);
+
+const cam = new THREE.PerspectiveCamera(46, 1, 0.05, 100);
+cam.position.set(0, 8, 13);
+
+const orbit = new OrbitControls(cam, canvas);
+orbit.target.set(0, 1.5, 0);
+orbit.enableDamping = true;
+orbit.dampingFactor = 0.08;
+orbit.maxPolarAngle = Math.PI * 0.46;
+orbit.minDistance = 4; orbit.maxDistance = 26;
+cam.lookAt(0, 1.5, 0);
+
+// Lights
+const sun = new THREE.DirectionalLight(0xfff6e0, 1.7);
+sun.position.set(5, 13, 7);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = sun.shadow.camera.bottom = -9;
+sun.shadow.camera.right = sun.shadow.camera.top   =  9;
+sun.shadow.camera.far   = 40;
+scene.add(sun);
+scene.add(new THREE.HemisphereLight(0x80bce0, 0x285018, 0.55));
+scene.add(new THREE.AmbientLight(0x304028, 0.5));
+
+// ─── Terrain geometry ─────────────────────────────────────────────────────────
+// Colour: valley-floor green → slope brown → ridge stone
+function terrainColor(ne) {
+  if (ne < 0.20) return [0.10+ne*0.6, 0.36+ne*0.2, 0.10+ne*0.2];
+  if (ne < 0.55) {
+    const t=(ne-.20)/.35;
+    return [0.22+t*.26, 0.40-t*.06, 0.14+t*.06];
+  }
+  const t=(ne-.55)/.45;
+  return [0.48+t*.14, 0.34+t*.18, 0.20+t*.26];
+}
+
+const pos = new Float32Array(G*G*3);
+const col = new Float32Array(G*G*3);
+
+function setVertex(k) {
+  const r = (k/G)|0, c = k%G;
+  pos[k*3]   = (c/(G-1) - 0.5) * W;
+  pos[k*3+1] = dem[k] * ES;
+  pos[k*3+2] = (r/(G-1) - 0.5) * W;
+  const [cr,cg,cb] = terrainColor(dem[k]/maxDEM);
+  col[k*3]=cr; col[k*3+1]=cg; col[k*3+2]=cb;
+}
+for (let k=0; k<G*G; k++) setVertex(k);
+
+const idx = [];
+for (let r=0;r<G-1;r++) for (let c=0;c<G-1;c++) {
+  const a=r*G+c, b=a+1, d=a+G, e=d+1;
+  idx.push(a,b,d, b,e,d);
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setIndex(idx);
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
+geo.computeVertexNormals();
+
+const mat  = new THREE.MeshPhongMaterial({ vertexColors:true, shininess:12, specular:new THREE.Color(0x182414) });
+const mesh = new THREE.Mesh(geo, mat);
+mesh.receiveShadow = true;
+mesh.castShadow    = true;
+scene.add(mesh);
+
+// ─── Rain particles ───────────────────────────────────────────────────────────
+const NR = 1200;
+const rp  = new Float32Array(NR*3);
+for (let i=0;i<NR;i++) {
+  rp[i*3]   = (Math.random()-.5)*W;
+  rp[i*3+1] = Math.random()*7+1;
+  rp[i*3+2] = (Math.random()-.5)*W;
+}
+const rgeo  = new THREE.BufferGeometry();
+rgeo.setAttribute('position', new THREE.BufferAttribute(rp, 3));
+const rain  = new THREE.Points(rgeo, new THREE.PointsMaterial({ color:0x90c8ff, size:.06, transparent:true, opacity:.5 }));
+rain.visible = false;
+scene.add(rain);
+
+// ─── Update mesh each sim step ────────────────────────────────────────────────
+function updateMesh() {
+  for (let k=0;k<G*G;k++) {
+    const w  = surf[k];
+    const wH = w > 0.08 ? w * WS : 0;
+    pos[k*3+1] = dem[k] * ES + wH;
+
+    const ne = dem[k]/maxDEM;
+    const [br,bg,bb] = terrainColor(ne);
+    if (w > 0.25) {
+      const t = Math.min(w/22, 0.88);
+      col[k*3]   = br*(1-t) + 0.02*t;
+      col[k*3+1] = bg*(1-t) + 0.24*t;
+      col[k*3+2] = bb*(1-t) + 0.82*t;
+    } else {
+      col[k*3]=br; col[k*3+1]=bg; col[k*3+2]=bb;
     }
-    allocSim();
+  }
+  geo.attributes.position.needsUpdate = true;
+  geo.attributes.color.needsUpdate    = true;
+  geo.computeVertexNormals();
+}
 
-    function simStep() {
-      const { ksat, storage } = SOIL[scenario];
+// ─── HUD ──────────────────────────────────────────────────────────────────────
+const elStatus = document.getElementById('status');
+const elT  = document.getElementById('t');
+const elRo = document.getElementById('ro');
+const elD  = document.getElementById('d');
 
-      // 1. Rain
-      if (simTime < STORM_HR) {
-        for (let i = 0; i < GRID * GRID; i++) wSurface[i] += RAIN_RATE * DT_HR;
-      }
+function updateHUD() {
+  elT.textContent  = tSim.toFixed(1)+' hr';
+  elRo.textContent = Math.round(outflow)+' mm';
+  let mx=0; for (let k=0;k<G*G;k++) if(surf[k]>mx) mx=surf[k];
+  elD.textContent  = mx.toFixed(1)+' mm';
 
-      // 2. Infiltration
-      for (let i = 0; i < GRID * GRID; i++) {
-        const inf = Math.min(wSurface[i], ksat * DT_HR, remStorage[i]);
-        wSurface[i]   -= inf;
-        remStorage[i] -= inf;
-      }
+  if      (done)                           elStatus.textContent = '✓  Complete';
+  else if (!running && tSim===0)           elStatus.textContent = 'Select a scenario · press Run Storm';
+  else if (running && tSim < STORM)        elStatus.textContent = '🌧  Storm in progress…';
+  else                                     elStatus.textContent = '⛅  Receding…';
+}
 
-      // 3. D8 routing (normalised)
-      for (let i = 0; i < GRID * GRID; i++) headArr[i] = dem[i] + wSurface[i];
-      const DIRS = [[-1,0],[1,0],[0,-1],[0,1]];
+// ─── Resize ───────────────────────────────────────────────────────────────────
+function resize() {
+  const vp = canvas.parentElement;
+  renderer.setSize(vp.clientWidth, vp.clientHeight);
+  cam.aspect = vp.clientWidth / vp.clientHeight;
+  cam.updateProjectionMatrix();
+}
+resize();
+new ResizeObserver(resize).observe(canvas.parentElement);
 
-      for (let d = 0; d < 4; d++) rawFracs[d].fill(0);
-      for (let r = 0; r < GRID; r++) {
-        for (let c = 0; c < GRID; c++) {
-          const idx = r * GRID + c;
-          let tot = 0;
-          for (let d = 0; d < 4; d++) {
-            const nr = Math.max(0, Math.min(GRID-1, r + DIRS[d][0]));
-            const nc = Math.max(0, Math.min(GRID-1, c + DIRS[d][1]));
-            if (nr === r && nc === c) continue;
-            const slope = headArr[idx] - headArr[nr * GRID + nc];
-            if (slope > 0) {
-              const f = ROUTING_FRAC * Math.min(slope / (slope + 1), 1);
-              rawFracs[d][idx] = f;
-              tot += f;
-            }
-          }
-          if (tot > 1) {
-            const s = 1 / tot;
-            for (let d = 0; d < 4; d++) rawFracs[d][idx] *= s;
-          }
-        }
-      }
+// ─── Render loop ──────────────────────────────────────────────────────────────
+let lastT = 0;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  const dt = Math.min((ts-lastT)/1000, .05); lastT=ts;
 
-      wNew.set(wSurface);
-      for (let r = 0; r < GRID; r++) {
-        for (let c = 0; c < GRID; c++) {
-          const idx = r * GRID + c;
-          for (let d = 0; d < 4; d++) {
-            if (!rawFracs[d][idx]) continue;
-            const nr = Math.max(0, Math.min(GRID-1, r + DIRS[d][0]));
-            const nc = Math.max(0, Math.min(GRID-1, c + DIRS[d][1]));
-            const tr = wSurface[idx] * rawFracs[d][idx];
-            wNew[idx] -= tr;
-            wNew[nr * GRID + nc] += tr;
-          }
-        }
-      }
+  if (running) {
+    for (let s=0; s<spf; s++) simStep();
+    updateMesh();
+  }
 
-      // 4. South-edge outflow (row 0 = outlet)
-      for (let c = 0; c < GRID; c++) {
-        const out = wNew[c] * 0.28;
-        totalOutflow += out;
-        wNew[c] -= out;
-      }
-
-      for (let i = 0; i < GRID * GRID; i++) wSurface[i] = Math.max(0, wNew[i]);
-      simTime += DT_HR;
-
-      if (simTime >= TOTAL_HR) { running = false; done = true; }
+  // Rain particles
+  rain.visible = running && tSim < STORM;
+  if (rain.visible) {
+    for (let i=0;i<NR;i++) {
+      rp[i*3+1] -= dt*5;
+      if (rp[i*3+1]<-.5) { rp[i*3]=(Math.random()-.5)*W; rp[i*3+1]=5+Math.random()*4; rp[i*3+2]=(Math.random()-.5)*W; }
     }
+    rgeo.attributes.position.needsUpdate=true;
+  }
 
-    // ── Three.js setup ─────────────────────────────────────────────────────
-    const canvas   = document.getElementById('ws-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+  updateHUD();
+  orbit.update();
+  renderer.render(scene, cam);
+}
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0c1a10);
-    scene.fog = new THREE.Fog(0x0c1a10, 20, 42);
+// Draw terrain immediately — user sees valley before pressing anything
+updateMesh();
+requestAnimationFrame(frame);
 
-    const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
-    camera.position.set(0, 9, 14);
-    camera.lookAt(0, 1, 0);
+// ─── Controls ─────────────────────────────────────────────────────────────────
+const playBtn = document.getElementById('play');
 
-    const controls = new OrbitControls(camera, canvas);
-    controls.target.set(0, 1, 0);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.maxPolarAngle = Math.PI * 0.48;
-    controls.minDistance = 5;
-    controls.maxDistance = 30;
+playBtn.addEventListener('click', () => {
+  if (done) return;
+  running = !running;
+  playBtn.textContent = running ? '⏸ Pause' : '▶ Resume';
+});
 
-    // Lights
-    const sun = new THREE.DirectionalLight(0xfff8e0, 1.4);
-    sun.position.set(7, 14, 9);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.far = 50;
-    sun.shadow.camera.left = sun.shadow.camera.bottom = -10;
-    sun.shadow.camera.right = sun.shadow.camera.top = 10;
-    scene.add(sun);
-    scene.add(new THREE.HemisphereLight(0x90cce0, 0x2d5a20, 0.55));
-    scene.add(new THREE.AmbientLight(0x3a5030, 0.4));
+document.getElementById('reset').addEventListener('click', () => {
+  running = false;
+  playBtn.textContent = '▶ Run Storm';
+  reset(); updateMesh(); updateHUD();
+});
 
-    // ── Terrain geometry ──────────────────────────────────────────────────
-    function lerp(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }
+document.querySelectorAll('.scen').forEach(b => b.addEventListener('click', () => {
+  scenario = b.dataset.s;
+  document.querySelectorAll('.scen').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  running=false; playBtn.textContent='▶ Run Storm';
+  reset(); updateMesh(); updateHUD();
+}));
 
-    function elevColor(ne) {
-      if (ne < 0.22)       return [0.18, 0.44, 0.20];
-      if (ne < 0.50) { const t=(ne-0.22)/0.28; return [lerp(0.18,0.50,t), lerp(0.44,0.38,t), lerp(0.20,0.20,t)]; }
-      if (ne < 0.78) { const t=(ne-0.50)/0.28; return [lerp(0.50,0.56,t), lerp(0.38,0.50,t), lerp(0.20,0.38,t)]; }
-      const t=(ne-0.78)/0.22; return [lerp(0.56,0.62,t), lerp(0.50,0.58,t), lerp(0.38,0.54,t)];
-    }
-
-    const posArr = new Float32Array(GRID * GRID * 3);
-    const colArr = new Float32Array(GRID * GRID * 3);
-
-    for (let i = 0; i < GRID; i++) {
-      for (let j = 0; j < GRID; j++) {
-        const idx = i * GRID + j;
-        posArr[idx*3]   = (j/(GRID-1) - 0.5) * WORLD;
-        posArr[idx*3+1] = dem[idx] * ELEV_SCALE;
-        posArr[idx*3+2] = (i/(GRID-1) - 0.5) * WORLD;
-        const [r,g,b] = elevColor(dem[idx] / maxH);
-        colArr[idx*3]=r; colArr[idx*3+1]=g; colArr[idx*3+2]=b;
-      }
-    }
-
-    const idxArr = [];
-    for (let i = 0; i < GRID-1; i++) {
-      for (let j = 0; j < GRID-1; j++) {
-        const a=i*GRID+j, b=i*GRID+j+1, c=(i+1)*GRID+j, d=(i+1)*GRID+j+1;
-        idxArr.push(a,b,c, b,d,c);
-      }
-    }
-
-    const terrainGeo = new THREE.BufferGeometry();
-    terrainGeo.setIndex(idxArr);
-    terrainGeo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-    terrainGeo.setAttribute('color',    new THREE.BufferAttribute(colArr, 3));
-    terrainGeo.computeVertexNormals();
-
-    const terrainMat = new THREE.MeshPhongMaterial({
-      vertexColors: true,
-      shininess: 18,
-      specular: new THREE.Color(0x223322),
-    });
-
-    const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
-    terrainMesh.receiveShadow = true;
-    terrainMesh.castShadow    = true;
-    scene.add(terrainMesh);
-
-    // ── Rain particles ─────────────────────────────────────────────────────
-    const rainPos = new Float32Array(N_DROPS * 3);
-    for (let i = 0; i < N_DROPS; i++) {
-      rainPos[i*3]   = (Math.random()-.5)*WORLD;
-      rainPos[i*3+1] = Math.random()*7+1.5;
-      rainPos[i*3+2] = (Math.random()-.5)*WORLD;
-    }
-    const rainGeo = new THREE.BufferGeometry();
-    rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
-    const rainMat = new THREE.PointsMaterial({ color: 0x8ac8ff, size: 0.07, transparent: true, opacity: 0.55 });
-    const rainPoints = new THREE.Points(rainGeo, rainMat);
-    rainPoints.visible = false;
-    scene.add(rainPoints);
-
-    // ── Update terrain mesh ────────────────────────────────────────────────
-    let maxWEver = 1;
-    function updateTerrain() {
-      const pos = terrainGeo.attributes.position.array;
-      const col = terrainGeo.attributes.color.array;
-      let localMax = 0;
-      for (let k = 0; k < GRID*GRID; k++) localMax = Math.max(localMax, wSurface[k]);
-      if (localMax > maxWEver) maxWEver = localMax;
-
-      for (let i = 0; i < GRID; i++) {
-        for (let j = 0; j < GRID; j++) {
-          const k = i * GRID + j;
-          const w = wSurface[k];
-          const wH = w > 0.08 ? w * WATER_SCALE : 0;
-
-          pos[k*3+1] = dem[k] * ELEV_SCALE + wH;
-
-          const ne = dem[k] / maxH;
-          const [br,bg,bb] = elevColor(ne);
-
-          if (w > 0.3) {
-            const blend = Math.min(w / 28, 0.82);
-            col[k*3]   = lerp(br, 0.07, blend);
-            col[k*3+1] = lerp(bg, 0.30, blend);
-            col[k*3+2] = lerp(bb, 0.82, blend);
-          } else {
-            col[k*3]=br; col[k*3+1]=bg; col[k*3+2]=bb;
-          }
-        }
-      }
-
-      terrainGeo.attributes.position.needsUpdate = true;
-      terrainGeo.attributes.color.needsUpdate    = true;
-      terrainGeo.computeVertexNormals();
-    }
-
-    // ── Rain animation ─────────────────────────────────────────────────────
-    function updateRain(delta) {
-      const raining = running && simTime < STORM_HR;
-      rainPoints.visible = raining;
-      if (!raining) return;
-      const p = rainGeo.attributes.position.array;
-      for (let i = 0; i < N_DROPS; i++) {
-        p[i*3+1] -= delta * 5.5;
-        if (p[i*3+1] < -0.5) {
-          p[i*3]   = (Math.random()-.5)*WORLD;
-          p[i*3+1] = 5 + Math.random()*4;
-          p[i*3+2] = (Math.random()-.5)*WORLD;
-        }
-      }
-      rainGeo.attributes.position.needsUpdate = true;
-    }
-
-    // ── HUD ────────────────────────────────────────────────────────────────
-    const elStatus  = document.getElementById('ws-status');
-    const elTime    = document.getElementById('ws-time');
-    const elRunoff  = document.getElementById('ws-runoff');
-    const elDepth   = document.getElementById('ws-depth');
-
-    function updateHUD() {
-      elTime.textContent   = simTime.toFixed(1) + ' hr';
-      elRunoff.textContent = Math.round(totalOutflow) + ' mm';
-      let maxW = 0;
-      for (let k = 0; k < GRID*GRID; k++) maxW = Math.max(maxW, wSurface[k]);
-      elDepth.textContent = maxW.toFixed(1) + ' mm';
-
-      if (done) elStatus.textContent = STATUS.done;
-      else if (!running && simTime === 0) elStatus.textContent = STATUS.idle;
-      else if (running && simTime < STORM_HR) elStatus.textContent = STATUS.rain;
-      else if (running || simTime > 0) elStatus.textContent = STATUS.recession;
-    }
-
-    // ── Render + sim loop ──────────────────────────────────────────────────
-    let stepsPerFrame = 1;
-    let lastTime = 0;
-
-    function resize() {
-      const wrap = canvas.parentElement;
-      const w = wrap.clientWidth, h = wrap.clientHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    resize();
-    new ResizeObserver(resize).observe(canvas.parentElement);
-
-    function frame(ts) {
-      requestAnimationFrame(frame);
-      const delta = Math.min((ts - lastTime) / 1000, 0.05);
-      lastTime = ts;
-
-      if (running) {
-        for (let s = 0; s < stepsPerFrame; s++) simStep();
-        updateTerrain();
-      }
-
-      updateRain(delta);
-      updateHUD();
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    updateTerrain();  // draw terrain immediately on load
-    requestAnimationFrame(frame);
-
-    // ── Controls ────────────────────────────────────────────────────────────
-    const playBtn  = document.getElementById('ws-play');
-    const resetBtn = document.getElementById('ws-reset');
-
-    playBtn.addEventListener('click', () => {
-      if (done) return;
-      running = !running;
-      playBtn.textContent = running ? '⏸ Pause' : '▶ Resume';
-    });
-
-    resetBtn.addEventListener('click', () => {
-      running = false;
-      playBtn.textContent = '▶ Run Storm';
-      allocSim();
-      updateTerrain();
-      updateHUD();
-    });
-
-    document.querySelectorAll('.wsScenBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        scenario = btn.dataset.s;
-        document.querySelectorAll('.wsScenBtn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        running = false;
-        playBtn.textContent = '▶ Run Storm';
-        allocSim();
-        updateTerrain();
-        updateHUD();
-      });
-    });
-
-    document.querySelectorAll('.wsSpeedBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sp = parseFloat(btn.dataset.sp);
-        stepsPerFrame = sp <= 0.5 ? 1 : Math.round(sp);
-        // For ½× slow it down via frame skipping (handled in frame rate)
-        // Simple: just change stepsPerFrame
-        document.querySelectorAll('.wsSpeedBtn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-  </script>
+document.querySelectorAll('.sp').forEach(b => b.addEventListener('click', () => {
+  spf = Math.max(1, Math.round(parseFloat(b.dataset.v)));
+  document.querySelectorAll('.sp').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+}));
+</script>
 </body>
 </html>
