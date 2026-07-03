@@ -281,7 +281,7 @@
     //   to zero there — mirroring how a soaked soil sponge can't absorb more.
     const SCENARIOS = {
       concrete: { name: 'Urban / Concrete',   n: 0.012, ksat: 0.03, capPerCell: 0.15, nLabel: "Manning's n = 0.012" },
-      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.10, capPerCell: 2.5,  nLabel: "Manning's n = 0.025" },
+      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.07, capPerCell: 1.5,  nLabel: "Manning's n = 0.025" },
       regen:    { name: 'Regenerative Land',  n: 0.080, ksat: 0.82, capPerCell: 22,   nLabel: "Manning's n = 0.080" },
     };
     let scenario = SCENARIOS.degraded;
@@ -851,19 +851,21 @@
             pvx_[i] *= Math.max(0, 1 - dt * 4);
             pvz_[i] *= Math.max(0, 1 - dt * 4);
             const sfp = satFrac(px_[i], pz_[i]);
-            const infilChance = scenario.ksat * (1 - sfp);
-            if (Math.random() < infilChance * dt * 2.5 || (ppool[i] > 2.2 && sfp < 0.98)) {
+            // Only chance-based infil, scaled by remaining capacity.
+            // No time-forced infil — pooled water on saturated ground must
+            // spill downstream, not disappear.
+            if (Math.random() < scenario.ksat * (1 - sfp) * dt * 3.0) {
               pstate[i] = INFILTRATING;
               ptimer[i]  = 0.8 + Math.random() * 0.3;
               addSat(px_[i], pz_[i], 1);
               pCol_.set(C_INFIL, i * 3);
             }
-            // Fully saturated ponding: force overland flow, particle spills
-            // toward the outlet as saturated-excess runoff.
-            else if (sfp >= 0.98 && ppool[i] > 3.0) {
+            // Ponded too long to still be absorbing — spill toward the outlet
+            // as saturation-excess overland flow.
+            else if (ppool[i] > 2.4) {
               pstate[i] = FLOWING;
               ppool[i]  = 0;
-              pvz_[i]   = 0.8;  // small kick downstream
+              pvz_[i]   = 0.9;  // kick downstream
               pCol_.set(C_FLOW, i * 3);
             }
           } else {
