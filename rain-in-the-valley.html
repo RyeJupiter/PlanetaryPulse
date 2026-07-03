@@ -212,6 +212,10 @@
           <span>Rainfall</span>
           <span class="hud-val" id="hud-count">0</span>
         </div>
+        <div class="hud-row">
+          <span>Soil moisture</span>
+          <span class="hud-val" id="hud-sat">0%</span>
+        </div>
       </div>
       <div class="hud-status" id="hud-status">Select a scenario and run a storm</div>
     </div>
@@ -272,12 +276,41 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     // ── Scenarios ────────────────────────────────────────────────────────
+    // capPerCell: soil-water storage capacity per saturation grid cell,
+    //   in "particle-equivalents". Once a cell fills, infiltration falls
+    //   to zero there — mirroring how a soaked soil sponge can't absorb more.
     const SCENARIOS = {
-      concrete: { name: 'Urban / Concrete',   n: 0.012, ksat: 0.03, nLabel: "Manning's n = 0.012" },
-      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.20, nLabel: "Manning's n = 0.025" },
-      regen:    { name: 'Regenerative Land',  n: 0.080, ksat: 0.82, nLabel: "Manning's n = 0.080" },
+      concrete: { name: 'Urban / Concrete',   n: 0.012, ksat: 0.03, capPerCell: 0.15, nLabel: "Manning's n = 0.012" },
+      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.10, capPerCell: 2.5,  nLabel: "Manning's n = 0.025" },
+      regen:    { name: 'Regenerative Land',  n: 0.080, ksat: 0.82, capPerCell: 22,   nLabel: "Manning's n = 0.080" },
     };
     let scenario = SCENARIOS.degraded;
+
+    // ── Per-cell soil saturation ─────────────────────────────────────────
+    // soilWater[i] tracks accumulated infiltrated water per cell in
+    // particle-equivalents. Saturation fraction = soilWater / capPerCell,
+    // clamped to [0,1]. Infiltration probability is scaled by (1 - sat),
+    // so once soil is soaked, further rainfall runs off.
+    const SAT_G = 32;
+    const soilWater = new Float32Array(SAT_G * SAT_G);
+    function satCellIdx(wx, wz) {
+      const fc = ((wx / WIDTH) + 0.5) * (SAT_G - 1);
+      const fr = ((wz / DEPTH) + 0.5) * (SAT_G - 1);
+      const c  = Math.max(0, Math.min(SAT_G - 1, Math.round(fc)));
+      const r  = Math.max(0, Math.min(SAT_G - 1, Math.round(fr)));
+      return r * SAT_G + c;
+    }
+    function satFrac(wx, wz) {
+      return Math.min(1, soilWater[satCellIdx(wx, wz)] / scenario.capPerCell);
+    }
+    function addSat(wx, wz, amount) {
+      soilWater[satCellIdx(wx, wz)] += amount;
+    }
+    function meanSat() {
+      let sum = 0;
+      for (let i = 0; i < soilWater.length; i++) sum += Math.min(1, soilWater[i] / scenario.capPerCell);
+      return sum / soilWater.length;
+    }
 
     // ── DEM constants ────────────────────────────────────────────────────
     const G      = 96;    // grid resolution (denser terrain)
@@ -794,9 +827,11 @@
           if (py_[i] <= tY + 0.05) {
             py_[i] = tY + 0.02;
             pShape_[i] = 0.0; // stop being a streak on impact
-            if (Math.random() < scenario.ksat) {
+            const sf = satFrac(px_[i], pz_[i]);
+            if (Math.random() < scenario.ksat * (1 - sf)) {
               pstate[i] = INFILTRATING;
               ptimer[i]  = 0.65 + Math.random() * 0.45;
+              addSat(px_[i], pz_[i], 1);
               pCol_.set(C_INFIL, i * 3);
             } else {
               pstate[i] = FLOWING;
@@ -815,10 +850,21 @@
             // Bleed off residual momentum so pooled drops rest calmly
             pvx_[i] *= Math.max(0, 1 - dt * 4);
             pvz_[i] *= Math.max(0, 1 - dt * 4);
-            if (ppool[i] > 2.2 || Math.random() < scenario.ksat * dt * 2.5) {
+            const sfp = satFrac(px_[i], pz_[i]);
+            const infilChance = scenario.ksat * (1 - sfp);
+            if (Math.random() < infilChance * dt * 2.5 || (ppool[i] > 2.2 && sfp < 0.98)) {
               pstate[i] = INFILTRATING;
               ptimer[i]  = 0.8 + Math.random() * 0.3;
+              addSat(px_[i], pz_[i], 1);
               pCol_.set(C_INFIL, i * 3);
+            }
+            // Fully saturated ponding: force overland flow, particle spills
+            // toward the outlet as saturated-excess runoff.
+            else if (sfp >= 0.98 && ppool[i] > 3.0) {
+              pstate[i] = FLOWING;
+              ppool[i]  = 0;
+              pvz_[i]   = 0.8;  // small kick downstream
+              pCol_.set(C_FLOW, i * 3);
             }
           } else {
             pstate[i] = FLOWING;
@@ -856,11 +902,13 @@
               pShape_[i] = 1.0;
               continue;
             }
-            // Secondary infiltration while flowing — kept low so heavy storms
-            // on degraded land actually produce runoff instead of soaking in
-            if (Math.random() < scenario.ksat * dt * 0.4) {
+            // Secondary infiltration while flowing — falls to zero as the
+            // local cell saturates, so long storms produce sustained runoff
+            const sfF = satFrac(px_[i], pz_[i]);
+            if (Math.random() < scenario.ksat * (1 - sfF) * dt * 0.4) {
               pstate[i] = INFILTRATING;
               ptimer[i]  = 0.6 + Math.random() * 0.4;
+              addSat(px_[i], pz_[i], 1);
               pCol_.set(C_INFIL, i * 3);
             }
           }
@@ -955,6 +1003,7 @@
         document.getElementById('hud-infil-pct').textContent  = '—';
         document.getElementById('hud-runoff-pct').textContent = '—';
       }
+      document.getElementById('hud-sat').textContent = Math.round(meanSat() * 100) + '%';
       document.getElementById('info-manning').textContent = scenario.nLabel;
     }
 
@@ -1021,6 +1070,7 @@
       totalRunoff      = 0;
       hyRunoff.fill(0); hyInfil.fill(0);
       hyIdx = 0; hyMax = 1; hyTick = 0;
+      soilWater.fill(0);
 
       for (let i = 0; i < MAX_P; i++) {
         pstate[i] = DONE;
