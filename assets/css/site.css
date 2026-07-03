@@ -247,6 +247,10 @@ li,
 }
 .cardBody { color: var(--muted); }
 
+/* ── Blog sidebar title/subtitle — full contrast ── */
+.blogSidebar h1 { color: #162616; }
+.blogSidebar .subtitle { color: var(--text); opacity: 1; }
+
 /* ── Blog layout ── */
 .blogLayout {
   display: grid;
