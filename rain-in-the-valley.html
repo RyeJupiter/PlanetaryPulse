@@ -856,7 +856,9 @@
               pShape_[i] = 1.0;
               continue;
             }
-            if (Math.random() < scenario.ksat * dt * 1.4) {
+            // Secondary infiltration while flowing — kept low so heavy storms
+            // on degraded land actually produce runoff instead of soaking in
+            if (Math.random() < scenario.ksat * dt * 0.4) {
               pstate[i] = INFILTRATING;
               ptimer[i]  = 0.6 + Math.random() * 0.4;
               pCol_.set(C_INFIL, i * 3);
