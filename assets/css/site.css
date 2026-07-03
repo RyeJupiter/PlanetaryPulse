@@ -251,6 +251,15 @@ li,
 .blogSidebar h1 { color: #162616; }
 .blogSidebar .subtitle { color: var(--text); opacity: 1; }
 
+/* ── Blog sidebar scroll containment ── */
+.blogSidebar {
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+
+/* ── Blog card title contrast (botanical theme override) ── */
+.blogCard .cardTitle { color: #1e3020; }
+
 /* ── Blog layout ── */
 .blogLayout {
   display: grid;
