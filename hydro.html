@@ -271,12 +271,14 @@
       flex-shrink: 0;
     }
 
-    .hydroAnimImg {
+    .hydroAnimImg,
+    .hydroAnimIframe {
       width: 100%;
       display: block;
       aspect-ratio: 1;
       object-fit: cover;
       background: #0b1410;
+      border: 0;
     }
 
     .hydroAnimPlaceholder {
@@ -459,10 +461,9 @@
               <div class="hydroAnimLabel">
                 <span class="hydroAnimDot"></span>Urban / Concrete
               </div>
-              <div class="hydroAnimPlaceholder">
-                Storm capture · concrete scenario<br>
-                <span style="opacity:0.5;">(record a clip from the live model)</span>
-              </div>
+              <iframe class="hydroAnimIframe" loading="lazy"
+                src="/rain-in-the-valley.html?scenario=concrete&amp;rate=2&amp;duration=1&amp;autoplay=1&amp;embed=1&amp;loop=1"
+                title="Live model — concrete scenario"></iframe>
               <div class="hydroAnimCaption">Every raindrop routes to the outlet almost instantly. The bucket fills before the storm ends.</div>
             </div>
 
@@ -470,10 +471,9 @@
               <div class="hydroAnimLabel">
                 <span class="hydroAnimDot"></span>Degraded Farmland
               </div>
-              <div class="hydroAnimPlaceholder">
-                Storm capture · degraded scenario<br>
-                <span style="opacity:0.5;">(record a clip from the live model)</span>
-              </div>
+              <iframe class="hydroAnimIframe" loading="lazy"
+                src="/rain-in-the-valley.html?scenario=degraded&amp;rate=2&amp;duration=1&amp;autoplay=1&amp;embed=1&amp;loop=1"
+                title="Live model — degraded scenario"></iframe>
               <div class="hydroAnimCaption">Some infiltration, but sheet flow dominates. Pools briefly, then runs. Downstream peak is delayed but still large.</div>
             </div>
 
@@ -481,34 +481,31 @@
               <div class="hydroAnimLabel">
                 <span class="hydroAnimDot"></span>Regenerative Land
               </div>
-              <div class="hydroAnimPlaceholder">
-                Storm capture · regenerative scenario<br>
-                <span style="opacity:0.5;">(record a clip from the live model)</span>
-              </div>
+              <iframe class="hydroAnimIframe" loading="lazy"
+                src="/rain-in-the-valley.html?scenario=regen&amp;rate=2&amp;duration=1&amp;autoplay=1&amp;embed=1&amp;loop=1"
+                title="Live model — regenerative scenario"></iframe>
               <div class="hydroAnimCaption">The soil sponge absorbs the storm where it falls. Little to nothing reaches the bucket.</div>
             </div>
 
           </div>
           <p style="margin:12px 0 0;font-size:12px;color:rgba(40,60,38,0.6);line-height:1.55;">
-            Each panel is a screen-recording of the
+            Each panel is a live instance of the
             <a href="/rain-in-the-valley.html" style="color:#4f744e;">Rain In The Valley</a>
-            particle model running with the corresponding scenario preset. The bucket at the outlet
-            catches every particle that leaves the watershed as runoff.
+            particle model, auto-playing a 2 in/hr, one-hour storm on the corresponding scenario.
+            The bucket at the outlet catches every particle that leaves the watershed as runoff.
+            Open the full model to try a 10 in/hr, 24-hour storm.
           </p>
         </div>
 
-        <!-- Comparative hydrograph — captured from the live sim's overlay ─── -->
-        <div class="hydroSectionLabel" style="margin-top:26px;margin-bottom:10px;">Comparative runoff curves — all three scenarios overlaid</div>
+        <!-- Comparative hydrograph note -->
+        <div class="hydroSectionLabel" style="margin-top:26px;margin-bottom:10px;">The comparative runoff curve</div>
         <div class="hydroChartWrap">
-          <div class="hydroAnimPlaceholder" style="aspect-ratio: 21 / 9;">
-            Overlaid hydrograph · runoff vs infiltration over storm duration<br>
-            <span style="opacity:0.5;">(export from the live model's hydrograph panel across all three scenarios)</span>
-          </div>
-          <div class="hydroChartCaption">
-            The comparative hydrograph is the argument made quantitative: cumulative runoff versus
-            cumulative infiltration over the same storm, plotted for all three landscapes. Capture
-            the hydrograph panel from each run of the Rain In The Valley model and overlay them
-            here.
+          <div class="hydroChartCaption" style="border-top:0;padding:22px 24px;">
+            Each iframe above renders its own live hydrograph in the lower-right — cumulative runoff
+            (blue) versus cumulative infiltration (green) over the storm. Compared side by side,
+            the concrete curve rockets up while the regenerative curve stays flat. That contrast
+            is the argument made quantitative — and it's the metric we'll graduate from a synthetic
+            valley to real USGS gauge data in Track B.
           </div>
         </div>
       </div>

@@ -178,6 +178,14 @@
     }
     #info-banner strong { color: rgba(160,220,140,0.9); display: block; margin-bottom: 3px; font-size: 9px; letter-spacing: 0.08em; }
     #info-manning { margin-top: 5px; font-size: 9px; color: rgba(140,180,120,0.55); }
+
+    /* Embed mode (?embed=1) — hides chrome for iframe use */
+    body.embed #site-nav,
+    body.embed #controls,
+    body.embed #info-banner { display: none; }
+    body.embed #hud       { top: 12px; left: 12px; font-size: 10px; padding: 9px 11px; min-width: 0; }
+    body.embed #hud-title { font-size: 8px; }
+    body.embed #hydro-wrap { bottom: 10px; right: 10px; padding: 6px 6px 3px; }
   </style>
 </head>
 
@@ -238,6 +246,11 @@
         <input type="range" id="intensity" min="0.5" max="10" step="0.1" value="1.0" />
         <span class="int-val" id="intensity-val">1.0 in/hr</span>
       </div>
+      <div class="int-row">
+        <label for="duration">Storm duration</label>
+        <input type="range" id="duration" min="0.25" max="24" step="0.25" value="1.0" />
+        <span class="int-val" id="duration-val">1.0 hr</span>
+      </div>
       <div class="act-row">
         <button class="act-btn" id="btn-storm">Run Storm</button>
         <button class="act-btn" id="btn-reset">Reset</button>
@@ -272,11 +285,12 @@
     const DEPTH  = 15;    // world Z extent (flow direction)
     const ELEV   = 4.1;   // max height in world units
 
-    // ── Particle constants ───────────────────────────────────────────────
-    const MAX_P               = 4000;
-    const PARTICLES_PER_INHR  = 380;   // particles per storm at 1.0 in/hr
-    const STORM_DURATION      = 15;    // seconds of active spawning
-    let rainRate              = 1.0;   // user-controlled inches per hour (0.5 – 10)
+    // ── Particle / storm constants ───────────────────────────────────────
+    const MAX_P                   = 4000;
+    const SPAWN_PER_INHR_PER_SEC  = 25;   // particles/s per in/hr (real-time spawn rate)
+    const SECONDS_PER_STORM_HOUR  = 12;   // real seconds mapped to one storm-hour
+    let rainRate                  = 1.0;  // inches per hour  (0.5 – 10)
+    let stormDurationHours        = 1.0;  // storm-hours      (0.25 – 24)
 
     const DONE=0, FALLING=1, FLOWING=2, INFILTRATING=3, POOLED=4, EXITING=5;
 
@@ -703,12 +717,13 @@
     const C_POOL   = [0.10, 0.35, 0.82];
 
     // ── Sim state ────────────────────────────────────────────────────────
-    let stormRunning = false;
-    let stormSpawned = 0;
-    let stormTimer   = 0;
-    let totalSpawned = 0;
-    let totalInfil   = 0;
-    let totalRunoff  = 0;
+    let stormRunning     = false;
+    let stormSpawned     = 0;
+    let stormTimer       = 0;
+    let spawnAccumulator = 0;
+    let totalSpawned     = 0;
+    let totalInfil       = 0;
+    let totalRunoff      = 0;
 
     // Hydrograph
     const HY_LEN = 250;
@@ -718,17 +733,8 @@
     let hyMax  = 1;
     let hyTick = 0;
 
-    // Storm curve: ease-out cubic so rain starts strong and tapers off
-    function cumulativeTarget(t) {
-      const total = effectiveTotal();
-      if (t <= 0) return 0;
-      if (t >= STORM_DURATION) return total;
-      const x = t / STORM_DURATION;
-      const s = 1 - Math.pow(1 - x, 3);
-      return Math.floor(total * s);
-    }
-    function effectiveTotal() {
-      return Math.min(MAX_P, Math.floor(rainRate * PARTICLES_PER_INHR));
+    function stormDurationSeconds() {
+      return stormDurationHours * SECONDS_PER_STORM_HOUR;
     }
 
     // ── Particle spawn ───────────────────────────────────────────────────
@@ -754,14 +760,15 @@
     // ── Sim step ─────────────────────────────────────────────────────────
     function stepSim(dt) {
       if (stormRunning) stormTimer += dt;
+      const stormDurSec = stormDurationSeconds();
 
-      // Spawn new particles per storm curve, scaled by intensity
-      const stormTotalNow = effectiveTotal();
-      if (stormRunning && stormSpawned < stormTotalNow) {
-        const target  = cumulativeTarget(stormTimer);
-        let need = target - stormSpawned;
+      // Continuous rate-based spawn while the storm is still raining
+      if (stormRunning && stormTimer < stormDurSec) {
+        spawnAccumulator += rainRate * SPAWN_PER_INHR_PER_SEC * dt;
+        let need = Math.floor(spawnAccumulator);
+        spawnAccumulator -= need;
         if (need > 0) {
-          const cap = 120; // max spawn per frame — high enough for 10 in/hr storms
+          const cap = 140; // max spawn per frame — high enough for 10 in/hr storms
           need = Math.min(need, cap);
           let done = 0;
           for (let i = 0; i < MAX_P && done < need; i++) {
@@ -916,8 +923,8 @@
 
       updateHUD();
 
-      // Auto-stop when storm is done and all particles settled
-      if (stormRunning && stormSpawned >= stormTotalNow) {
+      // Auto-stop when the rain has stopped and all particles have settled
+      if (stormRunning && stormTimer >= stormDurSec) {
         let any = false;
         for (let i = 0; i < MAX_P; i++) { if (pstate[i] !== DONE) { any = true; break; } }
         if (!any) {
@@ -928,6 +935,9 @@
           btn.classList.remove('running');
           document.getElementById('hud-status').textContent =
             `Done — ${Math.round(totalInfil / totalSpawned * 100)}% infiltrated, ${Math.round(totalRunoff / totalSpawned * 100)}% runoff`;
+
+          // Loop mode (for embedded iframes) — restart after a short pause
+          if (paramLoop) setTimeout(startStorm, 1500);
         }
       }
     }
@@ -1000,12 +1010,13 @@
 
     // ── Reset ────────────────────────────────────────────────────────────
     function resetSim() {
-      stormRunning = false;
-      stormSpawned = 0;
-      stormTimer   = 0;
-      totalSpawned = 0;
-      totalInfil   = 0;
-      totalRunoff  = 0;
+      stormRunning     = false;
+      stormSpawned     = 0;
+      stormTimer       = 0;
+      spawnAccumulator = 0;
+      totalSpawned     = 0;
+      totalInfil       = 0;
+      totalRunoff      = 0;
       hyRunoff.fill(0); hyInfil.fill(0);
       hyIdx = 0; hyMax = 1; hyTick = 0;
 
@@ -1057,6 +1068,60 @@
       rainRate = parseFloat(intensityEl.value);
       intensityVal.textContent = rainRate.toFixed(1) + ' in/hr';
     });
+
+    const durationEl  = document.getElementById('duration');
+    const durationVal = document.getElementById('duration-val');
+    durationEl.addEventListener('input', () => {
+      stormDurationHours = parseFloat(durationEl.value);
+      const fmt = stormDurationHours < 1
+        ? stormDurationHours.toFixed(2)
+        : stormDurationHours.toFixed(1);
+      durationVal.textContent = fmt + ' hr';
+    });
+
+    // ── URL param support (for iframe embedding) ─────────────────────────
+    const _params        = new URLSearchParams(location.search);
+    const paramScenario  = _params.get('scenario');
+    const paramRate      = parseFloat(_params.get('rate'));
+    const paramDuration  = parseFloat(_params.get('duration'));
+    const paramAutoplay  = _params.get('autoplay') === '1';
+    const paramEmbed     = _params.get('embed') === '1';
+    const paramLoop      = _params.get('loop') === '1';
+
+    if (paramScenario && SCENARIOS[paramScenario]) {
+      scenario = SCENARIOS[paramScenario];
+      document.querySelectorAll('.sc-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.sc === paramScenario);
+      });
+    }
+    if (!isNaN(paramRate)) {
+      rainRate = Math.max(0.5, Math.min(10, paramRate));
+      const el  = document.getElementById('intensity');
+      const val = document.getElementById('intensity-val');
+      if (el) el.value = rainRate;
+      if (val) val.textContent = rainRate.toFixed(1) + ' in/hr';
+    }
+    if (!isNaN(paramDuration)) {
+      stormDurationHours = Math.max(0.25, Math.min(24, paramDuration));
+      const el  = document.getElementById('duration');
+      const val = document.getElementById('duration-val');
+      if (el) el.value = stormDurationHours;
+      if (val) val.textContent = stormDurationHours.toFixed(1) + ' hr';
+    }
+    if (paramEmbed) document.body.classList.add('embed');
+
+    function startStorm() {
+      if (stormRunning) return;
+      resetSim();
+      stormRunning = true;
+      const btn = document.getElementById('btn-storm');
+      btn.disabled = true;
+      btn.textContent = 'Storm running…';
+      btn.classList.add('running');
+      document.getElementById('hud-status').textContent = 'Storm active…';
+    }
+
+    if (paramAutoplay) setTimeout(startStorm, 400);
 
     // ── Resize ───────────────────────────────────────────────────────────
     function onResize() {
