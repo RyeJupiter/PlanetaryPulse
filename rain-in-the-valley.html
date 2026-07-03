@@ -3,488 +3,1085 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rain In The Valley — EarthPulse</title>
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Rain In The Valley — EarthPulse</title>
+  <meta name="description" content="A particle-based hydrological model showing how land management affects rainfall infiltration and runoff." />
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/nav.js" defer></script>
-  <script type="importmap">
-  {"imports":{
-    "three":         "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
-  }}</script>
   <style>
-    body { overflow: hidden; }
-    .shell {
-      height: calc(100vh - 74px);
-      display: grid;
-      grid-template-rows: 1fr auto;
-      padding: 12px 16px 10px;
-      box-sizing: border-box;
+    html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #060d09; }
+
+    #canvas-wrap {
+      position: fixed;
+      inset: 0;
+      top: 0;
     }
-    .viewport {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(100,140,80,.3);
-      box-shadow: 0 16px 48px rgba(0,20,0,.55);
-      min-height: 0;
+
+    #c3d { display: block; width: 100%; height: 100%; }
+
+    /* ── HUD ── */
+    #hud {
+      position: absolute;
+      top: 62px;
+      left: 14px;
+      background: rgba(8, 18, 8, 0.86);
+      border: 1px solid rgba(90, 140, 70, 0.32);
+      border-radius: 14px;
+      padding: 13px 16px;
+      color: #c4ddb4;
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      font-size: 12px;
+      line-height: 1.72;
+      backdrop-filter: blur(12px);
+      min-width: 200px;
+      pointer-events: none;
     }
-    canvas { width:100%; height:100%; display:block; }
-    .hud { position:absolute; inset:0; pointer-events:none; }
-    #status {
-      position:absolute; top:12px; left:50%; transform:translateX(-50%);
-      background:rgba(5,18,8,.88); border:1px solid rgba(80,200,100,.32);
-      color:rgba(140,240,155,.95); font-size:11px; font-weight:700;
-      letter-spacing:.1em; text-transform:uppercase;
-      padding:5px 14px; border-radius:999px; white-space:nowrap;
+    #hud-title { font-weight: 700; letter-spacing: 0.1em; color: #8fd89a; font-size: 10px; margin-bottom: 5px; }
+    #hud-scenario { color: #d4e8b4; }
+    .hud-bar { margin-top: 6px; display: grid; gap: 2px; }
+    .hud-row { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; }
+    .hud-val { font-weight: 700; }
+    .hud-infil .hud-val { color: #5dd87a; }
+    .hud-runoff .hud-val { color: #5ab0e8; }
+    .hud-status { margin-top: 6px; font-size: 10px; color: rgba(180,210,150,0.55); }
+
+    /* ── Hydrograph ── */
+    #hydro-wrap {
+      position: absolute;
+      bottom: 76px;
+      right: 14px;
+      background: rgba(8, 18, 8, 0.86);
+      border: 1px solid rgba(90, 140, 70, 0.28);
+      border-radius: 12px;
+      padding: 10px 10px 6px;
+      backdrop-filter: blur(12px);
     }
-    #ver {
-      position:absolute; top:12px; left:12px;
-      background:rgba(200,80,40,.85); color:#fff;
-      font-size:10px; font-weight:700; padding:3px 8px;
-      border-radius:6px; letter-spacing:.08em;
+    #c-hydro { display: block; }
+    #hydro-legend {
+      display: flex;
+      gap: 12px;
+      margin-top: 5px;
+      justify-content: center;
+      font-family: ui-monospace, monospace;
+      font-size: 9px;
     }
-    .stats { position:absolute; top:12px; right:12px; display:grid; gap:5px; }
-    .stat {
-      background:rgba(5,18,8,.84); border:1px solid rgba(80,200,100,.2);
-      color:rgba(160,235,175,.92); font-size:11px; font-family:monospace;
-      padding:4px 10px; border-radius:8px; text-align:right;
+    .leg-infil  { color: rgba(60,200,90,0.8);  }
+    .leg-runoff { color: rgba(70,150,230,0.8); }
+
+    /* ── Controls ── */
+    #controls {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
     }
-    .val { color:#70ffaa; font-weight:700; }
-    .legend { position:absolute; bottom:12px; left:12px; display:grid; gap:4px; }
-    .leg {
-      display:flex; align-items:center; gap:7px;
-      background:rgba(5,18,8,.78); padding:3px 9px;
-      border-radius:6px; font-size:10px; color:rgba(190,230,200,.9);
+    .sc-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+    .sc-btn {
+      padding: 7px 15px;
+      border-radius: 999px;
+      border: 1px solid rgba(80,120,60,0.4);
+      background: rgba(8,18,8,0.82);
+      color: rgba(160,200,130,0.7);
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 160ms, border-color 160ms, color 160ms;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
     }
-    .sw { width:18px; height:6px; border-radius:2px; flex-shrink:0; }
-    .controls {
-      display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:9px 0 0;
+    .sc-btn:hover  { background: rgba(30,60,20,0.85); border-color: rgba(80,160,70,0.6); color: #9de090; }
+    .sc-btn.active { background: rgba(30,90,30,0.85); border-color: #4da860; color: #a8f0b0; font-weight: 600; }
+    .act-row { display: flex; gap: 8px; }
+    .act-btn {
+      padding: 9px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(80,140,70,0.45);
+      background: rgba(8,18,8,0.88);
+      color: #90d880;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 180ms, border-color 180ms;
+      backdrop-filter: blur(10px);
     }
-    .btn {
-      padding:7px 16px; border-radius:999px; cursor:pointer;
-      font-size:13px; font-weight:600;
-      border:1px solid rgba(100,140,80,.4);
-      background:rgba(248,244,228,.92); color:#1e3020;
-      transition:background 140ms, transform 110ms;
+    .act-btn:hover:not(:disabled) { background: rgba(20,70,20,0.9); border-color: #5ab860; }
+    .act-btn:disabled { opacity: 0.35; cursor: default; }
+    #btn-storm.running { color: #f0d060; border-color: rgba(200,150,30,0.5); }
+
+    /* ── Intensity slider ── */
+    .int-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(8,18,8,0.82);
+      border: 1px solid rgba(80,120,60,0.4);
+      border-radius: 999px;
+      padding: 6px 16px;
+      backdrop-filter: blur(10px);
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      color: rgba(180,215,150,0.85);
+      font-size: 11px;
     }
-    .btn:hover { background:#ede7cc; transform:translateY(-1px); }
-    .btn.go { background:#2d7a4f; border-color:#2d7a4f; color:#fff; }
-    .btn.go:hover { background:#389962; }
-    .btn.rst { background:rgba(160,70,55,.1); border-color:rgba(160,70,55,.38); color:#7a3018; }
-    .sg { display:flex; gap:5px; }
-    .sc {
-      padding:6px 13px; border-radius:999px; cursor:pointer;
-      font-size:12px; font-weight:600;
-      border:1px solid rgba(100,140,80,.28);
-      background:rgba(248,243,222,.85); color:rgba(30,50,28,.88);
-      transition:all 140ms;
+    .int-row label { letter-spacing: 0.06em; }
+    .int-row input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 180px;
+      height: 4px;
+      background: rgba(90,140,70,0.35);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
     }
-    .sc:hover { transform:translateY(-1px); }
-    .sc.on { color:#fff; }
-    .sc[data-s="concrete"].on { background:#b03020; border-color:#b03020; }
-    .sc[data-s="degraded"].on { background:#b87010; border-color:#b87010; }
-    .sc[data-s="regen"].on    { background:#2d7a4f; border-color:#2d7a4f; }
-    .dv { width:1px; height:22px; background:rgba(100,140,80,.28); flex-shrink:0; }
-    .spg { display:flex; gap:4px; align-items:center; }
-    .spl { font-size:11px; color:rgba(30,50,28,.6); margin-right:2px; }
-    .sp {
-      padding:4px 9px; border-radius:7px; cursor:pointer; font-size:11px;
-      border:1px solid rgba(100,140,80,.26);
-      background:rgba(248,243,222,.84); color:rgba(30,50,28,.86);
-      transition:all 120ms;
+    .int-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #7fd090;
+      border: 2px solid #1a3a1e;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(120,220,140,0.5);
     }
-    .sp.on { background:rgba(100,140,80,.22); border-color:rgba(100,140,80,.5); font-weight:700; }
+    .int-row input[type=range]::-moz-range-thumb {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #7fd090;
+      border: 2px solid #1a3a1e;
+      cursor: pointer;
+    }
+    .int-val {
+      min-width: 42px;
+      text-align: right;
+      color: #a8f0b0;
+      font-weight: 700;
+    }
+
+    /* ── Info banner ── */
+    #info-banner {
+      position: absolute;
+      top: 62px;
+      right: 14px;
+      max-width: 210px;
+      background: rgba(8,18,8,0.82);
+      border: 1px solid rgba(90,140,70,0.25);
+      border-radius: 12px;
+      padding: 10px 13px;
+      color: rgba(170,210,140,0.7);
+      font-size: 10px;
+      line-height: 1.65;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+    }
+    #info-banner strong { color: rgba(160,220,140,0.9); display: block; margin-bottom: 3px; font-size: 9px; letter-spacing: 0.08em; }
+    #info-manning { margin-top: 5px; font-size: 9px; color: rgba(140,180,120,0.55); }
   </style>
 </head>
+
 <body data-page="rain-valley">
-<div id="site-nav"></div>
-<main class="shell">
-  <div class="viewport">
-    <canvas id="c"></canvas>
-    <div class="hud">
-      <div id="ver">RAIN IN THE VALLEY</div>
-      <div id="status">Select scenario · Run Storm</div>
-      <div class="stats">
-        <div class="stat">Time&nbsp;<span class="val" id="st">0.0 hr</span></div>
-        <div class="stat">Runoff&nbsp;<span class="val" id="sr">0 mm</span></div>
-        <div class="stat">Depth&nbsp;<span class="val" id="sd">0.0 mm</span></div>
+  <div id="site-nav"></div>
+
+  <div id="canvas-wrap">
+    <canvas id="c3d"></canvas>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div id="hud-title">RAIN IN THE VALLEY</div>
+      <div id="hud-scenario">—</div>
+      <div class="hud-bar">
+        <div class="hud-row hud-infil">
+          <span>Infiltrated</span>
+          <span class="hud-val" id="hud-infil-pct">—</span>
+        </div>
+        <div class="hud-row hud-runoff">
+          <span>Runoff</span>
+          <span class="hud-val" id="hud-runoff-pct">—</span>
+        </div>
+        <div class="hud-row">
+          <span>Rainfall</span>
+          <span class="hud-val" id="hud-count">0</span>
+        </div>
       </div>
-      <div class="legend">
-        <div class="leg"><div class="sw" style="background:#1050a0"></div>Deep water</div>
-        <div class="leg"><div class="sw" style="background:#50a8e8"></div>Surface flow</div>
-        <div class="leg"><div class="sw" style="background:#2d5c20"></div>Valley floor</div>
-        <div class="leg"><div class="sw" style="background:#705030"></div>Slopes</div>
-        <div class="leg"><div class="sw" style="background:#806858"></div>Ridge</div>
+      <div class="hud-status" id="hud-status">Select a scenario and run a storm</div>
+    </div>
+
+    <!-- Info banner -->
+    <div id="info-banner">
+      <strong>HOW TO READ THIS</strong>
+      Each raindrop is a particle. Green = water infiltrating into soil.
+      Blue = water flowing as runoff toward the outlet.
+      Watch how land management changes where the water goes.
+      <div id="info-manning"></div>
+    </div>
+
+    <!-- Hydrograph -->
+    <div id="hydro-wrap">
+      <canvas id="c-hydro" width="220" height="110"></canvas>
+      <div id="hydro-legend">
+        <span class="leg-infil">▬ Infiltrated</span>
+        <span class="leg-runoff">▬ Runoff</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls">
+      <div class="sc-row">
+        <button class="sc-btn" data-sc="concrete">Urban / Concrete</button>
+        <button class="sc-btn active" data-sc="degraded">Degraded Farmland</button>
+        <button class="sc-btn" data-sc="regen">Regenerative Land</button>
+      </div>
+      <div class="int-row">
+        <label for="intensity">Rainfall rate</label>
+        <input type="range" id="intensity" min="0.5" max="10" step="0.1" value="1.0" />
+        <span class="int-val" id="intensity-val">1.0 in/hr</span>
+      </div>
+      <div class="act-row">
+        <button class="act-btn" id="btn-storm">Run Storm</button>
+        <button class="act-btn" id="btn-reset">Reset</button>
       </div>
     </div>
   </div>
-  <div class="controls">
-    <button class="btn go"  id="play">&#9654; Run Storm</button>
-    <button class="btn rst" id="rst">&#8635; Reset</button>
-    <div class="dv"></div>
-    <div class="sg">
-      <button class="sc"    data-s="concrete">Concrete</button>
-      <button class="sc on" data-s="degraded">Degraded</button>
-      <button class="sc"    data-s="regen">Regenerative</button>
-    </div>
-    <div class="dv"></div>
-    <div class="spg">
-      <span class="spl">Speed:</span>
-      <button class="sp"    data-v="1">1x</button>
-      <button class="sp on" data-v="2">2x</button>
-      <button class="sp"    data-v="4">4x</button>
-    </div>
-  </div>
-</main>
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-// ─── Grid ─────────────────────────────────────────────────────────────────────
-const G  = 60;    // cells per side
-const W  = 12;    // world width/depth
-const ES = 0.35;  // elevation → Three.js Y
-const WS = 0.05;  // mm water → Three.js Y
-
-// ─── Scenarios ────────────────────────────────────────────────────────────────
-const SOIL = {
-  concrete: { ksat:  0, cap:   0 },
-  degraded: { ksat:  8, cap:  20 },
-  regen:    { ksat: 95, cap: 115 },
-};
-
-// ─── DEM — zero noise, pure math ─────────────────────────────────────────────
-//
-//  xn = (col / (G-1)) * 2 - 1        range [-1, +1]  west→east
-//  yn =  row / (G-1)                  range [0,  1]   south/outlet → north/headwaters
-//
-//  Z  = wall(xn)  +  slope(yn)  −  channel(xn)
-//
-//  wall(xn)    = 6 * xn²               0 at centre, 6 at edge
-//  slope(yn)   = 5 * yn                0 at outlet, 5 at headwaters
-//  channel(xn) = 3 * max(0, 1−(xn/0.3)²)   parabolic notch, width ±0.3
-//
-//  Key heights (no noise):
-//    ridge corners   (xn=±1, yn=1) : 6 + 5 − 0   = 11
-//    headwaters floor(xn= 0, yn=1) : 0 + 5 − 3   =  2
-//    outlet walls    (xn=±1, yn=0) : 6 + 0 − 0   =  6
-//    outlet floor    (xn= 0, yn=0) : 0 + 0 − 3   → clamped 0  (exit point)
-//
-//  ELEV_SCALE 0.35 → max Three.js height = 11 × 0.35 = 3.85 units
-
-const dem    = new Float32Array(G * G);
-let   maxDEM = 0;
-
-for (let row = 0; row < G; row++) {
-  for (let col = 0; col < G; col++) {
-    const xn  = (col / (G - 1)) * 2 - 1;
-    const yn  =  row / (G - 1);
-    const z   = Math.max(0,
-      6.0 * xn * xn
-    + 5.0 * yn
-    - 3.0 * Math.max(0, 1 - (xn / 0.3) * (xn / 0.3))
-    );
-    dem[row * G + col] = z;
-    if (z > maxDEM) maxDEM = z;
-  }
-}
-
-// ─── Sim ──────────────────────────────────────────────────────────────────────
-const DT    = 5 / 60;   // 5-min step in hours
-const RAIN  = 30;       // mm/hr
-const STORM = 3;        // hours of rain
-const TOTAL = 6;        // total sim hours
-const DIRS  = [[-1,0],[1,0],[0,-1],[0,1]];
-
-let surf, stor, wnext;
-let tSim = 0, outflow = 0, running = false, done = false;
-let scenario = 'degraded', spf = 2;
-
-function allocSim() {
-  surf   = new Float32Array(G * G);
-  stor   = new Float32Array(G * G).fill(SOIL[scenario].cap);
-  wnext  = new Float32Array(G * G);
-  tSim = 0; outflow = 0; done = false;
-}
-allocSim();
-
-function simStep() {
-  const { ksat } = SOIL[scenario];
-
-  // Rain
-  if (tSim < STORM)
-    for (let i = 0; i < G * G; i++) surf[i] += RAIN * DT;
-
-  // Infiltration
-  for (let i = 0; i < G * G; i++) {
-    const inf = Math.min(surf[i], ksat * DT, stor[i]);
-    surf[i] -= inf;
-    stor[i] -= inf;
-  }
-
-  // D8 routing
-  wnext.set(surf);
-  for (let r = 0; r < G; r++) {
-    for (let c = 0; c < G; c++) {
-      const i  = r * G + c;
-      const hi = dem[i] + surf[i];
-      const f  = [0, 0, 0, 0];
-      let   tot = 0;
-      for (let d = 0; d < 4; d++) {
-        const nr = r + DIRS[d][0], nc = c + DIRS[d][1];
-        if (nr < 0 || nr >= G || nc < 0 || nc >= G) continue;
-        const dh = hi - (dem[nr * G + nc] + surf[nr * G + nc]);
-        if (dh > 0) { f[d] = 0.42 * Math.min(dh / (dh + 0.6), 1); tot += f[d]; }
-      }
-      if (tot === 0) continue;
-      if (tot > 1) { const s = 1 / tot; for (let d = 0; d < 4; d++) f[d] *= s; }
-      for (let d = 0; d < 4; d++) {
-        if (!f[d]) continue;
-        const nr = r + DIRS[d][0], nc = c + DIRS[d][1];
-        if (nr < 0 || nr >= G || nc < 0 || nc >= G) continue;
-        const tr = surf[i] * f[d];
-        wnext[i]           -= tr;
-        wnext[nr * G + nc] += tr;
-      }
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
     }
   }
+  </script>
 
-  // South-edge outlet
-  for (let c = 0; c < G; c++) {
-    const o = wnext[c] * 0.28;
-    outflow += o; wnext[c] -= o;
-  }
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-  for (let i = 0; i < G * G; i++) surf[i] = Math.max(0, wnext[i]);
-  tSim += DT;
-  if (tSim >= TOTAL) { running = false; done = true; }
-}
+    // ── Scenarios ────────────────────────────────────────────────────────
+    const SCENARIOS = {
+      concrete: { name: 'Urban / Concrete',   n: 0.012, ksat: 0.03, nLabel: "Manning's n = 0.012" },
+      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.20, nLabel: "Manning's n = 0.025" },
+      regen:    { name: 'Regenerative Land',  n: 0.080, ksat: 0.82, nLabel: "Manning's n = 0.080" },
+    };
+    let scenario = SCENARIOS.degraded;
 
-// ─── Renderer ─────────────────────────────────────────────────────────────────
-const canvas   = document.getElementById('c');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+    // ── DEM constants ────────────────────────────────────────────────────
+    const G      = 96;    // grid resolution (denser terrain)
+    const WIDTH  = 12;    // world X extent
+    const DEPTH  = 15;    // world Z extent (flow direction)
+    const ELEV   = 4.1;   // max height in world units
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x08140a);
-scene.fog = new THREE.Fog(0x08140a, 22, 45);
+    // ── Particle constants ───────────────────────────────────────────────
+    const MAX_P               = 4000;
+    const PARTICLES_PER_INHR  = 380;   // particles per storm at 1.0 in/hr
+    const STORM_DURATION      = 15;    // seconds of active spawning
+    let rainRate              = 1.0;   // user-controlled inches per hour (0.5 – 10)
 
-// Camera — positioned south of valley looking north-up into it
-const cam = new THREE.PerspectiveCamera(50, 1, 0.05, 100);
-cam.position.set(0, 7, 12);
+    const DONE=0, FALLING=1, FLOWING=2, INFILTRATING=3, POOLED=4, EXITING=5;
 
-const orbit = new OrbitControls(cam, canvas);
-orbit.target.set(0, 2, 0);
-orbit.enableDamping  = true;
-orbit.dampingFactor  = 0.08;
-orbit.maxPolarAngle  = Math.PI * 0.47;
-orbit.minDistance    = 3;
-orbit.maxDistance    = 28;
-orbit.update();
+    // ── Bucket (runoff catchment past the outlet edge) ───────────────────
+    const BUCKET_Z    = DEPTH / 2 + 3.0;
+    const BUCKET_R    = 2.55;
+    const BUCKET_Y_B  = -2.3;   // interior floor
+    const BUCKET_Y_T  = -0.35;  // rim height
+    const BUCKET_H    = BUCKET_Y_T - BUCKET_Y_B;
+    const BUCKET_MAX_FILL = 2500;
 
-// Lights
-const sun = new THREE.DirectionalLight(0xfff4d0, 1.8);
-sun.position.set(4, 12, 6);
-sun.castShadow = true;
-sun.shadow.camera.left = sun.shadow.camera.bottom = -10;
-sun.shadow.camera.right = sun.shadow.camera.top   =  10;
-sun.shadow.camera.far   = 40;
-sun.shadow.mapSize.set(1024, 1024);
-scene.add(sun);
-scene.add(new THREE.HemisphereLight(0x88bce0, 0x284818, 0.6));
-scene.add(new THREE.AmbientLight(0x304028, 0.5));
+    // ── Perlin noise ─────────────────────────────────────────────────────
+    const _perm = (() => {
+      const src = [151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,
+        140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,247,120,234,
+        75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,88,237,149,
+        56,87,174,20,125,136,171,168,68,175,74,165,71,134,139,48,27,166,
+        77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,
+        245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,
+        208,89,18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,
+        186,3,64,52,217,226,250,124,123,5,202,38,147,118,126,255,82,85,
+        212,207,206,59,227,47,16,58,17,182,189,28,42,223,183,170,213,119,
+        248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,129,22,39,
+        253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,
+        251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,
+        14,239,107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,
+        50,45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,
+        128,195,78,66,215,61,156,180];
+      const t = new Uint8Array(512);
+      for (let i = 0; i < 512; i++) t[i] = src[i & 255];
+      return t;
+    })();
 
-// ─── Terrain mesh ─────────────────────────────────────────────────────────────
-// Colour ramp based on normalised elevation
-function eCol(ne) {
-  // 0=dark green valley, 0.5=brown slope, 1=grey ridge
-  if (ne < 0.3) {
-    const t = ne / 0.3;
-    return [0.10 + t*0.18, 0.35 + t*0.05, 0.08 + t*0.10];
-  }
-  if (ne < 0.7) {
-    const t = (ne - 0.3) / 0.4;
-    return [0.28 + t*0.22, 0.40 - t*0.08, 0.18 + t*0.06];
-  }
-  const t = (ne - 0.7) / 0.3;
-  return [0.50 + t*0.12, 0.32 + t*0.16, 0.24 + t*0.22];
-}
+    const _fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+    const _lerp = (a, b, t) => a + t * (b - a);
+    const _grad = (h, x, y) => { h &= 3; return ((h & 1) ? x : -x) + ((h & 2) ? y : -y); };
 
-const pos = new Float32Array(G * G * 3);
-const col = new Float32Array(G * G * 3);
-
-// Build vertex positions and colours
-for (let row = 0; row < G; row++) {
-  for (let col2 = 0; col2 < G; col2++) {
-    const k = row * G + col2;
-    pos[k*3]   = (col2 / (G-1) - 0.5) * W;     // X  (west→east)
-    pos[k*3+1] = dem[k] * ES;                    // Y  (elevation)
-    pos[k*3+2] = (row / (G-1) - 0.5) * W;       // Z  (south→north)
-    const [r, g, b] = eCol(dem[k] / maxDEM);
-    col[k*3]=r; col[k*3+1]=g; col[k*3+2]=b;
-  }
-}
-
-// Triangle indices — two triangles per quad
-const idx = [];
-for (let row = 0; row < G-1; row++) {
-  for (let col2 = 0; col2 < G-1; col2++) {
-    const a = row*G + col2;
-    const b = a + 1;
-    const c = a + G;
-    const d = c + 1;
-    // CCW winding from above (camera is above, Y up)
-    idx.push(a, c, b);
-    idx.push(b, c, d);
-  }
-}
-
-const geo = new THREE.BufferGeometry();
-geo.setIndex(idx);
-geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
-geo.computeVertexNormals();
-
-const mat = new THREE.MeshPhongMaterial({
-  vertexColors: true,
-  side: THREE.DoubleSide,   // visible from any angle while we tune camera
-  shininess: 10,
-});
-const mesh = new THREE.Mesh(geo, mat);
-mesh.receiveShadow = true;
-mesh.castShadow    = true;
-scene.add(mesh);
-
-// ─── Rain ─────────────────────────────────────────────────────────────────────
-const NR  = 1000;
-const rp  = new Float32Array(NR * 3);
-for (let i = 0; i < NR; i++) {
-  rp[i*3]   = (Math.random() - 0.5) * W;
-  rp[i*3+1] = Math.random() * 6 + 1;
-  rp[i*3+2] = (Math.random() - 0.5) * W;
-}
-const rgeo  = new THREE.BufferGeometry();
-rgeo.setAttribute('position', new THREE.BufferAttribute(rp, 3));
-const rain  = new THREE.Points(rgeo,
-  new THREE.PointsMaterial({ color: 0x88ccff, size: 0.065, transparent: true, opacity: 0.5 }));
-rain.visible = false;
-scene.add(rain);
-
-// ─── Mesh update ──────────────────────────────────────────────────────────────
-function updateMesh() {
-  for (let k = 0; k < G * G; k++) {
-    const w   = surf[k];
-    const wH  = w > 0.1 ? w * WS : 0;
-    pos[k*3+1] = dem[k] * ES + wH;
-
-    const ne = dem[k] / maxDEM;
-    const [br, bg, bb] = eCol(ne);
-    if (w > 0.25) {
-      const t = Math.min(w / 20, 0.9);
-      col[k*3]   = br*(1-t) + 0.02*t;
-      col[k*3+1] = bg*(1-t) + 0.25*t;
-      col[k*3+2] = bb*(1-t) + 0.85*t;
-    } else {
-      col[k*3]=br; col[k*3+1]=bg; col[k*3+2]=bb;
+    function perlin(x, y) {
+      const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+      x -= Math.floor(x); y -= Math.floor(y);
+      const u = _fade(x), v = _fade(y);
+      const a = _perm[X] + Y, b = _perm[X + 1] + Y;
+      return _lerp(
+        _lerp(_grad(_perm[a],     x,     y),   _grad(_perm[b],     x - 1, y),   u),
+        _lerp(_grad(_perm[a + 1], x,     y - 1), _grad(_perm[b + 1], x - 1, y - 1), u),
+        v
+      );
     }
-  }
-  geo.attributes.position.needsUpdate = true;
-  geo.attributes.color.needsUpdate    = true;
-  geo.computeVertexNormals();
-}
 
-// ─── HUD ──────────────────────────────────────────────────────────────────────
-const elSt = document.getElementById('status');
-const elT  = document.getElementById('st');
-const elR  = document.getElementById('sr');
-const elD  = document.getElementById('sd');
+    // Ridge noise (folded perlin — gives sharp mountain-like ridges)
+    function ridge(x, y) {
+      return 1.0 - Math.abs(perlin(x, y));
+    }
 
-function updateHUD() {
-  elT.textContent = tSim.toFixed(1) + ' hr';
-  elR.textContent = Math.round(outflow) + ' mm';
-  let mx = 0;
-  for (let k = 0; k < G*G; k++) if (surf[k] > mx) mx = surf[k];
-  elD.textContent = mx.toFixed(1) + ' mm';
-  if      (done)                        elSt.textContent = 'Complete';
-  else if (!running && tSim === 0)      elSt.textContent = 'Select scenario · Run Storm';
-  else if (running && tSim < STORM)     elSt.textContent = 'Storm in progress';
-  else                                  elSt.textContent = 'Receding';
-}
+    function fbm(x, y, oct = 4, scale = 2.2) {
+      let v = 0, amp = 0.5, freq = 1, mx = 0;
+      for (let i = 0; i < oct; i++) {
+        v  += perlin(x * freq * scale, y * freq * scale) * amp;
+        mx += amp; amp *= 0.5; freq *= 2;
+      }
+      return v / mx; // [-1, 1]
+    }
 
-// ─── Resize ───────────────────────────────────────────────────────────────────
-function resize() {
-  const vp = canvas.parentElement;
-  renderer.setSize(vp.clientWidth, vp.clientHeight);
-  cam.aspect = vp.clientWidth / vp.clientHeight;
-  cam.updateProjectionMatrix();
-}
-resize();
-new ResizeObserver(resize).observe(canvas.parentElement);
+    function fbmRidge(x, y, oct = 4, scale = 1.6) {
+      let v = 0, amp = 0.5, freq = 1, mx = 0;
+      for (let i = 0; i < oct; i++) {
+        v  += ridge(x * freq * scale, y * freq * scale) * amp;
+        mx += amp; amp *= 0.5; freq *= 2;
+      }
+      return v / mx; // [0, 1]
+    }
 
-// ─── Loop ─────────────────────────────────────────────────────────────────────
-let lt = 0;
-function frame(ts) {
-  requestAnimationFrame(frame);
-  const dt = Math.min((ts - lt) / 1000, 0.05); lt = ts;
+    // ── DEM build (meandering, asymmetric, multi-scale) ─────────────────
+    const dem = new Float32Array(G * G);
 
-  if (running) {
-    for (let s = 0; s < spf; s++) simStep();
-    updateMesh();
-  }
+    (function buildDEM() {
+      // Step 1: primary FBM noise, normalized
+      let mn = Infinity, mx = -Infinity;
+      const noise1 = new Float32Array(G * G);
+      for (let r = 0; r < G; r++) {
+        for (let c = 0; c < G; c++) {
+          const xn = (c / (G - 1)) * 2 - 1;
+          const yn = r / (G - 1);
+          const v  = fbm(xn, yn, 5, 1.8);
+          noise1[r * G + c] = v;
+          mn = Math.min(mn, v); mx = Math.max(mx, v);
+        }
+      }
+      for (let i = 0; i < noise1.length; i++) noise1[i] = (noise1[i] - mn) / (mx - mn);
 
-  rain.visible = running && tSim < STORM;
-  if (rain.visible) {
-    for (let i = 0; i < NR; i++) {
-      rp[i*3+1] -= dt * 5;
-      if (rp[i*3+1] < -0.5) {
-        rp[i*3]   = (Math.random()-0.5)*W;
-        rp[i*3+1] = 5 + Math.random()*4;
-        rp[i*3+2] = (Math.random()-0.5)*W;
+      // Step 2: ridge noise for sharper peaks (multi-scale)
+      const ridgeN = new Float32Array(G * G);
+      for (let r = 0; r < G; r++) {
+        for (let c = 0; c < G; c++) {
+          const xn = (c / (G - 1)) * 2 - 1;
+          const yn = r / (G - 1);
+          ridgeN[r * G + c] = fbmRidge(xn + 4.3, yn + 7.1, 3, 1.4);
+        }
+      }
+
+      // Step 3: combine with meandering, asymmetric valley shape
+      for (let r = 0; r < G; r++) {
+        for (let c = 0; c < G; c++) {
+          const xn = (c / (G - 1)) * 2 - 1;
+          const yn = r / (G - 1);
+
+          // Meandering thalweg: valley bottom shifts left/right along its length
+          const meander = Math.sin(yn * Math.PI * 1.35 + 0.4) * 0.24;
+          const dxc     = xn - meander;
+          const absDx   = Math.abs(dxc);
+
+          // Asymmetric valley walls — steeper on the right side (like a real river-carved valley)
+          const asym    = dxc > 0 ? 5.6 : 4.4;
+          const walls   = dxc * dxc * asym;
+
+          // Downstream elevation drop
+          const slope   = (1 - yn) * 3.0;
+
+          // Detail: normalized noise scaled by distance from thalweg (ridges get texture, valley floor is smooth)
+          const n_soft  = noise1[r * G + c];
+          const softDetail = n_soft * (0.14 + absDx * 0.60) * 1.15;
+
+          // Ridge detail — peaks amplified on upper slopes
+          const peakMask = Math.min(1, absDx * 1.25);
+          const ridgeDetail = ridgeN[r * G + c] * peakMask * 1.2;
+
+          // Small-scale texture everywhere for realism
+          const fineDetail = fbm(xn * 3.4 + 11, yn * 3.4 + 13, 2, 3.0) * 0.22;
+
+          dem[r * G + c] = walls + slope + softDetail + ridgeDetail + fineDetail;
+        }
+      }
+
+      // Step 4: re-normalize combined heightmap to [0, 1]
+      mn = Infinity; mx = -Infinity;
+      for (let i = 0; i < dem.length; i++) { mn = Math.min(mn, dem[i]); mx = Math.max(mx, dem[i]); }
+      for (let i = 0; i < dem.length; i++) dem[i] = (dem[i] - mn) / (mx - mn);
+    })();
+
+    // Precomputed per-vertex slope for terrain coloring
+    const slopeAt = new Float32Array(G * G);
+    (function computeSlopes() {
+      for (let r = 0; r < G; r++) {
+        for (let c = 0; c < G; c++) {
+          const c0 = Math.max(0, c - 1), c1 = Math.min(G - 1, c + 1);
+          const r0 = Math.max(0, r - 1), r1 = Math.min(G - 1, r + 1);
+          const dhx = (dem[r * G + c1] - dem[r * G + c0]) / ((c1 - c0) / (G - 1) * WIDTH);
+          const dhz = (dem[r1 * G + c] - dem[r0 * G + c]) / ((r1 - r0) / (G - 1) * DEPTH);
+          slopeAt[r * G + c] = Math.sqrt(dhx * dhx + dhz * dhz) * ELEV;
+        }
+      }
+    })();
+
+    // ── Height & gradient sampling ───────────────────────────────────────
+    function heightAt(wx, wz) {
+      const fc = ((wx / WIDTH) + 0.5) * (G - 1);
+      const fr = ((wz / DEPTH) + 0.5) * (G - 1);
+      const c0 = Math.max(0, Math.min(G - 2, Math.floor(fc)));
+      const r0 = Math.max(0, Math.min(G - 2, Math.floor(fr)));
+      const tc = fc - c0, tr = fr - r0;
+      const h00 = dem[r0 * G + c0],       h10 = dem[r0 * G + c0 + 1];
+      const h01 = dem[(r0 + 1) * G + c0], h11 = dem[(r0 + 1) * G + c0 + 1];
+      return _lerp(_lerp(h00, h10, tc), _lerp(h01, h11, tc), tr) * ELEV;
+    }
+
+    function gradAt(wx, wz) {
+      const s = 0.18;
+      return {
+        dx: (heightAt(wx + s, wz) - heightAt(wx - s, wz)) / (2 * s),
+        dz: (heightAt(wx, wz + s) - heightAt(wx, wz - s)) / (2 * s),
+      };
+    }
+
+    // ── Three.js setup ───────────────────────────────────────────────────
+    const canvas3d  = document.getElementById('c3d');
+    const renderer  = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const scene  = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b1610);
+    scene.fog = new THREE.FogExp2(0x0b1712, 0.03);
+
+    const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 200);
+    camera.position.set(11, 10, -6);
+
+    const controls = new OrbitControls(camera, canvas3d);
+    controls.enableDamping  = true;
+    controls.dampingFactor  = 0.08;
+    controls.target.set(0, 0.4, 3.5);
+    controls.minDistance    = 5;
+    controls.maxDistance    = 40;
+    camera.lookAt(controls.target);
+
+    // Lighting — warm sun, cool sky rim, subtle ambient
+    scene.add(new THREE.AmbientLight(0x8098a0, 0.55));
+    const sun = new THREE.DirectionalLight(0xffeacc, 1.35);
+    sun.position.set(6, 14, -5);
+    scene.add(sun);
+    const skyRim = new THREE.DirectionalLight(0x5088b0, 0.65);
+    skyRim.position.set(-6, 5, 8);
+    scene.add(skyRim);
+    // Storm underlight (subtle bluish glow from below)
+    const underLight = new THREE.HemisphereLight(0x1a3040, 0x0a1608, 0.3);
+    scene.add(underLight);
+
+    // ── Terrain mesh with elevation-and-slope-based coloring ─────────────
+    (function buildTerrain() {
+      const pos = [], col = [], idx = [];
+
+      for (let r = 0; r < G; r++) {
+        for (let c = 0; c < G; c++) {
+          const h  = dem[r * G + c];
+          const s  = slopeAt[r * G + c];
+          const wx = (c / (G - 1) - 0.5) * WIDTH;
+          const wz = (r / (G - 1) - 0.5) * DEPTH;
+          const wy = h * ELEV;
+          pos.push(wx, wy, wz);
+
+          // Color banding by elevation, modified by slope (steep = rocky)
+          let rv, gv, bv;
+          const steep = Math.min(1, s * 0.9);
+
+          if (h < 0.12) {
+            // Wetland / riparian floor: deep verdant
+            rv = 0.08; gv = 0.30; bv = 0.15;
+          } else if (h < 0.32) {
+            // Meadow / lower floodplain: bright pasture
+            const t = (h - 0.12) / 0.20;
+            rv = _lerp(0.13, 0.22, t);
+            gv = _lerp(0.38, 0.44, t);
+            bv = _lerp(0.16, 0.18, t);
+          } else if (h < 0.62) {
+            // Forested slope: darker rich green
+            const t = (h - 0.32) / 0.30;
+            rv = _lerp(0.18, 0.24, t);
+            gv = _lerp(0.36, 0.32, t);
+            bv = _lerp(0.16, 0.14, t);
+          } else if (h < 0.85) {
+            // Upper forest / heath: olive-brown
+            const t = (h - 0.62) / 0.23;
+            rv = _lerp(0.26, 0.42, t);
+            gv = _lerp(0.32, 0.32, t);
+            bv = _lerp(0.16, 0.20, t);
+          } else {
+            // Rock / ridge / peaks: tan-gray
+            const t = (h - 0.85) / 0.15;
+            rv = _lerp(0.46, 0.62, t);
+            gv = _lerp(0.38, 0.54, t);
+            bv = _lerp(0.28, 0.48, t);
+          }
+
+          // Steep faces lean toward exposed rock
+          if (steep > 0.35 && h > 0.28) {
+            const mix = Math.min(1, (steep - 0.35) * 1.6);
+            rv = _lerp(rv, 0.42, mix * 0.55);
+            gv = _lerp(gv, 0.35, mix * 0.55);
+            bv = _lerp(bv, 0.28, mix * 0.55);
+          }
+
+          // Subtle deterministic color noise for variation
+          const jitter = (Math.sin(c * 12.9898 + r * 78.233) * 0.5 + 0.5 - 0.5) * 0.045;
+          rv += jitter; gv += jitter * 0.7; bv += jitter * 0.4;
+
+          col.push(
+            Math.max(0, Math.min(1, rv)),
+            Math.max(0, Math.min(1, gv)),
+            Math.max(0, Math.min(1, bv))
+          );
+        }
+      }
+
+      // CCW winding from above (+Y front face)
+      for (let r = 0; r < G - 1; r++) {
+        for (let c = 0; c < G - 1; c++) {
+          const a = r * G + c, b = r * G + c + 1;
+          const d = (r + 1) * G + c, e = (r + 1) * G + c + 1;
+          idx.push(a, d, b,  b, d, e);
+        }
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('color',    new THREE.Float32BufferAttribute(col, 3));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+
+      scene.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+        vertexColors: true,
+        side: THREE.DoubleSide,
+        shininess: 5,
+        flatShading: false,
+      })));
+    })();
+
+    // ── Bucket mesh at outlet ────────────────────────────────────────────
+    let bucketWater;
+    (function buildBucket() {
+      // Wooden staved sides (open top, wider at rim)
+      const rim = new THREE.Mesh(
+        new THREE.CylinderGeometry(BUCKET_R, BUCKET_R * 0.86, BUCKET_H, 44, 1, true),
+        new THREE.MeshPhongMaterial({ color: 0x6d3f1c, side: THREE.DoubleSide, shininess: 6, flatShading: true })
+      );
+      rim.position.set(0, (BUCKET_Y_B + BUCKET_Y_T) / 2, BUCKET_Z);
+      scene.add(rim);
+
+      // Base disc
+      const base = new THREE.Mesh(
+        new THREE.CircleGeometry(BUCKET_R * 0.86, 44),
+        new THREE.MeshPhongMaterial({ color: 0x3a2410, shininess: 3 })
+      );
+      base.rotation.x = -Math.PI / 2;
+      base.position.set(0, BUCKET_Y_B + 0.02, BUCKET_Z);
+      scene.add(base);
+
+      // Two metal hoops for the barrel look
+      const hoopMat = new THREE.MeshPhongMaterial({ color: 0x8a7658, shininess: 45 });
+      for (const yy of [BUCKET_Y_B + 0.18, BUCKET_Y_T - 0.12]) {
+        const hoop = new THREE.Mesh(
+          new THREE.TorusGeometry(BUCKET_R * 0.99, 0.055, 8, 44),
+          hoopMat
+        );
+        hoop.rotation.x = Math.PI / 2;
+        hoop.position.set(0, yy, BUCKET_Z);
+        scene.add(hoop);
+      }
+
+      // Water level (cylinder that grows in Y from the base)
+      bucketWater = new THREE.Mesh(
+        new THREE.CylinderGeometry(BUCKET_R * 0.84, BUCKET_R * 0.84, 1, 44),
+        new THREE.MeshPhongMaterial({
+          color: 0x2870c8, transparent: true, opacity: 0.85, shininess: 110, specular: 0x88b8ff,
+        })
+      );
+      bucketWater.position.set(0, BUCKET_Y_B, BUCKET_Z);
+      bucketWater.scale.y = 0.001;
+      scene.add(bucketWater);
+    })();
+
+    function bucketWaterY() {
+      return BUCKET_Y_B + Math.min(1, totalRunoff / BUCKET_MAX_FILL) * BUCKET_H;
+    }
+    function updateBucketFill() {
+      const h = Math.min(1, totalRunoff / BUCKET_MAX_FILL) * BUCKET_H;
+      bucketWater.scale.y  = Math.max(0.001, h);
+      bucketWater.position.y = BUCKET_Y_B + h / 2;
+    }
+
+    // ── Particle buffers ─────────────────────────────────────────────────
+    const pPos_   = new Float32Array(MAX_P * 3);
+    const pAlpha_ = new Float32Array(MAX_P);
+    const pCol_   = new Float32Array(MAX_P * 3);
+    const pShape_ = new Float32Array(MAX_P);  // 0 = round drop, 1 = elongated streak
+
+    // Start all off-screen
+    for (let i = 0; i < MAX_P; i++) pPos_[i * 3 + 1] = 9999;
+
+    const pGeo = new THREE.BufferGeometry();
+
+    const attrPos   = new THREE.BufferAttribute(pPos_,   3); attrPos.setUsage(THREE.DynamicDrawUsage);
+    const attrAlpha = new THREE.BufferAttribute(pAlpha_, 1); attrAlpha.setUsage(THREE.DynamicDrawUsage);
+    const attrCol   = new THREE.BufferAttribute(pCol_,   3); attrCol.setUsage(THREE.DynamicDrawUsage);
+    const attrShape = new THREE.BufferAttribute(pShape_, 1); attrShape.setUsage(THREE.DynamicDrawUsage);
+
+    pGeo.setAttribute('position', attrPos);
+    pGeo.setAttribute('aAlpha',   attrAlpha);
+    pGeo.setAttribute('aColor',   attrCol);
+    pGeo.setAttribute('aShape',   attrShape);
+
+    const pMat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      vertexShader: `
+        attribute float aAlpha;
+        attribute vec3  aColor;
+        attribute float aShape;
+        varying float vA;
+        varying vec3  vC;
+        varying float vS;
+        void main() {
+          vA = aAlpha; vC = aColor; vS = aShape;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          // Falling streaks get a taller sprite so the elongation is visible as height
+          gl_PointSize = clamp((420.0 + aShape * 180.0) / -mv.z, 3.0, 22.0);
+          gl_Position  = projectionMatrix * mv;
+        }
+      `,
+      fragmentShader: `
+        varying float vA;
+        varying vec3  vC;
+        varying float vS;
+        void main() {
+          vec2  uv = gl_PointCoord - 0.5;
+          // Elongate horizontally for falling drops → visible vertical streak
+          uv.x *= mix(1.0, 3.0, vS);
+          float r  = length(uv);
+          if (r > 0.5) discard;
+          // Soft edge falloff (explicit inverse smoothstep so it's well-defined across drivers)
+          float a  = vA * (1.0 - smoothstep(0.12, 0.5, r));
+          gl_FragColor = vec4(vC, a);
+        }
+      `,
+    });
+
+    const ptsMesh = new THREE.Points(pGeo, pMat);
+    ptsMesh.frustumCulled = false;
+    scene.add(ptsMesh);
+
+    // ── Particle state arrays ────────────────────────────────────────────
+    const px_    = new Float32Array(MAX_P);
+    const py_    = new Float32Array(MAX_P);
+    const pz_    = new Float32Array(MAX_P);
+    const pvx_   = new Float32Array(MAX_P);  // horizontal wind drift (falling) + flow velocity
+    const pvy_   = new Float32Array(MAX_P);  // vertical velocity (used in EXITING)
+    const pvz_   = new Float32Array(MAX_P);
+    const pstate = new Uint8Array(MAX_P);
+    const ptimer = new Float32Array(MAX_P);
+    const ppool  = new Float32Array(MAX_P);
+
+    const C_FALL   = [0.62, 0.86, 1.00];
+    const C_FLOW   = [0.22, 0.75, 0.96];
+    const C_INFIL  = [0.28, 0.90, 0.50];
+    const C_POOL   = [0.10, 0.35, 0.82];
+
+    // ── Sim state ────────────────────────────────────────────────────────
+    let stormRunning = false;
+    let stormSpawned = 0;
+    let stormTimer   = 0;
+    let totalSpawned = 0;
+    let totalInfil   = 0;
+    let totalRunoff  = 0;
+
+    // Hydrograph
+    const HY_LEN = 250;
+    const hyRunoff = new Float32Array(HY_LEN);
+    const hyInfil  = new Float32Array(HY_LEN);
+    let hyIdx  = 0;
+    let hyMax  = 1;
+    let hyTick = 0;
+
+    // Storm curve: ease-out cubic so rain starts strong and tapers off
+    function cumulativeTarget(t) {
+      const total = effectiveTotal();
+      if (t <= 0) return 0;
+      if (t >= STORM_DURATION) return total;
+      const x = t / STORM_DURATION;
+      const s = 1 - Math.pow(1 - x, 3);
+      return Math.floor(total * s);
+    }
+    function effectiveTotal() {
+      return Math.min(MAX_P, Math.floor(rainRate * PARTICLES_PER_INHR));
+    }
+
+    // ── Particle spawn ───────────────────────────────────────────────────
+    function spawnOne(i) {
+      // Rain covers the whole valley top area, biased slightly upstream
+      const xn = (Math.random() * 2 - 1) * 0.92;
+      const zn = (Math.random() * 0.78 - 0.55);  // [-0.55, 0.23]
+      px_[i] = xn * (WIDTH / 2);
+      pz_[i] = zn * DEPTH;
+      py_[i] = heightAt(px_[i], pz_[i]) + 3.4 + Math.random() * 2.0;
+      // Slight wind drift for realism (falling drops)
+      pvx_[i] = 0.45 + Math.random() * 0.25;
+      pvz_[i] = 0.20 + Math.random() * 0.15;
+      pvy_[i] = 0;
+      pstate[i] = FALLING;
+      ptimer[i] = 0;
+      ppool[i]  = 0;
+      pAlpha_[i] = 0.94;
+      pShape_[i] = 1.0;
+      pCol_.set(C_FALL, i * 3);
+    }
+
+    // ── Sim step ─────────────────────────────────────────────────────────
+    function stepSim(dt) {
+      if (stormRunning) stormTimer += dt;
+
+      // Spawn new particles per storm curve, scaled by intensity
+      const stormTotalNow = effectiveTotal();
+      if (stormRunning && stormSpawned < stormTotalNow) {
+        const target  = cumulativeTarget(stormTimer);
+        let need = target - stormSpawned;
+        if (need > 0) {
+          const cap = 120; // max spawn per frame — high enough for 10 in/hr storms
+          need = Math.min(need, cap);
+          let done = 0;
+          for (let i = 0; i < MAX_P && done < need; i++) {
+            if (pstate[i] === DONE) { spawnOne(i); done++; stormSpawned++; totalSpawned++; }
+          }
+        }
+      }
+
+      // Update each particle
+      for (let i = 0; i < MAX_P; i++) {
+        const s = pstate[i];
+        if (s === DONE) continue;
+
+        const tx = px_[i], tz = pz_[i];
+        const tY = heightAt(tx, tz);
+
+        if (s === FALLING) {
+          // Gravity + wind drift
+          py_[i] -= 8.5 * dt;
+          px_[i] += pvx_[i] * dt;
+          pz_[i] += pvz_[i] * dt;
+
+          if (py_[i] <= tY + 0.05) {
+            py_[i] = tY + 0.02;
+            pShape_[i] = 0.0; // stop being a streak on impact
+            if (Math.random() < scenario.ksat) {
+              pstate[i] = INFILTRATING;
+              ptimer[i]  = 0.65 + Math.random() * 0.45;
+              pCol_.set(C_INFIL, i * 3);
+            } else {
+              pstate[i] = FLOWING;
+              pCol_.set(C_FLOW, i * 3);
+            }
+          }
+        }
+        else if (s === FLOWING || s === POOLED) {
+          const { dx, dz } = gradAt(tx, tz);
+          const slope = Math.sqrt(dx * dx + dz * dz) + 1e-5;
+
+          if (s === POOLED || slope < 0.007) {
+            pstate[i] = POOLED;
+            ppool[i] += dt;
+            pCol_.set(C_POOL, i * 3);
+            // Bleed off residual momentum so pooled drops rest calmly
+            pvx_[i] *= Math.max(0, 1 - dt * 4);
+            pvz_[i] *= Math.max(0, 1 - dt * 4);
+            if (ppool[i] > 2.2 || Math.random() < scenario.ksat * dt * 2.5) {
+              pstate[i] = INFILTRATING;
+              ptimer[i]  = 0.8 + Math.random() * 0.3;
+              pCol_.set(C_INFIL, i * 3);
+            }
+          } else {
+            pstate[i] = FLOWING;
+            ppool[i]  = 0;
+            pCol_.set(C_FLOW, i * 3);
+
+            // Manning's-n scaled velocity: V ∝ (1/n) * S^0.5
+            const speed   = Math.min((1 / scenario.n) * Math.sqrt(slope) * 0.24, 5.5);
+            const targetVx = -(dx / slope) * speed;
+            const targetVz = -(dz / slope) * speed;
+            // Blend velocity toward the gradient direction — momentum smooths jitter from gradient sampling
+            const blend = Math.min(1, dt * 4.5);
+            pvx_[i] = pvx_[i] * (1 - blend) + targetVx * blend;
+            pvz_[i] = pvz_[i] * (1 - blend) + targetVz * blend;
+
+            px_[i] += pvx_[i] * dt;
+            pz_[i] += pvz_[i] * dt;
+            py_[i]  = heightAt(px_[i], pz_[i]) + 0.02;
+
+            // Waterfall over the outlet edge into the bucket
+            if (pz_[i] > DEPTH / 2 - 0.25) {
+              pstate[i] = EXITING;
+              pvy_[i]   = -0.35;
+              pvz_[i]   = Math.min(Math.max(pvz_[i], 2.8), 3.6);
+              pvx_[i]   = pvx_[i] * 0.35 + (0 - px_[i]) * 0.22;
+              pShape_[i] = 1.0;  // render as streak while airborne
+              continue;
+            }
+            if (Math.abs(px_[i]) > WIDTH / 2 + 0.5) {
+              // Side exit — leaves the mapped watershed, still counts as runoff
+              pstate[i] = EXITING;
+              pvy_[i]   = -0.3;
+              pvx_[i]   = Math.sign(px_[i]) * 2.0;
+              pvz_[i]   = pvz_[i] * 0.4;
+              pShape_[i] = 1.0;
+              continue;
+            }
+            if (Math.random() < scenario.ksat * dt * 1.4) {
+              pstate[i] = INFILTRATING;
+              ptimer[i]  = 0.6 + Math.random() * 0.4;
+              pCol_.set(C_INFIL, i * 3);
+            }
+          }
+        }
+        else if (s === EXITING) {
+          // Ballistic fall off the terrain edge into the bucket
+          pvy_[i] -= 4.2 * dt;
+          px_[i]  += pvx_[i] * dt;
+          py_[i]  += pvy_[i] * dt;
+          pz_[i]  += pvz_[i] * dt;
+
+          const waterY = bucketWaterY();
+          const dxb = px_[i], dzb = pz_[i] - BUCKET_Z;
+          const distC = Math.sqrt(dxb * dxb + dzb * dzb);
+
+          if (py_[i] <= waterY && distC < BUCKET_R * 0.84) {
+            // Splashed into the bucket
+            totalRunoff++;
+            updateBucketFill();
+            pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999;
+            continue;
+          }
+          if (py_[i] < -6) {
+            // Missed the bucket — still runoff (left the watershed)
+            totalRunoff++;
+            pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999;
+            continue;
+          }
+        }
+        else if (s === INFILTRATING) {
+          const maxT = 0.9;
+          ptimer[i] -= dt;
+          pAlpha_[i] = Math.max(0, (ptimer[i] / maxT)) * 0.92;
+          py_[i] -= 0.06 * dt;
+          if (ptimer[i] <= 0) {
+            totalInfil++;
+            pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999;
+            continue;
+          }
+        }
+
+        pPos_[i * 3]     = px_[i];
+        pPos_[i * 3 + 1] = py_[i];
+        pPos_[i * 3 + 2] = pz_[i];
+      }
+
+      attrPos.needsUpdate   = true;
+      attrAlpha.needsUpdate = true;
+      attrCol.needsUpdate   = true;
+      attrShape.needsUpdate = true;
+
+      // Hydrograph sampling
+      hyTick++;
+      if (hyTick >= 4) {
+        hyTick = 0;
+        hyRunoff[hyIdx] = totalRunoff;
+        hyInfil[hyIdx]  = totalInfil;
+        hyMax = Math.max(hyMax, totalRunoff + totalInfil + 1);
+        hyIdx = (hyIdx + 1) % HY_LEN;
+        drawHydro();
+      }
+
+      updateHUD();
+
+      // Auto-stop when storm is done and all particles settled
+      if (stormRunning && stormSpawned >= stormTotalNow) {
+        let any = false;
+        for (let i = 0; i < MAX_P; i++) { if (pstate[i] !== DONE) { any = true; break; } }
+        if (!any) {
+          stormRunning = false;
+          const btn = document.getElementById('btn-storm');
+          btn.disabled = false;
+          btn.textContent = 'Run Storm';
+          btn.classList.remove('running');
+          document.getElementById('hud-status').textContent =
+            `Done — ${Math.round(totalInfil / totalSpawned * 100)}% infiltrated, ${Math.round(totalRunoff / totalSpawned * 100)}% runoff`;
+        }
       }
     }
-    rgeo.attributes.position.needsUpdate = true;
-  }
 
-  updateHUD();
-  orbit.update();
-  renderer.render(scene, cam);
-}
+    // ── HUD ──────────────────────────────────────────────────────────────
+    function updateHUD() {
+      document.getElementById('hud-scenario').textContent = scenario.name;
+      document.getElementById('hud-count').textContent    = totalSpawned;
+      if (totalSpawned > 0) {
+        document.getElementById('hud-infil-pct').textContent  = Math.round(totalInfil  / totalSpawned * 100) + '%';
+        document.getElementById('hud-runoff-pct').textContent = Math.round(totalRunoff / totalSpawned * 100) + '%';
+      } else {
+        document.getElementById('hud-infil-pct').textContent  = '—';
+        document.getElementById('hud-runoff-pct').textContent = '—';
+      }
+      document.getElementById('info-manning').textContent = scenario.nLabel;
+    }
 
-updateMesh();           // show terrain before any button press
-requestAnimationFrame(frame);
+    // ── Hydrograph ───────────────────────────────────────────────────────
+    const hCanvas = document.getElementById('c-hydro');
+    const hCtx    = hCanvas.getContext('2d');
+    const HW = 220, HH = 110;
 
-// ─── Controls ─────────────────────────────────────────────────────────────────
-const playBtn = document.getElementById('play');
+    function drawHydro() {
+      hCtx.clearRect(0, 0, HW, HH);
 
-playBtn.addEventListener('click', () => {
-  if (done) return;
-  running = !running;
-  playBtn.textContent = running ? 'Pause' : 'Resume';
-});
+      if (totalSpawned === 0) {
+        hCtx.fillStyle = 'rgba(140,180,120,0.3)';
+        hCtx.font = '10px ui-monospace, monospace';
+        hCtx.fillText('Run a storm to see data', 12, 58);
+        return;
+      }
 
-document.getElementById('rst').addEventListener('click', () => {
-  running = false; playBtn.textContent = '\u25B6 Run Storm';
-  allocSim(); updateMesh(); updateHUD();
-});
+      hCtx.strokeStyle = 'rgba(100,140,80,0.28)';
+      hCtx.lineWidth = 1;
+      hCtx.beginPath();
+      hCtx.moveTo(30, 6); hCtx.lineTo(30, HH - 16);
+      hCtx.lineTo(HW - 5, HH - 16);
+      hCtx.stroke();
 
-document.querySelectorAll('.sc').forEach(b => b.addEventListener('click', () => {
-  scenario = b.dataset.s;
-  document.querySelectorAll('.sc').forEach(x => x.classList.remove('on'));
-  b.classList.add('on');
-  running = false; playBtn.textContent = '\u25B6 Run Storm';
-  allocSim(); updateMesh(); updateHUD();
-}));
+      hCtx.strokeStyle = 'rgba(80,110,60,0.12)';
+      for (let y = 0.25; y < 1; y += 0.25) {
+        const gy = (HH - 16) - y * (HH - 24);
+        hCtx.beginPath(); hCtx.moveTo(30, gy); hCtx.lineTo(HW - 5, gy); hCtx.stroke();
+      }
 
-document.querySelectorAll('.sp').forEach(b => b.addEventListener('click', () => {
-  spf = parseInt(b.dataset.v, 10);
-  document.querySelectorAll('.sp').forEach(x => x.classList.remove('on'));
-  b.classList.add('on');
-}));
-</script>
+      const plotLine = (data, color) => {
+        hCtx.beginPath();
+        hCtx.strokeStyle = color;
+        hCtx.lineWidth   = 1.6;
+        let first = true;
+        for (let k = 0; k < HY_LEN; k++) {
+          const j = (hyIdx + k) % HY_LEN;
+          const x = 30 + (k / (HY_LEN - 1)) * (HW - 35);
+          const y = (HH - 16) - (data[j] / hyMax) * (HH - 26);
+          if (first) { hCtx.moveTo(x, y); first = false; }
+          else hCtx.lineTo(x, y);
+        }
+        hCtx.stroke();
+      };
+
+      plotLine(hyInfil,  'rgba(50,200,80,0.88)');
+      plotLine(hyRunoff, 'rgba(60,150,230,0.88)');
+
+      hCtx.fillStyle = 'rgba(120,160,100,0.55)';
+      hCtx.font      = '8px ui-monospace, monospace';
+      hCtx.fillText(Math.round(hyMax), 2, 14);
+      hCtx.fillText('0', 22, HH - 17);
+    }
+
+    // ── Reset ────────────────────────────────────────────────────────────
+    function resetSim() {
+      stormRunning = false;
+      stormSpawned = 0;
+      stormTimer   = 0;
+      totalSpawned = 0;
+      totalInfil   = 0;
+      totalRunoff  = 0;
+      hyRunoff.fill(0); hyInfil.fill(0);
+      hyIdx = 0; hyMax = 1; hyTick = 0;
+
+      for (let i = 0; i < MAX_P; i++) {
+        pstate[i] = DONE;
+        pAlpha_[i] = 0;
+        pPos_[i * 3 + 1] = 9999;
+      }
+      attrPos.needsUpdate   = true;
+      attrAlpha.needsUpdate = true;
+      attrShape.needsUpdate = true;
+      updateBucketFill();
+
+      const btn = document.getElementById('btn-storm');
+      btn.disabled = false;
+      btn.textContent = 'Run Storm';
+      btn.classList.remove('running');
+      document.getElementById('hud-status').textContent = 'Select a scenario and run a storm';
+      updateHUD();
+      drawHydro();
+    }
+
+    // ── Controls ─────────────────────────────────────────────────────────
+    document.querySelectorAll('.sc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sc-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        scenario = SCENARIOS[btn.dataset.sc];
+        updateHUD();
+      });
+    });
+
+    document.getElementById('btn-storm').addEventListener('click', () => {
+      if (stormRunning) return;
+      resetSim();
+      stormRunning = true;
+      const btn = document.getElementById('btn-storm');
+      btn.disabled  = true;
+      btn.textContent = 'Storm running…';
+      btn.classList.add('running');
+      document.getElementById('hud-status').textContent = 'Storm active…';
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', resetSim);
+
+    const intensityEl  = document.getElementById('intensity');
+    const intensityVal = document.getElementById('intensity-val');
+    intensityEl.addEventListener('input', () => {
+      rainRate = parseFloat(intensityEl.value);
+      intensityVal.textContent = rainRate.toFixed(1) + ' in/hr';
+    });
+
+    // ── Resize ───────────────────────────────────────────────────────────
+    function onResize() {
+      const W = window.innerWidth, H = window.innerHeight;
+      renderer.setSize(W, H);
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // ── Animation loop ───────────────────────────────────────────────────
+    let prevT = 0;
+    function animate(t) {
+      requestAnimationFrame(animate);
+      const dt = Math.min((t - prevT) / 1000, 0.05);
+      prevT = t;
+      stepSim(dt);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(animate);
+
+    updateHUD();
+    drawHydro();
+  </script>
 </body>
 </html>

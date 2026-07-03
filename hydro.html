@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <title>Hydrological Model — EarthPulse</title>
-  <meta name="description" content="EarthPulse hydrological model: simulating how soil health changes storm-water runoff and flood risk." />
+  <meta name="description" content="EarthPulse hydrological model: how the soil sponge turns regenerative landscapes into a distributed flood-mitigation network." />
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/nav.js" defer></script>
   <style>
@@ -47,6 +47,30 @@
       max-width: 68ch;
       margin: 0 0 22px;
     }
+
+    .hydroCtaRow {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .hydroCta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,145,84,0.5);
+      background: rgba(111,145,84,0.14);
+      color: #2e4e2e;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+    .hydroCta:hover  { background: rgba(111,145,84,0.24); transform: translateY(-1px); }
+    .hydroCta.ghost  { background: transparent; }
 
     .hydroThesisBadge {
       display: inline-flex;
@@ -255,6 +279,24 @@
       background: #0b1410;
     }
 
+    .hydroAnimPlaceholder {
+      width: 100%;
+      aspect-ratio: 1;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(80, 140, 90, 0.16), transparent 45%),
+        radial-gradient(circle at 70% 80%, rgba(60, 110, 180, 0.14), transparent 45%),
+        #0b1410;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(150, 200, 160, 0.55);
+      font-size: 11px;
+      text-align: center;
+      padding: 24px;
+      line-height: 1.55;
+      letter-spacing: 0.04em;
+    }
+
     .hydroAnimCaption {
       padding: 10px 14px 12px;
       font-size: 12px;
@@ -263,9 +305,35 @@
       border-top: 1px solid rgba(80, 120, 80, 0.16);
     }
 
+    .physicsSplit {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 14px 0 22px;
+    }
+    .physicsCard {
+      padding: 18px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+    }
+    .physicsCard h4 {
+      margin: 0 0 8px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: #1e3020;
+    }
+    .physicsCard p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.65;
+      color: rgba(40, 60, 38, 0.82);
+    }
+
     @media (max-width: 760px) {
-      .hydroGrid { grid-template-columns: 1fr; }
-      .hydroAnimGrid { grid-template-columns: 1fr; }
+      .hydroGrid,
+      .hydroAnimGrid,
+      .physicsSplit { grid-template-columns: 1fr; }
       .hydroHero { padding: 24px 20px; }
     }
   </style>
@@ -281,14 +349,21 @@
         <div class="hydroEyebrow">EarthPulse · Hydrology</div>
         <h1 class="hydroTitle">Soil is Flood Infrastructure</h1>
         <p class="hydroLead">
-          Healthy soil infiltrates rain instead of shedding it — simultaneously
-          lowering flood peaks and raising dry-season water availability.
-          This model makes that argument visible, from a synthetic valley proof-of-concept
-          to a real watershed wired into live USGS storm data.
+          Climate stability and flood mitigation are not mysteries or miracles — they are predictable
+          systems outcomes. When a watershed is treated as a living system rather than a localized
+          problem to be managed away with concrete, agriculture stops being a driver of landscape
+          vulnerability and becomes our most powerful tool for municipal safety and economic
+          resilience.
         </p>
-        <a href="/watershed.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;border:1px solid rgba(111,145,84,0.5);background:rgba(111,145,84,0.12);color:#2e4e2e;font-weight:700;font-size:14px;text-decoration:none;transition:background 180ms ease;">
-          Open 3D Watershed Viewer <span>→</span>
-        </a>
+
+        <div class="hydroCtaRow">
+          <a class="hydroCta" href="/rain-in-the-valley.html">
+            Open the Rain In The Valley model <span aria-hidden="true">→</span>
+          </a>
+          <a class="hydroCta ghost" href="/blog.html#nature-based-flood-solutions">
+            Read the essay <span aria-hidden="true">→</span>
+          </a>
+        </div>
 
         <div class="hydroThesisBadge">
           <span>💡</span>
@@ -297,94 +372,143 @@
       </div>
 
       <div class="panel">
-        <div class="hydroSectionTitle">Track A — Valley Simulator (v1)</div>
-        <p style="color:rgba(40,60,38,0.8);line-height:1.7;margin:0 0 20px;max-width:70ch;">
-          A physics simulation of a synthetic valley watershed. Three soil scenarios share
-          identical topography and the same storm event — only the soil parameters change.
-          The hydrograph below is the argument made quantitative.
+        <div class="hydroSectionTitle">The Physics of the Soil Sponge</div>
+        <p style="color:rgba(40,60,38,0.82);line-height:1.72;margin:0 0 6px;max-width:72ch;">
+          Flood outcomes emerge from the physical condition of the land. When a storm drops
+          millions of gallons over a watershed, the response is governed by two properties: how
+          quickly water can enter the ground, and how much resistance the surface offers to water
+          that stays on top of it.
         </p>
+
+        <div class="physicsSplit">
+          <div class="physicsCard">
+            <h4>Maximizing infiltration (Kₛₐₜ)</h4>
+            <p>
+              Living soils are laced with root channels, fungal mycelium, and macropore networks
+              that give water somewhere to go. Saturated hydraulic conductivity climbs from an
+              abysmal <b>0–10 mm/hr</b> on compacted, degraded ground to <b>50–150 mm/hr</b>
+              under regeneratively managed land. The storm quietly disappears into the ground
+              instead of racing downhill.
+            </p>
+          </div>
+          <div class="physicsCard">
+            <h4>Attenuating flow (Manning's n)</h4>
+            <p>
+              Structural roughness — dense root systems, multi-species cover crops,
+              micro-topography — dissipates the kinetic energy of moving water. Higher Manning's n
+              means slower velocities, longer travel times, and a flat runoff curve where a bare
+              landscape would produce a violent flash-flood peak.
+            </p>
+          </div>
+        </div>
+
+        <p style="color:rgba(40,60,38,0.82);line-height:1.72;margin:0;max-width:72ch;">
+          The three scenarios below share identical topography and receive the same storm. Only
+          the two soil parameters change — and that is enough to move the outlet hydrograph from
+          catastrophe to non-event.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="hydroSectionTitle">Three Landscapes, One Storm</div>
 
         <div class="hydroGrid" style="margin-bottom:24px;">
           <div class="hydroScenarioCard">
             <div class="hydroScenarioHead">
               <div class="hydroScenarioDot" style="background:#c0392b;box-shadow:0 0 10px rgba(192,57,43,0.4)"></div>
-              <div class="hydroScenarioName">Concrete / Urban</div>
+              <div class="hydroScenarioName">Urban / Concrete</div>
             </div>
             <div class="hydroScenarioStats">
-              <div class="hydroStat">Infiltration rate: <b>0 mm/hr</b></div>
-              <div class="hydroStat">Soil storage: <b>0 mm</b></div>
-              <div class="hydroStat" style="color:#a33;">All rain becomes immediate runoff.</div>
+              <div class="hydroStat">Manning's n: <b>0.012</b></div>
+              <div class="hydroStat">Infiltration: <b>~0 mm/hr</b></div>
+              <div class="hydroStat" style="color:#a33;">Impervious surface — all rain becomes immediate, high-velocity runoff.</div>
             </div>
           </div>
 
           <div class="hydroScenarioCard">
             <div class="hydroScenarioHead">
               <div class="hydroScenarioDot" style="background:#e67e22;box-shadow:0 0 10px rgba(230,126,34,0.4)"></div>
-              <div class="hydroScenarioName">Degraded Soil</div>
+              <div class="hydroScenarioName">Degraded Farmland</div>
             </div>
             <div class="hydroScenarioStats">
-              <div class="hydroStat">Infiltration rate: <b>8 mm/hr</b></div>
-              <div class="hydroStat">Soil storage: <b>20 mm</b></div>
-              <div class="hydroStat" style="color:#964;">Compacted — rapid saturation, delayed peak.</div>
+              <div class="hydroStat">Manning's n: <b>0.025</b></div>
+              <div class="hydroStat">Infiltration: <b>0–10 mm/hr</b></div>
+              <div class="hydroStat" style="color:#964;">Compacted, low organic matter — sheet flow converges into flood pulses downstream.</div>
             </div>
           </div>
 
           <div class="hydroScenarioCard">
             <div class="hydroScenarioHead">
               <div class="hydroScenarioDot" style="background:#27ae60;box-shadow:0 0 10px rgba(39,174,96,0.4)"></div>
-              <div class="hydroScenarioName">Regenerative Soil</div>
+              <div class="hydroScenarioName">Regenerative Land</div>
             </div>
             <div class="hydroScenarioStats">
-              <div class="hydroStat">Infiltration rate: <b>100 mm/hr</b></div>
-              <div class="hydroStat">Soil storage: <b>120 mm</b></div>
-              <div class="hydroStat" style="color:#2a6;">Deep organic layer — absorbs the storm.</div>
+              <div class="hydroStat">Manning's n: <b>0.080</b></div>
+              <div class="hydroStat">Infiltration: <b>50–150 mm/hr</b></div>
+              <div class="hydroStat" style="color:#2a6;">Deep organic layer, living structure — storm absorbed, aquifer recharged.</div>
             </div>
           </div>
         </div>
 
-        <!-- Animations ─────────────────────────────────────────────── -->
+        <!-- Animations captured from the Rain In The Valley model ─────── -->
         <div style="margin-bottom:10px;">
-          <div class="hydroSectionLabel">Water moving through the valley — same storm, different soil</div>
+          <div class="hydroSectionLabel">Water moving through the valley — captured from the live model</div>
           <div class="hydroAnimGrid">
 
             <div class="hydroAnimCard" style="--dot:#c0392b;">
               <div class="hydroAnimLabel">
-                <span class="hydroAnimDot"></span>Concrete / Urban
+                <span class="hydroAnimDot"></span>Urban / Concrete
               </div>
-              <img class="hydroAnimImg" src="public/media/hydro/animation_concrete.gif"
-                   alt="Water flow animation for concrete/urban scenario — total runoff, no infiltration" />
-              <div class="hydroAnimCaption">All rain becomes surface runoff immediately. Peak discharge is highest and fastest.</div>
+              <div class="hydroAnimPlaceholder">
+                Storm capture · concrete scenario<br>
+                <span style="opacity:0.5;">(record a clip from the live model)</span>
+              </div>
+              <div class="hydroAnimCaption">Every raindrop routes to the outlet almost instantly. The bucket fills before the storm ends.</div>
             </div>
 
             <div class="hydroAnimCard" style="--dot:#e67e22;">
               <div class="hydroAnimLabel">
-                <span class="hydroAnimDot"></span>Degraded Soil
+                <span class="hydroAnimDot"></span>Degraded Farmland
               </div>
-              <img class="hydroAnimImg" src="public/media/hydro/animation_degraded.gif"
-                   alt="Water flow animation for degraded soil scenario — partial infiltration, delayed peak" />
-              <div class="hydroAnimCaption">Compacted soil saturates quickly. Water pools before routing, peak is delayed but still high.</div>
+              <div class="hydroAnimPlaceholder">
+                Storm capture · degraded scenario<br>
+                <span style="opacity:0.5;">(record a clip from the live model)</span>
+              </div>
+              <div class="hydroAnimCaption">Some infiltration, but sheet flow dominates. Pools briefly, then runs. Downstream peak is delayed but still large.</div>
             </div>
 
             <div class="hydroAnimCard" style="--dot:#27ae60;">
               <div class="hydroAnimLabel">
-                <span class="hydroAnimDot"></span>Regenerative Soil
+                <span class="hydroAnimDot"></span>Regenerative Land
               </div>
-              <img class="hydroAnimImg" src="public/media/hydro/animation_regen.gif"
-                   alt="Water flow animation for regenerative soil scenario — storm absorbed, near-zero runoff" />
-              <div class="hydroAnimCaption">Deep organic layer absorbs the entire storm. Near-zero runoff. Water enters baseflow instead.</div>
+              <div class="hydroAnimPlaceholder">
+                Storm capture · regenerative scenario<br>
+                <span style="opacity:0.5;">(record a clip from the live model)</span>
+              </div>
+              <div class="hydroAnimCaption">The soil sponge absorbs the storm where it falls. Little to nothing reaches the bucket.</div>
             </div>
 
           </div>
+          <p style="margin:12px 0 0;font-size:12px;color:rgba(40,60,38,0.6);line-height:1.55;">
+            Each panel is a screen-recording of the
+            <a href="/rain-in-the-valley.html" style="color:#4f744e;">Rain In The Valley</a>
+            particle model running with the corresponding scenario preset. The bucket at the outlet
+            catches every particle that leaves the watershed as runoff.
+          </p>
         </div>
 
-        <!-- Hydrograph ──────────────────────────────────────────────── -->
-        <div class="hydroSectionLabel" style="margin-bottom:10px;">Comparative runoff curves — all three scenarios on one chart</div>
+        <!-- Comparative hydrograph — captured from the live sim's overlay ─── -->
+        <div class="hydroSectionLabel" style="margin-top:26px;margin-bottom:10px;">Comparative runoff curves — all three scenarios overlaid</div>
         <div class="hydroChartWrap">
-          <img class="hydroChart" src="public/media/hydro/hydrograph.png"
-               alt="Comparative hydrograph showing storm runoff curves for concrete, degraded, and regenerative soil scenarios" />
+          <div class="hydroAnimPlaceholder" style="aspect-ratio: 21 / 9;">
+            Overlaid hydrograph · runoff vs infiltration over storm duration<br>
+            <span style="opacity:0.5;">(export from the live model's hydrograph panel across all three scenarios)</span>
+          </div>
           <div class="hydroChartCaption">
-            Storm runoff over 6 hours (30 mm/hr rainfall, 3-hr event) · 50×50 cell valley grid ·
-            D8 flow routing · NumPy/Matplotlib · v1 illustrative parameters
+            The comparative hydrograph is the argument made quantitative: cumulative runoff versus
+            cumulative infiltration over the same storm, plotted for all three landscapes. Capture
+            the hydrograph panel from each run of the Rain In The Valley model and overlay them
+            here.
           </div>
         </div>
       </div>
@@ -395,29 +519,29 @@
           <div class="hydroPhase done">
             <div class="hydroPhaseTag">A</div>
             <div>
-              <div class="hydroPhaseName">Track A — Local Valley Simulator ✓</div>
-              <p class="hydroPhaseDesc">Grid-based Python physics model. Three soil scenarios, shared topography, comparative hydrograph output. Proof-of-concept complete.</p>
+              <div class="hydroPhaseName">Track A — Rain In The Valley particle model ✓</div>
+              <p class="hydroPhaseDesc">Real-time browser-native hydrological sim: procedural valley terrain, ~1500 raindrop particles, Manning-scaled flow velocities, and a runoff bucket at the outlet. Three scenarios, one storm, one visible outcome.</p>
             </div>
           </div>
           <div class="hydroPhase">
             <div class="hydroPhaseTag">B0</div>
             <div>
               <div class="hydroPhaseName">Phase 0 — One Real Watershed</div>
-              <p class="hydroPhaseDesc">Python notebook pulling real USGS streamflow and PRISM precipitation for White Oak Pastures, Georgia. Compute runoff ratio, baseflow/quickflow split, SCS Curve Number.</p>
+              <p class="hydroPhaseDesc">Wire a real basin (e.g. White Oak Pastures, GA) to USGS streamflow and PRISM precipitation. Compute runoff ratio, baseflow/quickflow split, SCS Curve Number against measured storm events.</p>
             </div>
           </div>
           <div class="hydroPhase">
             <div class="hydroPhaseTag">B1</div>
             <div>
               <div class="hydroPhaseName">Phase 1 — Water Earth Metric</div>
-              <p class="hydroPhaseDesc">Wire infiltration/runoff-ratio results into the EarthPulse Earth Metrics dashboard via a Cloudflare Pages Function calling USGS NWIS / NOAA APIs.</p>
+              <p class="hydroPhaseDesc">Surface infiltration and runoff-ratio outputs alongside NDVI and LST inside the EarthPulse Earth Metrics dashboard. USGS NWIS / NOAA APIs via a Cloudflare Pages Function.</p>
             </div>
           </div>
           <div class="hydroPhase">
             <div class="hydroPhaseTag">B2</div>
             <div>
               <div class="hydroPhaseName">Phase 2 — Live Storm Demo</div>
-              <p class="hydroPhaseDesc">Real-time NOAA National Water Model gauge feed with the regen counterfactual overlay rendered live during an actual storm. The unforgettable demo.</p>
+              <p class="hydroPhaseDesc">Real-time NOAA National Water Model gauge feed with the regen counterfactual overlaid during an actual storm event. The unforgettable demo.</p>
             </div>
           </div>
         </div>
@@ -426,10 +550,10 @@
       <div class="panel">
         <div class="hydroSectionTitle">Honest Caveats</div>
         <div style="display:grid;gap:10px;margin-top:4px;">
-          <div class="hydroCaveat">Runoff ratio isn't pure infiltration — ET and storage confound it. Track B output is a scenario, not a prediction.</div>
+          <div class="hydroCaveat">Runoff ratio isn't pure infiltration — evapotranspiration and storage confound it. Track B output is a scenario, not a prediction.</div>
           <div class="hydroCaveat">SCS Curve Number is a lumped, empirical parameter. Scaling plot-scale gains to a whole watershed is approximate.</div>
-          <div class="hydroCaveat">Infiltration benefits are largest for small/medium storms and shrink for extreme events as soil saturates. Don't overclaim on the 500-year flood — the real win is frequent floods and dry-season water.</div>
-          <div class="hydroCaveat">Soil parameter values in Track A are illustrative. Real SSURGO measurements will replace them in Track B.</div>
+          <div class="hydroCaveat">Infiltration benefits are largest for small and medium storms and shrink for extremes as soil saturates. Don't overclaim on the 500-year flood — the real win is frequent floods and dry-season water.</div>
+          <div class="hydroCaveat">Manning's n and Kₛₐₜ values in Track A are illustrative and drawn from published literature ranges. Site-specific SSURGO measurements will replace them in Track B.</div>
         </div>
       </div>
 
