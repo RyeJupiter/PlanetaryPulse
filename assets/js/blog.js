@@ -40,11 +40,12 @@
       img.src = post.image;
       img.alt = post.imageAlt || post.title;
       img.loading = "lazy";
-      const applyOrientation = () => {
-        if (img.naturalHeight > img.naturalWidth) card.classList.add("img-portrait");
+      const applyLayout = () => {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        card.classList.add(ratio > 1.6 ? "img-wide" : "img-side");
       };
-      img.addEventListener("load", applyOrientation);
-      if (img.complete && img.naturalWidth) applyOrientation();
+      img.addEventListener("load", applyLayout);
+      if (img.complete && img.naturalWidth) applyLayout();
       card.appendChild(img);
     } else if (post.slug === "imagining-a-better-future") {
       const ph = document.createElement("div");
