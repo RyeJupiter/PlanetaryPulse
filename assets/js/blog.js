@@ -40,6 +40,11 @@
       img.src = post.image;
       img.alt = post.imageAlt || post.title;
       img.loading = "lazy";
+      const applyOrientation = () => {
+        if (img.naturalHeight > img.naturalWidth) card.classList.add("img-portrait");
+      };
+      img.addEventListener("load", applyOrientation);
+      if (img.complete && img.naturalWidth) applyOrientation();
       card.appendChild(img);
     } else if (post.slug === "imagining-a-better-future") {
       const ph = document.createElement("div");

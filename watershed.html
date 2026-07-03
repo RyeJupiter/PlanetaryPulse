@@ -242,7 +242,7 @@
     // ── Constants ──────────────────────────────────────────────────────────
     const GRID   = 72;
     const WORLD  = 12;
-    const ELEV_SCALE  = 0.28;
+    const ELEV_SCALE  = 0.46;
     const WATER_SCALE = 0.07;
     const DT_HR  = 5 / 60;   // 5-minute timestep in hours
     const STORM_HR  = 3;
@@ -274,7 +274,7 @@
       return new Uint8Array([...p, ...p]);
     })();
     const _fade = t => t*t*t*(t*(t*6-15)+10);
-    const _grad = (h, x, y) => { const u=h<2?x:y, v=h<2?y:x; return ((h&1)?-u:u)+((h&2)?-v:v); };
+    const _grad = (h, x, y) => { h &= 3; const u=h<2?x:y, v=h<2?y:x; return ((h&1)?-u:u)+((h&2)?-v:v); };
     const _l    = (a, b, t) => a + (b-a)*t;
 
     function perlin2(x, y) {
@@ -294,16 +294,16 @@
       return v/m;
     }
 
-    // Gemini formula: Z = Z_plateau - Z_cone(convergence bowl) - Z_wedge(incised channel) + noise
-    // yn=0 → outlet/south, yn=1 → headwaters/north
-    // yd flips so yd=0 at headwaters, yd=1 at outlet (Gemini's downstream direction)
+    // Gemini formula: Z = Z_plateau − Z_cone(convergence bowl) − Z_wedge(channel) + fbm
+    // yn=0→outlet/south, yn=1→headwaters/north; yd flips to Gemini's downstream direction
+    // FBM scale 1.4 keeps highest octave (freq≈9.3) well below the aliasing threshold for 72-cell grid
     function calculateElevation(xn, yn) {
       const yd  = 1 - yn;
-      const zc  = 4.2 * Math.sqrt(xn*xn + (yd + 0.3)*(yd + 0.3));   // convergence cone
-      const sig = 0.08 + 0.50 * yd;                                    // channel widens downstream
-      const zw  = 3.6 * Math.exp(-(xn/sig)*(xn/sig));                 // incised wedge
-      const n   = fbm(xn*3.5 + 10, yn*3.5 + 10, 5) * 0.55;
-      return Math.max(0, 10 - zc - zw + n);
+      const zc  = 4.5 * Math.sqrt(xn*xn + (yd + 0.3)*(yd + 0.3));  // convergence cone
+      const sig = 0.15 + 0.48 * yd;                                   // narrow gorge → wide valley
+      const zw  = 3.8 * Math.exp(-(xn/sig)*(xn/sig));               // incised channel
+      const n   = fbm(xn * 1.4 + 5, yn * 1.4 + 5, 4) * 0.5;
+      return Math.max(0, 11 - zc - zw + n);
     }
 
     const dem = new Float32Array(GRID * GRID);

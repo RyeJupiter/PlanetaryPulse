@@ -135,11 +135,41 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Landscape: full-width top, no crop */
     .fnCardHeroImg {
       width: 100%;
-      aspect-ratio: 16 / 6;
-      object-fit: cover;
       display: block;
+      object-fit: contain;
+      max-height: 400px;
+      background: rgba(196, 210, 182, 0.10);
+    }
+
+    /* Portrait: sidebar alongside card body */
+    .fnCard.img-portrait {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      align-items: stretch;
+    }
+
+    .fnCard.img-portrait .fnCardHeroImg {
+      width: 260px;
+      max-height: none;
+      height: 100%;
+      object-fit: cover;
+      border-right: 1px solid var(--fn-border);
+    }
+
+    @media (max-width: 700px) {
+      .fnCard.img-portrait {
+        grid-template-columns: 1fr;
+      }
+      .fnCard.img-portrait .fnCardHeroImg {
+        width: 100%;
+        height: auto;
+        max-height: 280px;
+        border-right: none;
+        border-bottom: 1px solid var(--fn-border);
+      }
     }
 
     .fnCardPlaceholder {
