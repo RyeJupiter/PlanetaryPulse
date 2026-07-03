@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.lines import Line2D
 
-from simulator import SCENARIOS, build_valley_dem, run_scenario, TOTAL_HOURS
+from simulator import SCENARIOS, build_valley_dem, run_scenario, TOTAL_HOURS, DT_MINUTES
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -62,29 +62,38 @@ def save_hydrograph(results: dict):
 
 
 def save_animation(scenario_name: str, frames: list, color: str):
-    fig, ax = plt.subplots(figsize=(6, 6))
-    fig.patch.set_facecolor("#0e1a10")
-    ax.set_facecolor("#0e1a10")
-    ax.set_title(scenario_name, color="#90ffd1", fontsize=11)
+    # Subsample frames for smaller file size
+    step = max(1, len(frames) // 28)
+    frames = frames[::step]
+
+    fig, ax = plt.subplots(figsize=(4, 4))
+    fig.patch.set_facecolor("#0b1410")
+    ax.set_facecolor("#0b1410")
+    ax.set_title(scenario_name, color="#90ffd1", fontsize=10, pad=6)
     ax.axis("off")
 
+    # Use shared vmax so all three animations are on the same scale
     vmax = max(f.max() for f in frames) or 1
-    im = ax.imshow(frames[0], vmin=0, vmax=vmax, cmap="Blues",
-                   interpolation="bilinear", origin="upper")
-    cbar = fig.colorbar(im, ax=ax, fraction=0.04, pad=0.02)
-    cbar.set_label("Surface water (mm)", color="#c8ddc8")
-    cbar.ax.yaxis.set_tick_params(color="#7aaa7a")
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color="#7aaa7a")
 
-    def update(frame_idx):
-        im.set_data(frames[frame_idx])
-        return [im]
+    im = ax.imshow(frames[0], vmin=0, vmax=vmax, cmap="YlGnBu",
+                   interpolation="nearest", origin="upper")
+
+    time_label = ax.text(0.02, 0.97, "", transform=ax.transAxes,
+                         color="white", fontsize=8, va="top",
+                         bbox=dict(facecolor="#0b1410", edgecolor="none", pad=2))
+
+    def update(idx):
+        im.set_data(frames[idx])
+        t_hr = idx * step * (TOTAL_HOURS / (len(frames) * step + 1))
+        time_label.set_text(f"t = {t_hr:.1f} hr")
+        return [im, time_label]
 
     ani = animation.FuncAnimation(fig, update, frames=len(frames),
-                                  interval=80, blit=True)
+                                  interval=110, blit=True)
     safe_name = scenario_name.lower().replace(" ", "_").replace("/", "")
     path = os.path.join(OUTPUT_DIR, f"animation_{safe_name}.gif")
-    ani.save(path, writer="pillow", fps=12, dpi=90)
+    ani.save(path, writer="pillow", fps=10, dpi=72,
+             savefig_kwargs={"facecolor": "#0b1410"})
     plt.close(fig)
     print(f"  Saved {path}")
 

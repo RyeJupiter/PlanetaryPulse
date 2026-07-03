@@ -202,8 +202,70 @@
       line-height: 1.6;
     }
 
+    .hydroSectionLabel {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #4f744e;
+      margin-bottom: 14px;
+    }
+
+    .hydroAnimGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .hydroAnimCard {
+      border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: #0b1410;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(4, 10, 6, 0.36);
+    }
+
+    .hydroAnimLabel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(200, 230, 200, 0.88);
+      border-bottom: 1px solid rgba(80, 120, 80, 0.18);
+    }
+
+    .hydroAnimDot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--dot);
+      box-shadow: 0 0 8px var(--dot);
+      flex-shrink: 0;
+    }
+
+    .hydroAnimImg {
+      width: 100%;
+      display: block;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: #0b1410;
+    }
+
+    .hydroAnimCaption {
+      padding: 10px 14px 12px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: rgba(160, 210, 160, 0.72);
+      border-top: 1px solid rgba(80, 120, 80, 0.16);
+    }
+
     @media (max-width: 760px) {
       .hydroGrid { grid-template-columns: 1fr; }
+      .hydroAnimGrid { grid-template-columns: 1fr; }
       .hydroHero { padding: 24px 20px; }
     }
   </style>
@@ -276,6 +338,43 @@
           </div>
         </div>
 
+        <!-- Animations ─────────────────────────────────────────────── -->
+        <div style="margin-bottom:10px;">
+          <div class="hydroSectionLabel">Water moving through the valley — same storm, different soil</div>
+          <div class="hydroAnimGrid">
+
+            <div class="hydroAnimCard" style="--dot:#c0392b;">
+              <div class="hydroAnimLabel">
+                <span class="hydroAnimDot"></span>Concrete / Urban
+              </div>
+              <img class="hydroAnimImg" src="public/media/hydro/animation_concrete.gif"
+                   alt="Water flow animation for concrete/urban scenario — total runoff, no infiltration" />
+              <div class="hydroAnimCaption">All rain becomes surface runoff immediately. Peak discharge is highest and fastest.</div>
+            </div>
+
+            <div class="hydroAnimCard" style="--dot:#e67e22;">
+              <div class="hydroAnimLabel">
+                <span class="hydroAnimDot"></span>Degraded Soil
+              </div>
+              <img class="hydroAnimImg" src="public/media/hydro/animation_degraded.gif"
+                   alt="Water flow animation for degraded soil scenario — partial infiltration, delayed peak" />
+              <div class="hydroAnimCaption">Compacted soil saturates quickly. Water pools before routing, peak is delayed but still high.</div>
+            </div>
+
+            <div class="hydroAnimCard" style="--dot:#27ae60;">
+              <div class="hydroAnimLabel">
+                <span class="hydroAnimDot"></span>Regenerative Soil
+              </div>
+              <img class="hydroAnimImg" src="public/media/hydro/animation_regen.gif"
+                   alt="Water flow animation for regenerative soil scenario — storm absorbed, near-zero runoff" />
+              <div class="hydroAnimCaption">Deep organic layer absorbs the entire storm. Near-zero runoff. Water enters baseflow instead.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Hydrograph ──────────────────────────────────────────────── -->
+        <div class="hydroSectionLabel" style="margin-bottom:10px;">Comparative runoff curves — all three scenarios on one chart</div>
         <div class="hydroChartWrap">
           <img class="hydroChart" src="public/media/hydro/hydrograph.png"
                alt="Comparative hydrograph showing storm runoff curves for concrete, degraded, and regenerative soil scenarios" />
