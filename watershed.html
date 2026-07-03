@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Watershed Viewer — EarthPulse</title>
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three":          "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+      "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <style>
+    body { overflow: hidden; }
+
+    .wsShell {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      height: calc(100vh - 74px);
+      gap: 0;
+      padding: 16px 20px 12px;
+      box-sizing: border-box;
+    }
+
+    .wsViewport {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      box-shadow: 0 24px 60px rgba(10, 30, 10, 0.5);
+      min-height: 0;
+    }
+
+    #ws-canvas { width: 100%; height: 100%; display: block; }
+
+    /* HUD overlays */
+    .wsHud {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+
+    .wsStatusBadge {
+      position: absolute;
+      top: 16px; left: 50%; transform: translateX(-50%);
+      padding: 7px 18px;
+      border-radius: 999px;
+      background: rgba(10, 22, 12, 0.78);
+      border: 1px solid rgba(100, 200, 100, 0.3);
+      color: rgba(160, 240, 160, 0.92);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .wsLegend {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .wsLegendRow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(10, 22, 12, 0.72);
+      backdrop-filter: blur(6px);
+      font-size: 11px;
+      color: rgba(200, 230, 200, 0.88);
+    }
+
+    .wsLegendSwatch {
+      width: 24px;
+      height: 8px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .wsStats {
+      position: absolute;
+      top: 16px; right: 16px;
+      display: grid;
+      gap: 6px;
+      text-align: right;
+    }
+
+    .wsStat {
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(10, 22, 12, 0.78);
+      border: 1px solid rgba(100, 200, 100, 0.2);
+      backdrop-filter: blur(6px);
+      color: rgba(180, 240, 180, 0.88);
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .wsStatVal { color: #90ffb0; font-weight: 700; }
+
+    /* Control bar */
+    .wsControls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 4px 0;
+    }
+
+    .wsBtn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(117, 143, 93, 0.38);
+      background: rgba(249, 245, 229, 0.88);
+      color: #1e3020;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+    }
+
+    .wsBtn:hover { background: rgba(240, 235, 210, 1); border-color: rgba(117, 143, 93, 0.6); transform: translateY(-1px); }
+    .wsBtn.primary { background: #2d7a4f; border-color: #2d7a4f; color: #fff; }
+    .wsBtn.primary:hover { background: #3a9060; }
+    .wsBtn.danger  { background: rgba(163, 86, 65, 0.12); border-color: rgba(163, 86, 65, 0.4); color: #8a3a20; }
+
+    .wsScenarios { display: flex; gap: 6px; }
+
+    .wsScenBtn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background: rgba(248, 243, 222, 0.82);
+      color: rgba(40, 60, 38, 0.88);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 160ms ease;
+    }
+
+    .wsScenBtn:hover { transform: translateY(-1px); }
+    .wsScenBtn.active { color: #fff; }
+    .wsScenBtn[data-s="concrete"].active  { background: #c0392b; border-color: #c0392b; }
+    .wsScenBtn[data-s="degraded"].active  { background: #c87820; border-color: #c87820; }
+    .wsScenBtn[data-s="regen"].active     { background: #2d7a4f; border-color: #2d7a4f; }
+
+    .wsDivider {
+      width: 1px; height: 24px;
+      background: rgba(117, 143, 93, 0.3);
+      flex-shrink: 0;
+    }
+
+    .wsSpeedGroup { display: flex; gap: 4px; align-items: center; }
+    .wsSpeedLabel { font-size: 12px; color: rgba(40,60,38,0.7); margin-right: 2px; }
+    .wsSpeedBtn {
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background: rgba(248, 243, 222, 0.8);
+      font-size: 12px;
+      color: rgba(40,60,38,0.88);
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+    .wsSpeedBtn.active { background: rgba(111, 145, 84, 0.22); border-color: rgba(111, 145, 84, 0.5); font-weight: 700; }
+
+    @media (max-width: 640px) {
+      .wsShell { padding: 10px 12px 8px; }
+      .wsControls { gap: 7px; }
+      .wsBtn { padding: 7px 13px; font-size: 12px; }
+    }
+  </style>
+</head>
+
+<body data-page="hydro">
+  <div id="site-nav"></div>
+
+  <main class="wsShell">
+
+    <div class="wsViewport">
+      <canvas id="ws-canvas"></canvas>
+
+      <div class="wsHud">
+        <div class="wsStatusBadge" id="ws-status">Ready — press Run Storm</div>
+
+        <div class="wsStats">
+          <div class="wsStat">Time &nbsp;<span class="wsStatVal" id="ws-time">0.0 hr</span></div>
+          <div class="wsStat">Runoff &nbsp;<span class="wsStatVal" id="ws-runoff">0 mm</span></div>
+          <div class="wsStat">Max depth &nbsp;<span class="wsStatVal" id="ws-depth">0.0 mm</span></div>
+        </div>
+
+        <div class="wsLegend">
+          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#1a6aaa"></div>Deep water</div>
+          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#4a9ed8"></div>Shallow water</div>
+          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#3a6030"></div>Valley floor</div>
+          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#7a5c38"></div>Slopes</div>
+          <div class="wsLegendRow"><div class="wsLegendSwatch" style="background:#8a8070"></div>Ridgeline</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wsControls">
+      <button class="wsBtn primary" id="ws-play">▶ Run Storm</button>
+      <button class="wsBtn danger"  id="ws-reset">↺ Reset</button>
+
+      <div class="wsDivider"></div>
+
+      <div class="wsScenarios">
+        <button class="wsScenBtn" data-s="concrete">Concrete</button>
+        <button class="wsScenBtn active" data-s="degraded">Degraded Soil</button>
+        <button class="wsScenBtn" data-s="regen">Regenerative</button>
+      </div>
+
+      <div class="wsDivider"></div>
+
+      <div class="wsSpeedGroup">
+        <span class="wsSpeedLabel">Speed:</span>
+        <button class="wsSpeedBtn" data-sp="0.5">½×</button>
+        <button class="wsSpeedBtn active" data-sp="1">1×</button>
+        <button class="wsSpeedBtn" data-sp="2">2×</button>
+        <button class="wsSpeedBtn" data-sp="4">4×</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ── Constants ──────────────────────────────────────────────────────────
+    const GRID   = 72;
+    const WORLD  = 12;
+    const ELEV_SCALE  = 0.28;
+    const WATER_SCALE = 0.07;
+    const DT_HR  = 5 / 60;   // 5-minute timestep in hours
+    const STORM_HR  = 3;
+    const TOTAL_HR  = 6;
+    const RAIN_RATE = 30;     // mm/hr
+    const ROUTING_FRAC = 0.46;
+    const N_DROPS = 1600;
+
+    const SOIL = {
+      concrete: { ksat: 0,   storage: 0   },
+      degraded: { ksat: 8,   storage: 20  },
+      regen:    { ksat: 100, storage: 120 },
+    };
+
+    const STATUS = {
+      idle:     'Ready — press Run Storm',
+      rain:     '🌧  Storm in progress…',
+      recession:'⛅  Storm passed — water receding',
+      done:     '✓  Simulation complete',
+    };
+
+    // ── DEM ────────────────────────────────────────────────────────────────
+    function noise(x, y) {
+      return (
+        Math.sin(x * 3.1 + y * 2.4 + 1.2) * 0.55 +
+        Math.sin(x * 7.3 - y * 5.8 + 2.1) * 0.28 +
+        Math.sin(x * 15.7 + y * 11.3 + 0.8) * 0.14 +
+        Math.sin(x * 31.2 - y * 23.7 + 3.4) * 0.07
+      );
+    }
+
+    const dem = new Float32Array(GRID * GRID);
+    let maxH = 0;
+    for (let i = 0; i < GRID; i++) {
+      for (let j = 0; j < GRID; j++) {
+        const x = (j / (GRID - 1)) * 2 - 1;   // −1..1 (EW)
+        const y = i / (GRID - 1);               // 0 (south/outlet) .. 1 (north/ridge)
+        const valley  = x * x * 8.5;
+        const slope   = y * 6.2;
+        const n       = noise(x * 1.4, y * 1.2);
+        dem[i * GRID + j] = Math.max(0, valley + slope + n);
+        maxH = Math.max(maxH, dem[i * GRID + j]);
+      }
+    }
+
+    // ── Sim state ──────────────────────────────────────────────────────────
+    let wSurface, remStorage, headArr, rawFracs, wNew;
+    let simTime = 0, totalOutflow = 0, running = false, done = false;
+    let scenario = 'degraded';
+
+    function allocSim() {
+      wSurface    = new Float32Array(GRID * GRID);
+      remStorage  = new Float32Array(GRID * GRID).fill(SOIL[scenario].storage);
+      headArr     = new Float32Array(GRID * GRID);
+      rawFracs    = Array.from({length: 4}, () => new Float32Array(GRID * GRID));
+      wNew        = new Float32Array(GRID * GRID);
+      simTime     = 0;
+      totalOutflow = 0;
+      done        = false;
+    }
+    allocSim();
+
+    function simStep() {
+      const { ksat, storage } = SOIL[scenario];
+
+      // 1. Rain
+      if (simTime < STORM_HR) {
+        for (let i = 0; i < GRID * GRID; i++) wSurface[i] += RAIN_RATE * DT_HR;
+      }
+
+      // 2. Infiltration
+      for (let i = 0; i < GRID * GRID; i++) {
+        const inf = Math.min(wSurface[i], ksat * DT_HR, remStorage[i]);
+        wSurface[i]   -= inf;
+        remStorage[i] -= inf;
+      }
+
+      // 3. D8 routing (normalised)
+      for (let i = 0; i < GRID * GRID; i++) headArr[i] = dem[i] + wSurface[i];
+      const DIRS = [[-1,0],[1,0],[0,-1],[0,1]];
+
+      for (let d = 0; d < 4; d++) rawFracs[d].fill(0);
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          const idx = r * GRID + c;
+          let tot = 0;
+          for (let d = 0; d < 4; d++) {
+            const nr = Math.max(0, Math.min(GRID-1, r + DIRS[d][0]));
+            const nc = Math.max(0, Math.min(GRID-1, c + DIRS[d][1]));
+            if (nr === r && nc === c) continue;
+            const slope = headArr[idx] - headArr[nr * GRID + nc];
+            if (slope > 0) {
+              const f = ROUTING_FRAC * Math.min(slope / (slope + 1), 1);
+              rawFracs[d][idx] = f;
+              tot += f;
+            }
+          }
+          if (tot > 1) {
+            const s = 1 / tot;
+            for (let d = 0; d < 4; d++) rawFracs[d][idx] *= s;
+          }
+        }
+      }
+
+      wNew.set(wSurface);
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          const idx = r * GRID + c;
+          for (let d = 0; d < 4; d++) {
+            if (!rawFracs[d][idx]) continue;
+            const nr = Math.max(0, Math.min(GRID-1, r + DIRS[d][0]));
+            const nc = Math.max(0, Math.min(GRID-1, c + DIRS[d][1]));
+            const tr = wSurface[idx] * rawFracs[d][idx];
+            wNew[idx] -= tr;
+            wNew[nr * GRID + nc] += tr;
+          }
+        }
+      }
+
+      // 4. South-edge outflow (row 0 = outlet)
+      for (let c = 0; c < GRID; c++) {
+        const out = wNew[c] * 0.28;
+        totalOutflow += out;
+        wNew[c] -= out;
+      }
+
+      for (let i = 0; i < GRID * GRID; i++) wSurface[i] = Math.max(0, wNew[i]);
+      simTime += DT_HR;
+
+      if (simTime >= TOTAL_HR) { running = false; done = true; }
+    }
+
+    // ── Three.js setup ─────────────────────────────────────────────────────
+    const canvas   = document.getElementById('ws-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0c1a10);
+    scene.fog = new THREE.Fog(0x0c1a10, 20, 42);
+
+    const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
+    camera.position.set(0, 9, 14);
+    camera.lookAt(0, 1, 0);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.target.set(0, 1, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.minDistance = 5;
+    controls.maxDistance = 30;
+
+    // Lights
+    const sun = new THREE.DirectionalLight(0xfff8e0, 1.4);
+    sun.position.set(7, 14, 9);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.far = 50;
+    sun.shadow.camera.left = sun.shadow.camera.bottom = -10;
+    sun.shadow.camera.right = sun.shadow.camera.top = 10;
+    scene.add(sun);
+    scene.add(new THREE.HemisphereLight(0x90cce0, 0x2d5a20, 0.55));
+    scene.add(new THREE.AmbientLight(0x3a5030, 0.4));
+
+    // ── Terrain geometry ──────────────────────────────────────────────────
+    function lerp(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }
+
+    function elevColor(ne) {
+      if (ne < 0.22)       return [0.18, 0.44, 0.20];
+      if (ne < 0.50) { const t=(ne-0.22)/0.28; return [lerp(0.18,0.50,t), lerp(0.44,0.38,t), lerp(0.20,0.20,t)]; }
+      if (ne < 0.78) { const t=(ne-0.50)/0.28; return [lerp(0.50,0.56,t), lerp(0.38,0.50,t), lerp(0.20,0.38,t)]; }
+      const t=(ne-0.78)/0.22; return [lerp(0.56,0.62,t), lerp(0.50,0.58,t), lerp(0.38,0.54,t)];
+    }
+
+    const posArr = new Float32Array(GRID * GRID * 3);
+    const colArr = new Float32Array(GRID * GRID * 3);
+
+    for (let i = 0; i < GRID; i++) {
+      for (let j = 0; j < GRID; j++) {
+        const idx = i * GRID + j;
+        posArr[idx*3]   = (j/(GRID-1) - 0.5) * WORLD;
+        posArr[idx*3+1] = dem[idx] * ELEV_SCALE;
+        posArr[idx*3+2] = (i/(GRID-1) - 0.5) * WORLD;
+        const [r,g,b] = elevColor(dem[idx] / maxH);
+        colArr[idx*3]=r; colArr[idx*3+1]=g; colArr[idx*3+2]=b;
+      }
+    }
+
+    const idxArr = [];
+    for (let i = 0; i < GRID-1; i++) {
+      for (let j = 0; j < GRID-1; j++) {
+        const a=i*GRID+j, b=i*GRID+j+1, c=(i+1)*GRID+j, d=(i+1)*GRID+j+1;
+        idxArr.push(a,b,c, b,d,c);
+      }
+    }
+
+    const terrainGeo = new THREE.BufferGeometry();
+    terrainGeo.setIndex(idxArr);
+    terrainGeo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+    terrainGeo.setAttribute('color',    new THREE.BufferAttribute(colArr, 3));
+    terrainGeo.computeVertexNormals();
+
+    const terrainMat = new THREE.MeshPhongMaterial({
+      vertexColors: true,
+      shininess: 18,
+      specular: new THREE.Color(0x223322),
+    });
+
+    const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
+    terrainMesh.receiveShadow = true;
+    terrainMesh.castShadow    = true;
+    scene.add(terrainMesh);
+
+    // ── Rain particles ─────────────────────────────────────────────────────
+    const rainPos = new Float32Array(N_DROPS * 3);
+    for (let i = 0; i < N_DROPS; i++) {
+      rainPos[i*3]   = (Math.random()-.5)*WORLD;
+      rainPos[i*3+1] = Math.random()*7+1.5;
+      rainPos[i*3+2] = (Math.random()-.5)*WORLD;
+    }
+    const rainGeo = new THREE.BufferGeometry();
+    rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+    const rainMat = new THREE.PointsMaterial({ color: 0x8ac8ff, size: 0.07, transparent: true, opacity: 0.55 });
+    const rainPoints = new THREE.Points(rainGeo, rainMat);
+    rainPoints.visible = false;
+    scene.add(rainPoints);
+
+    // ── Update terrain mesh ────────────────────────────────────────────────
+    let maxWEver = 1;
+    function updateTerrain() {
+      const pos = terrainGeo.attributes.position.array;
+      const col = terrainGeo.attributes.color.array;
+      let localMax = 0;
+      for (let k = 0; k < GRID*GRID; k++) localMax = Math.max(localMax, wSurface[k]);
+      if (localMax > maxWEver) maxWEver = localMax;
+
+      for (let i = 0; i < GRID; i++) {
+        for (let j = 0; j < GRID; j++) {
+          const k = i * GRID + j;
+          const w = wSurface[k];
+          const wH = w > 0.08 ? w * WATER_SCALE : 0;
+
+          pos[k*3+1] = dem[k] * ELEV_SCALE + wH;
+
+          const ne = dem[k] / maxH;
+          const [br,bg,bb] = elevColor(ne);
+
+          if (w > 0.3) {
+            const blend = Math.min(w / 28, 0.82);
+            col[k*3]   = lerp(br, 0.07, blend);
+            col[k*3+1] = lerp(bg, 0.30, blend);
+            col[k*3+2] = lerp(bb, 0.82, blend);
+          } else {
+            col[k*3]=br; col[k*3+1]=bg; col[k*3+2]=bb;
+          }
+        }
+      }
+
+      terrainGeo.attributes.position.needsUpdate = true;
+      terrainGeo.attributes.color.needsUpdate    = true;
+      terrainGeo.computeVertexNormals();
+    }
+
+    // ── Rain animation ─────────────────────────────────────────────────────
+    function updateRain(delta) {
+      const raining = running && simTime < STORM_HR;
+      rainPoints.visible = raining;
+      if (!raining) return;
+      const p = rainGeo.attributes.position.array;
+      for (let i = 0; i < N_DROPS; i++) {
+        p[i*3+1] -= delta * 5.5;
+        if (p[i*3+1] < -0.5) {
+          p[i*3]   = (Math.random()-.5)*WORLD;
+          p[i*3+1] = 5 + Math.random()*4;
+          p[i*3+2] = (Math.random()-.5)*WORLD;
+        }
+      }
+      rainGeo.attributes.position.needsUpdate = true;
+    }
+
+    // ── HUD ────────────────────────────────────────────────────────────────
+    const elStatus  = document.getElementById('ws-status');
+    const elTime    = document.getElementById('ws-time');
+    const elRunoff  = document.getElementById('ws-runoff');
+    const elDepth   = document.getElementById('ws-depth');
+
+    function updateHUD() {
+      elTime.textContent   = simTime.toFixed(1) + ' hr';
+      elRunoff.textContent = Math.round(totalOutflow) + ' mm';
+      let maxW = 0;
+      for (let k = 0; k < GRID*GRID; k++) maxW = Math.max(maxW, wSurface[k]);
+      elDepth.textContent = maxW.toFixed(1) + ' mm';
+
+      if (done) elStatus.textContent = STATUS.done;
+      else if (!running && simTime === 0) elStatus.textContent = STATUS.idle;
+      else if (running && simTime < STORM_HR) elStatus.textContent = STATUS.rain;
+      else if (running || simTime > 0) elStatus.textContent = STATUS.recession;
+    }
+
+    // ── Render + sim loop ──────────────────────────────────────────────────
+    let stepsPerFrame = 1;
+    let lastTime = 0;
+
+    function resize() {
+      const wrap = canvas.parentElement;
+      const w = wrap.clientWidth, h = wrap.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    new ResizeObserver(resize).observe(canvas.parentElement);
+
+    function frame(ts) {
+      requestAnimationFrame(frame);
+      const delta = Math.min((ts - lastTime) / 1000, 0.05);
+      lastTime = ts;
+
+      if (running) {
+        for (let s = 0; s < stepsPerFrame; s++) simStep();
+        updateTerrain();
+      }
+
+      updateRain(delta);
+      updateHUD();
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(frame);
+
+    // ── Controls ────────────────────────────────────────────────────────────
+    const playBtn  = document.getElementById('ws-play');
+    const resetBtn = document.getElementById('ws-reset');
+
+    playBtn.addEventListener('click', () => {
+      if (done) return;
+      running = !running;
+      playBtn.textContent = running ? '⏸ Pause' : '▶ Resume';
+    });
+
+    resetBtn.addEventListener('click', () => {
+      running = false;
+      playBtn.textContent = '▶ Run Storm';
+      allocSim();
+      updateTerrain();
+      updateHUD();
+    });
+
+    document.querySelectorAll('.wsScenBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        scenario = btn.dataset.s;
+        document.querySelectorAll('.wsScenBtn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        running = false;
+        playBtn.textContent = '▶ Run Storm';
+        allocSim();
+        updateTerrain();
+        updateHUD();
+      });
+    });
+
+    document.querySelectorAll('.wsSpeedBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sp = parseFloat(btn.dataset.sp);
+        stepsPerFrame = sp <= 0.5 ? 1 : Math.round(sp);
+        // For ½× slow it down via frame skipping (handled in frame rate)
+        // Simple: just change stepsPerFrame
+        document.querySelectorAll('.wsSpeedBtn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
