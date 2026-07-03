@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Hydrological Model — EarthPulse</title>
+  <meta name="description" content="EarthPulse hydrological model: simulating how soil health changes storm-water runoff and flood risk." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .hydroPage { display: grid; gap: 32px; }
+
+    .hydroHero {
+      padding: 36px 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+
+    .hydroEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      color: #4f744e;
+      margin-bottom: 12px;
+    }
+
+    .hydroTitle {
+      font-size: clamp(32px, 5vw, 54px);
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: #1e3020;
+      line-height: 1.05;
+      margin: 0 0 16px;
+    }
+
+    .hydroLead {
+      font-size: 17px;
+      line-height: 1.72;
+      color: rgba(40, 60, 38, 0.88);
+      max-width: 68ch;
+      margin: 0 0 22px;
+    }
+
+    .hydroThesisBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 145, 84, 0.42);
+      background: rgba(111, 145, 84, 0.1);
+      font-size: 14px;
+      color: #2a4a2a;
+      line-height: 1.4;
+      max-width: 64ch;
+    }
+
+    .hydroThesisBadge strong { color: #1e3a1e; }
+
+    .hydroGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .hydroScenarioCard {
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.94), rgba(236, 228, 198, 0.88));
+      box-shadow: 0 14px 32px rgba(117, 97, 48, 0.1);
+    }
+
+    .hydroScenarioDot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .hydroScenarioHead {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .hydroScenarioName {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 16px;
+      color: #1e3020;
+    }
+
+    .hydroScenarioStats {
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .hydroStat {
+      font-size: 13px;
+      color: rgba(40, 60, 38, 0.82);
+    }
+
+    .hydroStat b { color: #1e3020; }
+
+    .hydroChartWrap {
+      border-radius: 20px;
+      border: 1px solid rgba(117, 143, 93, 0.24);
+      overflow: hidden;
+      background: #0e1a10;
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.14);
+    }
+
+    .hydroChart {
+      width: 100%;
+      display: block;
+    }
+
+    .hydroChartCaption {
+      padding: 14px 20px;
+      background: #0e1a10;
+      color: rgba(180, 220, 180, 0.82);
+      font-size: 13px;
+      line-height: 1.5;
+      border-top: 1px solid rgba(80, 140, 80, 0.2);
+    }
+
+    .hydroSectionTitle {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: #1e3020;
+      margin: 0 0 16px;
+    }
+
+    .hydroPhaseList {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hydroPhase {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.2);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.86));
+    }
+
+    .hydroPhaseTag {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(111, 145, 84, 0.16);
+      border: 1px solid rgba(111, 145, 84, 0.3);
+      font-size: 13px;
+      font-weight: 700;
+      color: #3a5c3e;
+      font-family: var(--font-display);
+    }
+
+    .hydroPhaseName {
+      font-weight: 600;
+      color: #1e3020;
+      margin-bottom: 4px;
+    }
+
+    .hydroPhaseDesc {
+      font-size: 14px;
+      color: rgba(40, 60, 38, 0.8);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .hydroPhase.done .hydroPhaseTag {
+      background: rgba(111, 145, 84, 0.28);
+      border-color: rgba(111, 145, 84, 0.5);
+      color: #2e4e2e;
+    }
+
+    .hydroCaveat {
+      padding: 16px 20px;
+      border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.08);
+      font-size: 14px;
+      color: rgba(80, 55, 20, 0.88);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      .hydroGrid { grid-template-columns: 1fr; }
+      .hydroHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="hydro">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="hydroPage">
+
+      <div class="hydroHero">
+        <div class="hydroEyebrow">EarthPulse · Hydrology</div>
+        <h1 class="hydroTitle">Soil is Flood Infrastructure</h1>
+        <p class="hydroLead">
+          Healthy soil infiltrates rain instead of shedding it — simultaneously
+          lowering flood peaks and raising dry-season water availability.
+          This model makes that argument visible, from a synthetic valley proof-of-concept
+          to a real watershed wired into live USGS storm data.
+        </p>
+        <div class="hydroThesisBadge">
+          <span>💡</span>
+          <span><strong>The pitch:</strong> regenerative land management should be financed by paying farmers for the ecosystem service — funded by avoided FEMA/NFIP flood-insurance payouts.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hydroSectionTitle">Track A — Valley Simulator (v1)</div>
+        <p style="color:rgba(40,60,38,0.8);line-height:1.7;margin:0 0 20px;max-width:70ch;">
+          A physics simulation of a synthetic valley watershed. Three soil scenarios share
+          identical topography and the same storm event — only the soil parameters change.
+          The hydrograph below is the argument made quantitative.
+        </p>
+
+        <div class="hydroGrid" style="margin-bottom:24px;">
+          <div class="hydroScenarioCard">
+            <div class="hydroScenarioHead">
+              <div class="hydroScenarioDot" style="background:#c0392b;box-shadow:0 0 10px rgba(192,57,43,0.4)"></div>
+              <div class="hydroScenarioName">Concrete / Urban</div>
+            </div>
+            <div class="hydroScenarioStats">
+              <div class="hydroStat">Infiltration rate: <b>0 mm/hr</b></div>
+              <div class="hydroStat">Soil storage: <b>0 mm</b></div>
+              <div class="hydroStat" style="color:#a33;">All rain becomes immediate runoff.</div>
+            </div>
+          </div>
+
+          <div class="hydroScenarioCard">
+            <div class="hydroScenarioHead">
+              <div class="hydroScenarioDot" style="background:#e67e22;box-shadow:0 0 10px rgba(230,126,34,0.4)"></div>
+              <div class="hydroScenarioName">Degraded Soil</div>
+            </div>
+            <div class="hydroScenarioStats">
+              <div class="hydroStat">Infiltration rate: <b>8 mm/hr</b></div>
+              <div class="hydroStat">Soil storage: <b>20 mm</b></div>
+              <div class="hydroStat" style="color:#964;">Compacted — rapid saturation, delayed peak.</div>
+            </div>
+          </div>
+
+          <div class="hydroScenarioCard">
+            <div class="hydroScenarioHead">
+              <div class="hydroScenarioDot" style="background:#27ae60;box-shadow:0 0 10px rgba(39,174,96,0.4)"></div>
+              <div class="hydroScenarioName">Regenerative Soil</div>
+            </div>
+            <div class="hydroScenarioStats">
+              <div class="hydroStat">Infiltration rate: <b>100 mm/hr</b></div>
+              <div class="hydroStat">Soil storage: <b>120 mm</b></div>
+              <div class="hydroStat" style="color:#2a6;">Deep organic layer — absorbs the storm.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hydroChartWrap">
+          <img class="hydroChart" src="public/media/hydro/hydrograph.png"
+               alt="Comparative hydrograph showing storm runoff curves for concrete, degraded, and regenerative soil scenarios" />
+          <div class="hydroChartCaption">
+            Storm runoff over 6 hours (30 mm/hr rainfall, 3-hr event) · 50×50 cell valley grid ·
+            D8 flow routing · NumPy/Matplotlib · v1 illustrative parameters
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hydroSectionTitle">Roadmap</div>
+        <div class="hydroPhaseList">
+          <div class="hydroPhase done">
+            <div class="hydroPhaseTag">A</div>
+            <div>
+              <div class="hydroPhaseName">Track A — Local Valley Simulator ✓</div>
+              <p class="hydroPhaseDesc">Grid-based Python physics model. Three soil scenarios, shared topography, comparative hydrograph output. Proof-of-concept complete.</p>
+            </div>
+          </div>
+          <div class="hydroPhase">
+            <div class="hydroPhaseTag">B0</div>
+            <div>
+              <div class="hydroPhaseName">Phase 0 — One Real Watershed</div>
+              <p class="hydroPhaseDesc">Python notebook pulling real USGS streamflow and PRISM precipitation for White Oak Pastures, Georgia. Compute runoff ratio, baseflow/quickflow split, SCS Curve Number.</p>
+            </div>
+          </div>
+          <div class="hydroPhase">
+            <div class="hydroPhaseTag">B1</div>
+            <div>
+              <div class="hydroPhaseName">Phase 1 — Water Earth Metric</div>
+              <p class="hydroPhaseDesc">Wire infiltration/runoff-ratio results into the EarthPulse Earth Metrics dashboard via a Cloudflare Pages Function calling USGS NWIS / NOAA APIs.</p>
+            </div>
+          </div>
+          <div class="hydroPhase">
+            <div class="hydroPhaseTag">B2</div>
+            <div>
+              <div class="hydroPhaseName">Phase 2 — Live Storm Demo</div>
+              <p class="hydroPhaseDesc">Real-time NOAA National Water Model gauge feed with the regen counterfactual overlay rendered live during an actual storm. The unforgettable demo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hydroSectionTitle">Honest Caveats</div>
+        <div style="display:grid;gap:10px;margin-top:4px;">
+          <div class="hydroCaveat">Runoff ratio isn't pure infiltration — ET and storage confound it. Track B output is a scenario, not a prediction.</div>
+          <div class="hydroCaveat">SCS Curve Number is a lumped, empirical parameter. Scaling plot-scale gains to a whole watershed is approximate.</div>
+          <div class="hydroCaveat">Infiltration benefits are largest for small/medium storms and shrink for extreme events as soil saturates. Don't overclaim on the 500-year flood — the real win is frequent floods and dry-season water.</div>
+          <div class="hydroCaveat">Soil parameter values in Track A are illustrative. Real SSURGO measurements will replace them in Track B.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

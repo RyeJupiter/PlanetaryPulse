@@ -1,205 +1,217 @@
 (function initBlog() {
-  const list = document.getElementById("blog-list");
-  const search = document.getElementById("blog-search");
-  const emptyTip = document.getElementById("blog-empty-tip");
-  const index = document.getElementById("blog-index");
-  if (!list || !search || !emptyTip || !index) return;
+  const list    = document.getElementById("blog-list");
+  const search  = document.getElementById("blog-search");
+  const tagBar  = document.getElementById("fn-tag-bar");
+  if (!list) return;
 
-  function toDateLabel(dateStr) {
-    const d = new Date(dateStr + "T00:00:00");
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+  let allPosts   = [];
+  let activeTag  = "all";
+  let activeQuery = "";
+
+  // Pill colour cycle (emerald / sky / warm alternating)
+  const PILL_COLORS = ["emerald", "sky", "warm"];
+  const tagColorMap = {};
+  let colorIdx = 0;
+
+  function tagColor(tag) {
+    if (!tagColorMap[tag]) {
+      tagColorMap[tag] = PILL_COLORS[colorIdx % PILL_COLORS.length];
+      colorIdx++;
+    }
+    return tagColorMap[tag];
+  }
+
+  function formatDate(dateStr) {
+    return new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, {
+      year: "numeric", month: "short", day: "numeric",
     });
   }
 
-  function cardFor(post) {
+  function buildCard(post) {
     const card = document.createElement("article");
-    card.className = "card blogCard";
-    card.setAttribute("itemscope", "");
-    card.setAttribute("itemtype", "https://schema.org/BlogPosting");
-    if (post.slug) {
-      card.id = post.slug;
+    card.className = "fnCard";
+    card.dataset.tags = (post.tags || []).join(",").toLowerCase();
+    card.dataset.slug = post.slug || "";
+
+    // Hero image or placeholder
+    if (post.image) {
+      const img = document.createElement("img");
+      img.className = "fnCardHeroImg";
+      img.src = post.image;
+      img.alt = post.imageAlt || post.title;
+      img.loading = "lazy";
+      card.appendChild(img);
+    } else if (post.slug === "imagining-a-better-future") {
+      const ph = document.createElement("div");
+      ph.className = "fnCardPlaceholder";
+      ph.textContent = "AI-generated vision of cooperative, regenerative futures — image coming soon.";
+      card.appendChild(ph);
     }
 
-    const title = document.createElement("h2");
-    title.className = "cardTitle";
-    title.setAttribute("itemprop", "headline");
-    title.textContent = post.title;
-    card.appendChild(title);
+    const body = document.createElement("div");
+    body.className = "fnCardBody";
 
+    // Meta row: date + tag pills
     const meta = document.createElement("div");
-    meta.className = "muted";
-    meta.textContent = toDateLabel(post.datePublished);
-    meta.setAttribute("itemprop", "datePublished");
-    card.appendChild(meta);
+    meta.className = "fnCardMeta";
+    const dateEl = document.createElement("span");
+    dateEl.className = "fnCardDate";
+    dateEl.textContent = formatDate(post.datePublished);
+    meta.appendChild(dateEl);
 
+    (post.tags || []).forEach(tag => {
+      const pill = document.createElement("button");
+      pill.className = `fnPill ${tagColor(tag)}`;
+      pill.textContent = tag;
+      pill.addEventListener("click", () => setTag(tag));
+      meta.appendChild(pill);
+    });
+    body.appendChild(meta);
+
+    // Title
+    const title = document.createElement("h2");
+    title.className = "fnCardTitle";
+    title.textContent = post.title;
+    body.appendChild(title);
+
+    // Summary
     if (post.summary) {
       const summary = document.createElement("p");
-      summary.className = "cardBody";
-      summary.setAttribute("itemprop", "description");
+      summary.className = "fnCardSummary";
       summary.textContent = post.summary;
-      card.appendChild(summary);
+      body.appendChild(summary);
     }
 
-    if (post.image) {
-      const hero = document.createElement("img");
-      hero.className = "blogHero blogLightbox";
-      hero.src = post.image;
-      hero.alt = post.imageAlt || post.title;
-      hero.loading = "lazy";
-      hero.setAttribute("data-lightbox", "true");
-      card.appendChild(hero);
+    // Full content (collapsed)
+    if (post.content) {
+      const content = document.createElement("div");
+      content.className = "fnCardContent";
+      content.innerHTML = post.content
+        .split("\n\n")
+        .map(p => `<p>${p.replace(/\n/g, " ")}</p>`)
+        .join("");
+      body.appendChild(content);
     }
+
+    // Footer CTAs
+    const footer = document.createElement("div");
+    footer.className = "fnCardFooter";
 
     if (post.content) {
-      const body = document.createElement("div");
-      body.className = "cardBody";
-      body.innerHTML = post.content
-        .split("\n\n")
-        .map((para) => `<p>${para.replace(/\n/g, " ")}</p>`)
-        .join("");
-      card.appendChild(body);
-    }
-
-    if (post.tags && post.tags.length) {
-      const tags = document.createElement("div");
-      tags.className = "signalMeta";
-      post.tags.forEach((tag) => {
-        const chip = document.createElement("span");
-        chip.className = "chip";
-        chip.textContent = tag;
-        tags.appendChild(chip);
+      const readBtn = document.createElement("button");
+      readBtn.className = "fnReadBtn";
+      readBtn.textContent = "Read more";
+      readBtn.addEventListener("click", () => {
+        const contentEl = body.querySelector(".fnCardContent");
+        const open = contentEl.classList.toggle("open");
+        readBtn.textContent = open ? "Show less" : "Read more";
       });
-      card.appendChild(tags);
+      footer.appendChild(readBtn);
     }
 
+    // Regen Registry card gets Map Explorer CTA
+    if (post.slug === "regen-registry-stories") {
+      const mapLink = document.createElement("a");
+      mapLink.className = "fnMapLink";
+      mapLink.href = "/regen-registry.html";
+      mapLink.innerHTML = "Link to EarthPulse Map Explorer <span aria-hidden='true'>→</span>";
+      footer.appendChild(mapLink);
+    }
+
+    body.appendChild(footer);
+    card.appendChild(body);
     return card;
   }
 
-  function asSearchText(post) {
-    return [
-      post.title,
-      post.summary,
-      post.content,
-      (post.tags || []).join(" "),
-      (post.keywords || []).join(" "),
-    ]
-      .join(" ")
-      .toLowerCase();
+  function visible(post) {
+    const matchTag = activeTag === "all" ||
+      (post.tags || []).map(t => t.toLowerCase()).includes(activeTag.toLowerCase());
+    const matchQuery = !activeQuery ||
+      [post.title, post.summary, post.content, ...(post.tags || []), ...(post.keywords || [])]
+        .join(" ").toLowerCase().includes(activeQuery);
+    return matchTag && matchQuery;
   }
 
-  function render(posts, query) {
+  function render() {
     list.innerHTML = "";
-    index.innerHTML = "";
-    const normalized = query.trim().toLowerCase();
-    const visible = !normalized
-      ? posts
-      : posts.filter((post) => asSearchText(post).includes(normalized));
+    const shown = allPosts.filter(visible);
 
-    visible.forEach((post) => {
-      list.appendChild(cardFor(post));
-      const link = document.createElement("a");
-      link.className = "blogIndexLink";
-      link.href = "#" + post.slug;
-      link.textContent = post.title;
-      index.appendChild(link);
+    if (!shown.length) {
+      const empty = document.createElement("div");
+      empty.className = "fnEmpty";
+      empty.textContent = "No notes match that filter — try a different tag or search.";
+      list.appendChild(empty);
+      return;
+    }
+
+    shown.forEach((post, i) => {
+      const card = buildCard(post);
+      card.style.animationDelay = `${i * 40}ms`;
+      list.appendChild(card);
     });
-    emptyTip.style.display = normalized ? "none" : "block";
   }
 
-  function initLightbox(images) {
-    if (!images.length) return;
-
-    const lightbox = document.createElement("div");
-    lightbox.className = "lightbox";
-    lightbox.innerHTML = `
-      <div class="lightboxContent">
-        <button class="lightboxClose" type="button" aria-label="Close">Close</button>
-        <button class="lightboxPrev" type="button" aria-label="Previous">Prev</button>
-        <button class="lightboxNext" type="button" aria-label="Next">Next</button>
-        <img class="lightboxImage" alt="" />
-        <div class="lightboxCaption"></div>
-      </div>
-    `;
-    document.body.appendChild(lightbox);
-
-    const imgEl = lightbox.querySelector(".lightboxImage");
-    const captionEl = lightbox.querySelector(".lightboxCaption");
-    const btnPrev = lightbox.querySelector(".lightboxPrev");
-    const btnNext = lightbox.querySelector(".lightboxNext");
-    const btnClose = lightbox.querySelector(".lightboxClose");
-
-    let currentIndex = 0;
-
-    function openAt(index) {
-      currentIndex = (index + images.length) % images.length;
-      const img = images[currentIndex];
-      imgEl.src = img.src;
-      imgEl.alt = img.alt || "Field note image";
-      captionEl.textContent = img.alt || "";
-      lightbox.classList.add("active");
-    }
-
-    function close() {
-      lightbox.classList.remove("active");
-    }
-
-    images.forEach((img, idx) => {
-      img.addEventListener("click", () => openAt(idx));
+  function setTag(tag) {
+    activeTag = tag;
+    tagBar.querySelectorAll(".fnTag").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.tag === tag ||
+        (tag !== "all" && btn.dataset.tag === tag));
     });
+    // clear "all" active if a specific tag chosen
+    tagBar.querySelector('[data-tag="all"]').classList.toggle("active", tag === "all");
+    render();
+  }
 
-    btnPrev.addEventListener("click", () => openAt(currentIndex - 1));
-    btnNext.addEventListener("click", () => openAt(currentIndex + 1));
-    btnClose.addEventListener("click", close);
-    lightbox.addEventListener("click", (event) => {
-      if (event.target === lightbox) close();
+  function buildTagBar(posts) {
+    const seen = new Set();
+    posts.forEach(p => (p.tags || []).forEach(t => seen.add(t)));
+    seen.forEach(tag => {
+      const btn = document.createElement("button");
+      btn.className = "fnTag";
+      btn.dataset.tag = tag;
+      btn.textContent = tag;
+      btn.addEventListener("click", () => setTag(activeTag === tag ? "all" : tag));
+      tagBar.appendChild(btn);
     });
-    window.addEventListener("keydown", (event) => {
-      if (!lightbox.classList.contains("active")) return;
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") openAt(currentIndex - 1);
-      if (event.key === "ArrowRight") openAt(currentIndex + 1);
-    });
+    tagBar.querySelector('[data-tag="all"]').addEventListener("click", () => setTag("all"));
   }
 
   fetch("assets/data/blog-posts.json")
-    .then((response) => response.json())
-    .then((posts) => {
-      const sorted = posts
-        .slice()
-        .sort((a, b) => new Date(b.datePublished) - new Date(a.datePublished));
-      render(sorted, "");
-      search.addEventListener("input", () => {
-        render(sorted, search.value);
-      });
+    .then(r => r.json())
+    .then(posts => {
+      allPosts = posts.slice().sort((a, b) =>
+        new Date(b.datePublished) - new Date(a.datePublished)
+      );
+      buildTagBar(allPosts);
+      render();
 
-      const images = Array.from(document.querySelectorAll(".blogLightbox"));
-      initLightbox(images);
+      if (search) {
+        search.addEventListener("input", () => {
+          activeQuery = search.value.trim().toLowerCase();
+          render();
+        });
+      }
 
-      const jsonLd = {
+      // JSON-LD
+      const ld = {
         "@context": "https://schema.org",
         "@type": "Blog",
         name: "EarthPulse Field Notes",
         description: "Field notes on Earth Metrics, regeneration, and climate stability.",
-        blogPost: sorted.map((post) => ({
+        blogPost: allPosts.map(p => ({
           "@type": "BlogPosting",
-          headline: post.title,
-          datePublished: post.datePublished,
-          keywords: [...(post.tags || []), ...(post.keywords || [])].join(", "),
-          description: post.summary,
-          url: "blog.html#" + post.slug,
+          headline: p.title,
+          datePublished: p.datePublished,
+          description: p.summary,
+          url: "blog.html#" + (p.slug || ""),
         })),
       };
-
-      const script = document.createElement("script");
-      script.type = "application/ld+json";
-      script.text = JSON.stringify(jsonLd);
-      document.head.appendChild(script);
+      const s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.text = JSON.stringify(ld);
+      document.head.appendChild(s);
     })
     .catch(() => {
-      emptyTip.textContent = "Posts are temporarily unavailable.";
+      list.innerHTML = '<div class="fnEmpty">Field notes temporarily unavailable.</div>';
     });
 })();
-

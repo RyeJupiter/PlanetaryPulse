@@ -4,47 +4,314 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-  <title>Field Notes - EarthPulse</title>
-  <meta name="description" content="EarthPulse Field Notes: Earth Metrics, landscape function, and how land influences local climate stability." />
-  <meta name="keywords" content="EarthPulse, Earth Metrics, landscape impact on local climate, regeneration, climate stability" />
+  <title>Field Notes — EarthPulse</title>
+  <meta name="description" content="EarthPulse Field Notes: landscape function, climate regulation, and how land influences local climate stability." />
   <link rel="stylesheet" href="assets/css/site.css" />
   <script src="assets/js/blog.js" defer></script>
   <script src="assets/js/nav.js" defer></script>
+  <style>
+    :root {
+      --fn-charcoal:   #1e2c1e;
+      --fn-body:       rgba(36, 52, 34, 0.88);
+      --fn-muted:      rgba(60, 80, 58, 0.68);
+      --fn-border:     rgba(111, 145, 84, 0.22);
+      --fn-sky:        #2b6cb0;
+      --fn-sky-bg:     rgba(43, 108, 176, 0.1);
+      --fn-emerald:    #2d7a4f;
+      --fn-emerald-bg: rgba(45, 122, 79, 0.1);
+    }
+
+    .fnHero {
+      padding: 44px 40px 36px;
+      border-radius: 24px;
+      border: 1px solid var(--fn-border);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(126, 158, 96, 0.16), transparent 36%),
+        radial-gradient(circle at 86% 88%, rgba(212, 170, 101, 0.14), transparent 28%),
+        linear-gradient(160deg, rgba(250, 246, 232, 0.98), rgba(238, 230, 202, 0.94));
+      box-shadow: 0 20px 52px rgba(69, 59, 30, 0.11);
+      display: grid;
+      gap: 18px;
+    }
+
+    .fnEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 11px;
+      color: #4f744e;
+    }
+
+    .fnTitle {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 6vw, 70px);
+      font-weight: 600;
+      color: var(--fn-charcoal);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      margin: 0;
+    }
+
+    .fnLead {
+      font-size: 17px;
+      line-height: 1.72;
+      color: var(--fn-body);
+      max-width: 66ch;
+      margin: 0;
+    }
+
+    .fnSearchInput {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(111, 145, 84, 0.3);
+      background: rgba(255, 252, 240, 0.88);
+      color: var(--fn-charcoal);
+      font-size: 14px;
+      width: 100%;
+      max-width: 340px;
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+
+    .fnSearchInput:focus {
+      border-color: rgba(111, 145, 84, 0.6);
+      box-shadow: 0 0 0 3px rgba(111, 145, 84, 0.12);
+    }
+
+    .fnSearchInput::placeholder { color: rgba(60, 80, 58, 0.48); }
+
+    .fnTagBar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fnTag {
+      padding: 6px 15px;
+      border-radius: 999px;
+      border: 1px solid var(--fn-border);
+      background: rgba(248, 243, 222, 0.82);
+      color: var(--fn-body);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 140ms ease, box-shadow 180ms ease;
+      user-select: none;
+    }
+
+    .fnTag:hover {
+      background: rgba(111, 145, 84, 0.12);
+      border-color: rgba(111, 145, 84, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .fnTag.active {
+      background: var(--fn-emerald);
+      border-color: var(--fn-emerald);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(45, 122, 79, 0.26);
+    }
+
+    .fnList { display: grid; gap: 24px; }
+
+    .fnCard {
+      border-radius: 22px;
+      border: 1px solid var(--fn-border);
+      background: linear-gradient(160deg, rgba(250, 246, 232, 0.98), rgba(238, 230, 202, 0.92));
+      box-shadow: 0 14px 36px rgba(117, 97, 48, 0.09);
+      overflow: hidden;
+      transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+      animation: fnFadeIn 300ms ease both;
+    }
+
+    .fnCard:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 54px rgba(117, 97, 48, 0.15);
+      border-color: rgba(111, 145, 84, 0.44);
+    }
+
+    @keyframes fnFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fnCardHeroImg {
+      width: 100%;
+      aspect-ratio: 16 / 6;
+      object-fit: cover;
+      display: block;
+    }
+
+    .fnCardPlaceholder {
+      width: 100%;
+      aspect-ratio: 16 / 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(148, 182, 102, 0.16), rgba(212, 170, 101, 0.12));
+      border-bottom: 1px solid var(--fn-border);
+      color: var(--fn-muted);
+      font-size: 13px;
+      font-style: italic;
+      text-align: center;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .fnCardBody { padding: 28px 32px 30px; display: grid; gap: 14px; }
+
+    .fnCardMeta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fnCardDate {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fn-muted);
+    }
+
+    .fnPill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 160ms ease;
+      border: 1px solid;
+    }
+
+    .fnPill:hover { opacity: 0.76; }
+    .fnPill.emerald { background: var(--fn-emerald-bg); border-color: rgba(45, 122, 79, 0.3); color: var(--fn-emerald); }
+    .fnPill.sky     { background: var(--fn-sky-bg);     border-color: rgba(43, 108, 176, 0.3); color: var(--fn-sky); }
+    .fnPill.warm    { background: rgba(181, 125, 56, 0.1); border-color: rgba(181, 125, 56, 0.3); color: #8a5a1a; }
+
+    .fnCardTitle {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 600;
+      color: var(--fn-charcoal);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .fnCardSummary {
+      font-size: 16px;
+      line-height: 1.74;
+      color: var(--fn-body);
+      margin: 0;
+    }
+
+    .fnCardContent {
+      font-size: 15px;
+      line-height: 1.88;
+      color: var(--fn-body);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 500ms ease;
+    }
+
+    .fnCardContent.open { max-height: 9999px; }
+    .fnCardContent p { margin: 0 0 1.1em; }
+    .fnCardContent p:last-child { margin-bottom: 0; }
+
+    .fnCardFooter {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--fn-border);
+      margin-top: 4px;
+    }
+
+    .fnReadBtn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 145, 84, 0.38);
+      background: rgba(111, 145, 84, 0.08);
+      color: var(--fn-emerald);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 180ms ease, border-color 180ms ease, transform 140ms ease;
+    }
+
+    .fnReadBtn:hover {
+      background: rgba(111, 145, 84, 0.16);
+      border-color: rgba(111, 145, 84, 0.56);
+      transform: translateY(-1px);
+    }
+
+    .fnMapLink {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(43, 108, 176, 0.38);
+      background: var(--fn-sky-bg);
+      color: var(--fn-sky);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 180ms ease, border-color 180ms ease, transform 140ms ease;
+    }
+
+    .fnMapLink:hover {
+      background: rgba(43, 108, 176, 0.18);
+      border-color: rgba(43, 108, 176, 0.56);
+      transform: translateY(-1px);
+    }
+
+    .fnEmpty {
+      text-align: center;
+      padding: 56px 24px;
+      color: var(--fn-muted);
+      font-size: 15px;
+      border-radius: 18px;
+      border: 1px dashed rgba(111, 145, 84, 0.24);
+    }
+
+    @media (max-width: 640px) {
+      .fnHero { padding: 28px 20px 24px; }
+      .fnCardBody { padding: 20px; }
+      .fnCardTitle { font-size: 20px; }
+      .fnCardSummary { font-size: 15px; }
+    }
+  </style>
 </head>
 
 <body data-page="blog">
   <div id="site-nav"></div>
 
   <main class="page">
-    <div class="blogLayout">
+    <div style="display:grid;gap:28px;">
 
-      <aside class="blogSidebar">
-        <section class="panel">
-          <h1>Field Notes</h1>
-          <p class="subtitle">
-            Landscape function, climate regulation, and the metrics that make change visible.
-          </p>
-        </section>
+      <header class="fnHero">
+        <div class="fnEyebrow">EarthPulse · Field Notes</div>
+        <h1 class="fnTitle">Field Notes</h1>
+        <p class="fnLead">
+          These are notes from the process of building EarthPulse — the ideas that drive it,
+          the science that grounds it, and the stories that make it feel worth doing. Essays on
+          landscape function, Earth Metrics, and the quiet revolution in how we understand the
+          relationship between living systems and climate stability.
+        </p>
+        <input id="blog-search" class="fnSearchInput" type="search" placeholder="Search topics…" autocomplete="off" />
+      </header>
 
-        <section class="panel">
-          <div class="cardTitle">Search</div>
-          <div class="cardBody" style="margin-top:10px">
-            <input id="blog-search" class="input" type="search" placeholder="Search by topic or keyword" />
-            <div class="muted" id="blog-empty-tip" style="margin-top:8px;font-size:12px">Start typing to filter.</div>
-          </div>
-        </section>
+      <div class="fnTagBar" id="fn-tag-bar">
+        <button class="fnTag active" data-tag="all">All</button>
+      </div>
 
-        <section class="panel">
-          <div class="cardTitle">Index</div>
-          <div style="margin-top:12px">
-            <div id="blog-index" class="blogIndex"></div>
-          </div>
-        </section>
-      </aside>
-
-      <section class="blogMain">
-        <div id="blog-list" class="stack"></div>
-      </section>
+      <div class="fnList" id="blog-list">
+        <div class="fnEmpty">Loading field notes…</div>
+      </div>
 
     </div>
   </main>
@@ -52,11 +319,6 @@
   <footer class="footer">
     <span>&copy; <span id="year"></span> EarthPulse</span>
   </footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
-
-
