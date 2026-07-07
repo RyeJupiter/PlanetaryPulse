@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>San Lorenzo Watershed — 3D Terrain — EarthPulse</title>
+  <meta name="description" content="A real, LiDAR-derived 3D terrain model of the San Lorenzo River watershed in the Santa Cruz Mountains, built for instant load." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #060d09; }
+
+    #canvas-wrap { position: fixed; inset: 0; }
+    #c3d { display: block; width: 100%; height: 100%; }
+
+    #back-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(90, 140, 70, 0.4);
+      background: rgba(8, 18, 8, 0.82);
+      color: #a8f0b0;
+      font-family: var(--font-label, ui-sans-serif, system-ui, sans-serif);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: background 160ms, border-color 160ms, transform 160ms;
+      z-index: 10;
+    }
+    #back-btn:hover { background: rgba(30, 70, 30, 0.9); border-color: #5ab860; transform: translateX(-2px); }
+    #back-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    #right-panel {
+      position: absolute;
+      top: 16px;
+      right: 14px;
+      max-width: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    #hud {
+      background: rgba(6, 14, 7, 0.93);
+      border: 1px solid rgba(90, 140, 70, 0.3);
+      border-radius: 14px;
+      padding: 13px 16px;
+      color: #d4e8c4;
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      font-size: 11px;
+      line-height: 1.65;
+      backdrop-filter: blur(12px);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+    #hud-title { font-weight: 700; letter-spacing: 0.06em; color: #a8f0b0; font-size: 13px; margin-bottom: 6px; font-family: var(--font-display, serif); text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+    #hud .hud-row { display: flex; justify-content: space-between; gap: 10px; }
+    #hud .hud-val { color: #eaf7de; font-weight: 700; }
+    #hud-caveat { margin-top: 8px; font-size: 10px; color: #b9dca8; line-height: 1.55; }
+
+    #geology-card {
+      background: rgba(6, 14, 7, 0.95);
+      border: 1px solid rgba(90, 140, 70, 0.32);
+      border-radius: 14px;
+      backdrop-filter: blur(14px);
+      pointer-events: auto;
+      overflow: hidden;
+    }
+    #geology-card summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      cursor: pointer;
+      font-family: var(--font-display, serif);
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+      color: #a8f0b0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+      user-select: none;
+    }
+    #geology-card summary::-webkit-details-marker { display: none; }
+    #geology-card summary .geology-icon { font-size: 14px; flex-shrink: 0; }
+    #geology-card summary .geology-chevron {
+      margin-left: auto;
+      font-size: 10px;
+      color: rgba(160,210,150,0.6);
+      transition: transform 200ms ease;
+    }
+    #geology-card[open] summary .geology-chevron { transform: rotate(180deg); }
+    #geology-card .geology-body {
+      padding: 0 14px 14px;
+      font-family: var(--font-label, ui-sans-serif, system-ui, sans-serif);
+      font-size: 12px;
+      line-height: 1.7;
+      color: #dcefd0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+    }
+    #geology-card .geology-body p { margin: 0 0 9px; }
+    #geology-card .geology-body p:last-child { margin-bottom: 0; }
+    #geology-card .geology-body b { color: #f2fbe8; font-weight: 700; }
+
+    #loading {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #060d09; color: rgba(160,210,150,0.6);
+      font-family: ui-monospace, monospace; font-size: 12px;
+      letter-spacing: 0.08em; z-index: 5;
+      transition: opacity 320ms ease;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+
+    /* ── Storm controls ── */
+    #controls {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      z-index: 10;
+    }
+    .sc-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+    .sc-btn {
+      padding: 7px 15px;
+      border-radius: 999px;
+      border: 1px solid rgba(80,120,60,0.4);
+      background: rgba(8,18,8,0.82);
+      color: rgba(160,200,130,0.7);
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 160ms, border-color 160ms, color 160ms;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    .sc-btn:hover  { background: rgba(30,60,20,0.85); border-color: rgba(80,160,70,0.6); color: #9de090; }
+    .sc-btn.active { background: rgba(30,90,30,0.85); border-color: #4da860; color: #a8f0b0; font-weight: 600; }
+    .int-row {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(8,18,8,0.82);
+      border: 1px solid rgba(80,120,60,0.4);
+      border-radius: 999px;
+      padding: 6px 16px;
+      backdrop-filter: blur(10px);
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      color: rgba(180,215,150,0.85);
+      font-size: 11px;
+    }
+    .int-row label { letter-spacing: 0.06em; }
+    .int-row input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 180px; height: 4px;
+      background: rgba(90,140,70,0.35);
+      border-radius: 999px; outline: none; cursor: pointer;
+    }
+    .int-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #7fd090; border: 2px solid #1a3a1e; cursor: pointer;
+      box-shadow: 0 0 6px rgba(120,220,140,0.5);
+    }
+    .int-row input[type=range]::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #7fd090; border: 2px solid #1a3a1e; cursor: pointer;
+    }
+    .int-val { min-width: 42px; text-align: right; color: #a8f0b0; font-weight: 700; }
+    .act-row { display: flex; gap: 8px; }
+    .act-btn {
+      padding: 9px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(80,140,70,0.45);
+      background: rgba(8,18,8,0.88);
+      color: #90d880;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 180ms, border-color 180ms;
+      backdrop-filter: blur(10px);
+    }
+    .act-btn:hover:not(:disabled) { background: rgba(20,70,20,0.9); border-color: #5ab860; }
+    .act-btn:disabled { opacity: 0.35; cursor: default; }
+    #btn-storm.running { color: #f0d060; border-color: rgba(200,150,30,0.5); }
+
+    /* ── Hydrograph ── */
+    #hydro-wrap {
+      position: absolute;
+      bottom: 76px;
+      left: 14px;
+      background: rgba(8, 18, 8, 0.86);
+      border: 1px solid rgba(90, 140, 70, 0.28);
+      border-radius: 12px;
+      padding: 10px 10px 6px;
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+    #c-hydro { display: block; }
+    #hydro-legend {
+      display: flex; gap: 12px; margin-top: 5px; justify-content: center;
+      font-family: ui-monospace, monospace; font-size: 9px;
+    }
+    .leg-infil  { color: rgba(60,200,90,0.8);  }
+    .leg-runoff { color: rgba(70,150,230,0.8); }
+  </style>
+</head>
+
+<body data-page="watershed-san-lorenzo">
+
+  <div id="canvas-wrap">
+    <canvas id="c3d"></canvas>
+
+    <a id="back-btn" href="/hydro.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      Back to Hydrology
+    </a>
+
+    <div id="right-panel">
+      <div id="hud">
+        <div id="hud-title">San Lorenzo Watershed</div>
+        <div class="hud-row"><span>Boundary</span><span class="hud-val">HUC10 drainage divide</span></div>
+        <div class="hud-row"><span>Area</span><span class="hud-val">353 km² (136 mi²)</span></div>
+        <div class="hud-row"><span>Elevation range</span><span class="hud-val" id="hud-elev">—</span></div>
+        <div class="hud-row"><span>Source</span><span class="hud-val">2020 LiDAR (3DEP)</span></div>
+        <div class="hud-bar" style="margin-top:6px; display:grid; gap:2px;">
+          <div class="hud-row"><span>Scenario</span><span class="hud-val" id="hud-scenario">—</span></div>
+          <div class="hud-row"><span>Infiltrated</span><span class="hud-val" id="hud-infil-pct" style="color:#5dd87a;">—</span></div>
+          <div class="hud-row"><span>Runoff to ocean</span><span class="hud-val" id="hud-runoff-pct" style="color:#5ab0e8;">—</span></div>
+          <div class="hud-row"><span>Rainfall</span><span class="hud-val" id="hud-count">0</span></div>
+          <div class="hud-row"><span>Soil moisture</span><span class="hud-val" id="hud-sat">0%</span></div>
+        </div>
+        <div id="hud-status" style="margin-top:6px; font-size:10.5px; color:#c8e0ba; text-shadow:0 1px 3px rgba(0,0,0,0.6);">Select a scenario and run a storm</div>
+        <div id="hud-caveat">Mesh follows the real ridge-defined watershed boundary (USGS WBD), softened by a ~3% context buffer that fades into surrounding terrain and the Monterey Bay coastline at the river mouth. Contour lines every 50m (200m index). Decimated for instant load; vertical relief exaggerated ~4× for visibility.</div>
+      </div>
+
+      <details id="geology-card">
+        <summary>
+          <span class="geology-icon">⛰</span> Local Geologic History
+          <span class="geology-chevron">▾</span>
+        </summary>
+        <div class="geology-body">
+          <p>The San Lorenzo rises at <b>Castle Rock State Park</b> and runs about 29 miles to Monterey Bay — the largest watershed lying entirely within Santa Cruz County.</p>
+          <p>The Santa Cruz Mountains themselves are young: <b>uplifted 3–4 million years ago</b> as the Pacific Plate ground against the North American Plate along the San Andreas Fault system, which cuts right through this watershed. That same fault zone caused the 1989 <b>Loma Prieta earthquake</b> (M6.9) — the uplift is still active.</p>
+          <p>Uplift exposed older marine sedimentary rock to erosion, landslides, and — where fault movement juxtaposed different rock bodies — <b>karst limestone</b> (the caves at Henry Cowell and Bonny Doon) alongside pockets of granitic and metamorphic basement rock.</p>
+          <p>One formation matters most for water: the <b>Santa Margarita Sandstone</b>, which weathers into the sandy "Zayante soils" of the Santa Cruz Sandhills. That sand drains fast and stores groundwater — the Santa Margarita basin beneath it supplies up to <b>half of the river's dry-season flow</b>. It's the same soil-sponge principle this site argues for, just built by 15 million years of marine deposition instead of a season of cover cropping.</p>
+        </div>
+      </details>
+    </div>
+
+    <div id="loading">LOADING TERRAIN…</div>
+
+    <div id="hydro-wrap">
+      <canvas id="c-hydro" width="200" height="100"></canvas>
+      <div id="hydro-legend">
+        <span class="leg-infil">▬ Infiltrated</span>
+        <span class="leg-runoff">▬ Runoff to ocean</span>
+      </div>
+    </div>
+
+    <div id="controls">
+      <div class="sc-row">
+        <button class="sc-btn" data-sc="concrete">Urban / Concrete</button>
+        <button class="sc-btn active" data-sc="degraded">Degraded Farmland</button>
+        <button class="sc-btn" data-sc="regen">Regenerative Land</button>
+      </div>
+      <div class="int-row">
+        <label for="intensity">Rainfall rate</label>
+        <input type="range" id="intensity" min="0.5" max="10" step="0.1" value="1.0" />
+        <span class="int-val" id="intensity-val">1.0 in/hr</span>
+      </div>
+      <div class="int-row">
+        <label for="duration">Storm duration</label>
+        <input type="range" id="duration" min="0.25" max="24" step="0.25" value="1.0" />
+        <span class="int-val" id="duration-val">1.0 hr</span>
+      </div>
+      <div class="act-row">
+        <button class="act-btn" id="btn-storm" disabled>Loading…</button>
+        <button class="act-btn" id="btn-reset" disabled>Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    // ── World scale ──────────────────────────────────────────────────────
+    // World-unit plane width is fixed; depth is derived from the real bbox
+    // aspect ratio (computed at load from meta.json) so the geometry always
+    // matches true relative proportions. Vertical relief is exaggerated
+    // because at true scale (~1000m relief over ~30km) terrain reads flat.
+    const WIDTH = 10;
+    const VERT_EXAGGERATION = 4.0;
+
+    // ── Rainfall simulation scenarios (same physics framing as the
+    // synthetic Rain In The Valley model, applied to the real watershed) ──
+    const SCENARIOS = {
+      concrete: { name: 'Urban / Concrete',   n: 0.012, ksat: 0.03, capPerCell: 0.15, nLabel: "Manning's n = 0.012" },
+      degraded: { name: 'Degraded Farmland',  n: 0.025, ksat: 0.07, capPerCell: 1.5,  nLabel: "Manning's n = 0.025" },
+      regen:    { name: 'Regenerative Land',  n: 0.080, ksat: 0.82, capPerCell: 22,   nLabel: "Manning's n = 0.080" },
+    };
+    let scenario = SCENARIOS.degraded;
+    let rainRate = 1.0;
+    let stormDurationHours = 1.0;
+
+    const MAX_P = 4000;
+    const SPAWN_PER_INHR_PER_SEC = 25;
+    const SECONDS_PER_STORM_HOUR = 12;
+    const DONE = 0, FALLING = 1, FLOWING = 2, INFILTRATING = 3, POOLED = 4, EXITING = 5;
+    const C_FALL  = [0.62, 0.86, 1.00];
+    const C_FLOW  = [0.22, 0.75, 0.96];
+    const C_INFIL = [0.28, 0.90, 0.50];
+    const C_POOL  = [0.10, 0.35, 0.82];
+    const C_OCEAN = [0.20, 0.55, 0.85];
+
+    let simStep = null; // set once build() finishes; animate() calls this each frame
+
+    const META_URL = 'assets/terrain/sanlorenzo/meta.json';
+    const HEIGHT_URL = 'assets/terrain/sanlorenzo/heightmap.png';
+    const MASK_URL   = 'assets/terrain/sanlorenzo/heightmask.png';
+    const NORMAL_URL = 'assets/terrain/sanlorenzo/normal.png';
+    const COLOR_URL  = 'assets/terrain/sanlorenzo/basecolor.png';
+
+    // ── Renderer / scene / camera ────────────────────────────────────────
+    const canvas3d = document.getElementById('c3d');
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b1610);
+    scene.fog = new THREE.FogExp2(0x0b1712, 0.018);
+
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 300);
+    camera.position.set(9, 8, -11);
+
+    const controls = new OrbitControls(camera, canvas3d);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.target.set(0, 0.6, 0);
+    controls.minDistance = 4;
+    controls.maxDistance = 45;
+    camera.lookAt(controls.target);
+
+    // Procedural environment map (no HDR download) for PBR ambient/specular response
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    // Lighting rig matching the site's other hydrology visuals
+    scene.add(new THREE.AmbientLight(0x8098a0, 0.4));
+    const sun = new THREE.DirectionalLight(0xffeacc, 1.5);
+    sun.position.set(6, 14, -5);
+    scene.add(sun);
+    const skyRim = new THREE.DirectionalLight(0x5088b0, 0.55);
+    skyRim.position.set(-6, 5, 8);
+    scene.add(skyRim);
+
+    // ── Load terrain assets ──────────────────────────────────────────────
+    const texLoader = new THREE.TextureLoader();
+
+    function loadImageData(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const cnv = document.createElement('canvas');
+          cnv.width = img.naturalWidth; cnv.height = img.naturalHeight;
+          const ctx = cnv.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve({ data: ctx.getImageData(0, 0, cnv.width, cnv.height), w: cnv.width, h: cnv.height });
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    async function build() {
+      const [meta, hmap, mask] = await Promise.all([
+        fetch(META_URL).then(r => r.json()),
+        loadImageData(HEIGHT_URL),
+        loadImageData(MASK_URL),
+      ]);
+
+      const { elevMin, elevMax, bbox } = meta;
+
+      // Depth derived from the real bbox aspect ratio (lat/lon -> km, cos-corrected)
+      const latMid = (bbox.north + bbox.south) / 2;
+      const lonKm = (bbox.east - bbox.west) * 111.32 * Math.cos(latMid * Math.PI / 180);
+      const latKm = (bbox.north - bbox.south) * 111.32;
+      const DEPTH = WIDTH * (latKm / lonKm);
+
+      const HM_W = hmap.w, HM_H = hmap.h;
+      const hd = hmap.data.data; // Uint8ClampedArray RGBA, R channel carries elevation (grayscale)
+      const MK_W = mask.w, MK_H = mask.h;
+      const md = mask.data.data;
+
+      function sampleHeight01(u, v) {
+        // bilinear sample of the heightmap, u/v in [0,1]
+        const fx = u * (HM_W - 1), fy = v * (HM_H - 1);
+        const x0 = Math.max(0, Math.min(HM_W - 2, Math.floor(fx)));
+        const y0 = Math.max(0, Math.min(HM_H - 2, Math.floor(fy)));
+        const tx = fx - x0, ty = fy - y0;
+        const p = (x, y) => hd[(y * HM_W + x) * 4] / 255;
+        const h00 = p(x0, y0), h10 = p(x0 + 1, y0), h01 = p(x0, y0 + 1), h11 = p(x0 + 1, y0 + 1);
+        return (h00 * (1 - tx) + h10 * tx) * (1 - ty) + (h01 * (1 - tx) + h11 * tx) * ty;
+      }
+
+      function sampleMask01(u, v) {
+        // bilinear-sample of the soft watershed mask: 1.0 inside the true
+        // ridge-defined boundary, fading continuously through a ~3% dilated
+        // + blurred buffer ring (context terrain), toward 0 at the outer edge.
+        const fx = u * (MK_W - 1), fy = v * (MK_H - 1);
+        const x0 = Math.max(0, Math.min(MK_W - 2, Math.floor(fx)));
+        const y0 = Math.max(0, Math.min(MK_H - 2, Math.floor(fy)));
+        const tx = fx - x0, ty = fy - y0;
+        const p = (x, y) => md[(y * MK_W + x) * 4] / 255;
+        const m00 = p(x0, y0), m10 = p(x0 + 1, y0), m01 = p(x0, y0 + 1), m11 = p(x0 + 1, y0 + 1);
+        return (m00 * (1 - tx) + m10 * tx) * (1 - ty) + (m01 * (1 - tx) + m11 * tx) * ty;
+      }
+
+      // Geometry grid — decoupled from heightmap pixel resolution; fine
+      // shading detail comes from the baked normal map, not vertex density.
+      const GX = 140;
+      const gz = Math.round(GX * (DEPTH / WIDTH));
+      const pos = [], uv = [], vmask = [];
+      for (let r = 0; r <= gz; r++) {
+        for (let c = 0; c <= GX; c++) {
+          const u = c / GX, v = r / gz;
+          const h01 = sampleHeight01(u, v);
+          const elevM = elevMin + h01 * (elevMax - elevMin);
+          const wx = (u - 0.5) * WIDTH;
+          const wz = (v - 0.5) * DEPTH;
+          const wy = (elevM / 1000) * VERT_EXAGGERATION;
+          pos.push(wx, wy, wz);
+          uv.push(u, 1 - v);
+          vmask.push(sampleMask01(u, v));
+        }
+      }
+
+      // Only emit triangles for quads substantially inside the real watershed
+      // boundary polygon — this is what cuts the mesh to the ridge-defined
+      // drainage divide instead of a rectangular bounding box.
+      const idx = [];
+      for (let r = 0; r < gz; r++) {
+        for (let c = 0; c < GX; c++) {
+          const a = r * (GX + 1) + c, b = a + 1;
+          const d = a + (GX + 1), e = d + 1;
+          const avg = (vmask[a] + vmask[b] + vmask[d] + vmask[e]) / 4;
+          if (avg >= 0.06) idx.push(a, d, b, b, d, e);
+        }
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+
+      const maxAniso = renderer.capabilities.getMaxAnisotropy();
+      const colorTex = texLoader.load(COLOR_URL);
+      colorTex.colorSpace = THREE.SRGBColorSpace;
+      colorTex.anisotropy = maxAniso;
+      const normalTex = texLoader.load(NORMAL_URL);
+      normalTex.anisotropy = maxAniso;
+
+      const mat = new THREE.MeshStandardMaterial({
+        map: colorTex,
+        normalMap: normalTex,
+        normalScale: new THREE.Vector2(1.4, 1.4),
+        roughness: 0.9,
+        metalness: 0.0,
+      });
+
+      const mesh = new THREE.Mesh(geo, mat);
+      scene.add(mesh);
+
+      controls.target.set(0, (elevMin + (elevMax - elevMin) * 0.25) / 1000 * VERT_EXAGGERATION, 0);
+
+      document.getElementById('hud-elev').textContent =
+        `${Math.round(elevMin)}–${Math.round(elevMax)} m`;
+      document.getElementById('loading').classList.add('hidden');
+
+      // ── Terrain queries in world space (wrap the u/v samplers above) ────
+      function heightAt(wx, wz) {
+        const u = Math.min(1, Math.max(0, wx / WIDTH + 0.5));
+        const v = Math.min(1, Math.max(0, wz / DEPTH + 0.5));
+        const elevM = elevMin + sampleHeight01(u, v) * (elevMax - elevMin);
+        return (elevM / 1000) * VERT_EXAGGERATION;
+      }
+      function maskAt(wx, wz) {
+        const u = Math.min(1, Math.max(0, wx / WIDTH + 0.5));
+        const v = Math.min(1, Math.max(0, wz / DEPTH + 0.5));
+        return sampleMask01(u, v);
+      }
+      function gradAt(wx, wz) {
+        const s = 0.06;
+        return {
+          dx: (heightAt(wx + s, wz) - heightAt(wx - s, wz)) / (2 * s),
+          dz: (heightAt(wx, wz + s) - heightAt(wx, wz - s)) / (2 * s),
+        };
+      }
+      // Wider-radius gradient: looks across a local depression/flat to find
+      // the real regional downhill direction, instead of the near-zero
+      // gradient a particle sees from inside the depression itself.
+      function gradAtWide(wx, wz) {
+        const s = 0.42;
+        return {
+          dx: (heightAt(wx + s, wz) - heightAt(wx - s, wz)) / (2 * s),
+          dz: (heightAt(wx, wz + s) - heightAt(wx, wz - s)) / (2 * s),
+        };
+      }
+      const SEA_LEVEL_Y = 0.012; // world-y at ~3m elevation, given the 4x exaggeration
+
+      // ── Per-cell soil saturation ─────────────────────────────────────────
+      const SAT_G = 40;
+      const soilWater = new Float32Array(SAT_G * SAT_G);
+      function satCellIdx(wx, wz) {
+        const fc = Math.max(0, Math.min(SAT_G - 1, Math.round(((wx / WIDTH) + 0.5) * (SAT_G - 1))));
+        const fr = Math.max(0, Math.min(SAT_G - 1, Math.round(((wz / DEPTH) + 0.5) * (SAT_G - 1))));
+        return fr * SAT_G + fc;
+      }
+      function satFrac(wx, wz) { return Math.min(1, soilWater[satCellIdx(wx, wz)] / scenario.capPerCell); }
+      function addSat(wx, wz, amt) { soilWater[satCellIdx(wx, wz)] += amt; }
+      function meanSat() {
+        let sum = 0;
+        for (let i = 0; i < soilWater.length; i++) sum += Math.min(1, soilWater[i] / scenario.capPerCell);
+        return sum / soilWater.length;
+      }
+
+      // ── Rain particles ───────────────────────────────────────────────────
+      const pPos_ = new Float32Array(MAX_P * 3);
+      const pAlpha_ = new Float32Array(MAX_P);
+      const pCol_ = new Float32Array(MAX_P * 3);
+      const pShape_ = new Float32Array(MAX_P);
+      for (let i = 0; i < MAX_P; i++) pPos_[i * 3 + 1] = 9999;
+
+      const pGeo = new THREE.BufferGeometry();
+      const attrPos = new THREE.BufferAttribute(pPos_, 3); attrPos.setUsage(THREE.DynamicDrawUsage);
+      const attrAlpha = new THREE.BufferAttribute(pAlpha_, 1); attrAlpha.setUsage(THREE.DynamicDrawUsage);
+      const attrCol = new THREE.BufferAttribute(pCol_, 3); attrCol.setUsage(THREE.DynamicDrawUsage);
+      const attrShape = new THREE.BufferAttribute(pShape_, 1); attrShape.setUsage(THREE.DynamicDrawUsage);
+      pGeo.setAttribute('position', attrPos);
+      pGeo.setAttribute('aAlpha', attrAlpha);
+      pGeo.setAttribute('aColor', attrCol);
+      pGeo.setAttribute('aShape', attrShape);
+
+      const pMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        vertexShader: `
+          attribute float aAlpha; attribute vec3 aColor; attribute float aShape;
+          varying float vA; varying vec3 vC; varying float vS;
+          void main() {
+            vA = aAlpha; vC = aColor; vS = aShape;
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = clamp((420.0 + aShape * 180.0) / -mv.z, 3.0, 22.0);
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: `
+          varying float vA; varying vec3 vC; varying float vS;
+          void main() {
+            vec2 uv = gl_PointCoord - 0.5;
+            uv.x *= mix(1.0, 3.0, vS);
+            float r = length(uv);
+            if (r > 0.5) discard;
+            float a = vA * (1.0 - smoothstep(0.12, 0.5, r));
+            gl_FragColor = vec4(vC, a);
+          }
+        `,
+      });
+      const ptsMesh = new THREE.Points(pGeo, pMat);
+      ptsMesh.frustumCulled = false;
+      scene.add(ptsMesh);
+
+      const px_ = new Float32Array(MAX_P), py_ = new Float32Array(MAX_P), pz_ = new Float32Array(MAX_P);
+      const pvx_ = new Float32Array(MAX_P), pvy_ = new Float32Array(MAX_P), pvz_ = new Float32Array(MAX_P);
+      const pstate = new Uint8Array(MAX_P);
+      const ptimer = new Float32Array(MAX_P);
+      const ppool = new Float32Array(MAX_P);
+
+      let stormRunning = false, stormTimer = 0, spawnAccumulator = 0;
+      let totalSpawned = 0, totalInfil = 0, totalRunoff = 0;
+
+      const HY_LEN = 220;
+      const hyRunoff = new Float32Array(HY_LEN), hyInfil = new Float32Array(HY_LEN);
+      let hyIdx = 0, hyMax = 1, hyTick = 0;
+
+      function stormDurationSeconds() { return stormDurationHours * SECONDS_PER_STORM_HOUR; }
+
+      // Rain covers the real watershed's irregular footprint via rejection
+      // sampling against the boundary mask, staying above sea level.
+      function pickSpawnXZ() {
+        for (let tries = 0; tries < 25; tries++) {
+          const wx = (Math.random() - 0.5) * WIDTH;
+          const wz = (Math.random() - 0.5) * DEPTH;
+          if (maskAt(wx, wz) > 0.55 && heightAt(wx, wz) > SEA_LEVEL_Y * 1.5) return [wx, wz];
+        }
+        return [0, -DEPTH * 0.2];
+      }
+
+      function spawnOne(i) {
+        const [wx, wz] = pickSpawnXZ();
+        px_[i] = wx; pz_[i] = wz;
+        py_[i] = heightAt(wx, wz) + 2.2 + Math.random() * 1.6;
+        pvx_[i] = (Math.random() - 0.5) * 0.15;
+        pvz_[i] = (Math.random() - 0.5) * 0.15;
+        pvy_[i] = 0;
+        pstate[i] = FALLING; ptimer[i] = 0; ppool[i] = 0;
+        pAlpha_[i] = 0.94; pShape_[i] = 1.0;
+        pCol_.set(C_FALL, i * 3);
+      }
+
+      function stepSim(dt) {
+        if (stormRunning) stormTimer += dt;
+        const stormDurSec = stormDurationSeconds();
+
+        if (stormRunning && stormTimer < stormDurSec) {
+          spawnAccumulator += rainRate * SPAWN_PER_INHR_PER_SEC * dt;
+          let need = Math.floor(spawnAccumulator);
+          spawnAccumulator -= need;
+          if (need > 0) {
+            need = Math.min(need, 140);
+            let done = 0;
+            for (let i = 0; i < MAX_P && done < need; i++) {
+              if (pstate[i] === DONE) { spawnOne(i); done++; totalSpawned++; }
+            }
+          }
+        }
+
+        for (let i = 0; i < MAX_P; i++) {
+          const s = pstate[i];
+          if (s === DONE) continue;
+          const tx = px_[i], tz = pz_[i];
+          const tY = heightAt(tx, tz);
+          const inMask = maskAt(tx, tz) > 0.06;
+
+          if (s === FALLING) {
+            py_[i] -= 7.0 * dt;
+            px_[i] += pvx_[i] * dt; pz_[i] += pvz_[i] * dt;
+            if (py_[i] <= tY + 0.02) {
+              py_[i] = tY + 0.01;
+              pShape_[i] = 0.0;
+              const sf = satFrac(px_[i], pz_[i]);
+              if (Math.random() < scenario.ksat * (1 - sf)) {
+                pstate[i] = INFILTRATING; ptimer[i] = 0.65 + Math.random() * 0.45;
+                addSat(px_[i], pz_[i], 1); pCol_.set(C_INFIL, i * 3);
+              } else {
+                pstate[i] = FLOWING; pCol_.set(C_FLOW, i * 3);
+              }
+            }
+          } else if (s === FLOWING || s === POOLED) {
+            if (!inMask || tY <= SEA_LEVEL_Y) {
+              pstate[i] = EXITING; ptimer[i] = 0.8; pCol_.set(C_OCEAN, i * 3);
+              continue;
+            }
+            const { dx, dz } = gradAt(tx, tz);
+            const slope = Math.sqrt(dx * dx + dz * dz) + 1e-5;
+            const wide = gradAtWide(tx, tz);
+            const wideSlope = Math.sqrt(wide.dx * wide.dx + wide.dz * wide.dz) + 1e-5;
+
+            // Only truly pool when BOTH the local and the wider-radius
+            // gradient are flat — i.e. a genuine basin, not a small
+            // resampling pit with a real slope just beyond it (the DEM is
+            // also depression-filled at bake time, so this should be rare).
+            if (s === POOLED || (slope < 0.006 && wideSlope < 0.004)) {
+              pstate[i] = POOLED; ppool[i] += dt; pCol_.set(C_POOL, i * 3);
+              pvx_[i] *= Math.max(0, 1 - dt * 4); pvz_[i] *= Math.max(0, 1 - dt * 4);
+              const sfp = satFrac(px_[i], pz_[i]);
+              if (Math.random() < scenario.ksat * (1 - sfp) * dt * 3.0) {
+                pstate[i] = INFILTRATING; ptimer[i] = 0.8 + Math.random() * 0.3;
+                addSat(px_[i], pz_[i], 1); pCol_.set(C_INFIL, i * 3);
+              } else if (ppool[i] > 1.2) {
+                // Escape using whichever gradient has signal, so the kick
+                // actually heads downhill instead of a fixed direction.
+                const esc = wideSlope > 0.006 ? wide : (slope > 1.5e-5 ? { dx, dz } : { dx: 0, dz: 1 });
+                const escMag = Math.sqrt(esc.dx * esc.dx + esc.dz * esc.dz) + 1e-5;
+                pstate[i] = FLOWING; ppool[i] = 0;
+                pvx_[i] = -(esc.dx / escMag) * 0.7; pvz_[i] = -(esc.dz / escMag) * 0.7;
+                pCol_.set(C_FLOW, i * 3);
+              }
+            } else {
+              pstate[i] = FLOWING; ppool[i] = 0; pCol_.set(C_FLOW, i * 3);
+              // Use the wider gradient when the immediate one is nearly
+              // flat (a shallow depression) so flow keeps heading toward
+              // the real regional low point instead of stalling.
+              const useWide = slope < 0.01 && wideSlope > slope;
+              const gx = useWide ? wide.dx : dx, gz = useWide ? wide.dz : dz;
+              const gslope = useWide ? wideSlope : slope;
+              const speed = Math.min((1 / scenario.n) * Math.sqrt(gslope) * 0.22, 4.5);
+              const targetVx = -(gx / gslope) * speed, targetVz = -(gz / gslope) * speed;
+              const blend = Math.min(1, dt * 4.5);
+              pvx_[i] = pvx_[i] * (1 - blend) + targetVx * blend;
+              pvz_[i] = pvz_[i] * (1 - blend) + targetVz * blend;
+              px_[i] += pvx_[i] * dt; pz_[i] += pvz_[i] * dt;
+              py_[i] = heightAt(px_[i], pz_[i]) + 0.01;
+
+              const sfF = satFrac(px_[i], pz_[i]);
+              if (Math.random() < scenario.ksat * (1 - sfF) * dt * 0.4) {
+                pstate[i] = INFILTRATING; ptimer[i] = 0.6 + Math.random() * 0.4;
+                addSat(px_[i], pz_[i], 1); pCol_.set(C_INFIL, i * 3);
+              }
+            }
+          } else if (s === EXITING) {
+            ptimer[i] -= dt;
+            py_[i] -= 0.05 * dt;
+            pAlpha_[i] = Math.max(0, ptimer[i] / 0.8) * 0.85;
+            if (ptimer[i] <= 0) {
+              totalRunoff++;
+              pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999;
+              continue;
+            }
+          } else if (s === INFILTRATING) {
+            const maxT = 0.9;
+            ptimer[i] -= dt;
+            pAlpha_[i] = Math.max(0, ptimer[i] / maxT) * 0.92;
+            py_[i] -= 0.03 * dt;
+            if (ptimer[i] <= 0) {
+              totalInfil++;
+              pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999;
+              continue;
+            }
+          }
+
+          pPos_[i * 3] = px_[i]; pPos_[i * 3 + 1] = py_[i]; pPos_[i * 3 + 2] = pz_[i];
+        }
+
+        attrPos.needsUpdate = true; attrAlpha.needsUpdate = true;
+        attrCol.needsUpdate = true; attrShape.needsUpdate = true;
+
+        hyTick++;
+        if (hyTick >= 4) {
+          hyTick = 0;
+          hyRunoff[hyIdx] = totalRunoff; hyInfil[hyIdx] = totalInfil;
+          hyMax = Math.max(hyMax, totalRunoff + totalInfil + 1);
+          hyIdx = (hyIdx + 1) % HY_LEN;
+          drawHydro();
+        }
+        updateHUD();
+
+        if (stormRunning && stormTimer >= stormDurSec) {
+          let any = false;
+          for (let i = 0; i < MAX_P; i++) { if (pstate[i] !== DONE) { any = true; break; } }
+          if (!any) {
+            stormRunning = false;
+            const btn = document.getElementById('btn-storm');
+            btn.disabled = false; btn.textContent = 'Run Storm'; btn.classList.remove('running');
+            document.getElementById('hud-status').textContent =
+              `Done — ${Math.round(totalInfil / totalSpawned * 100)}% infiltrated, ${Math.round(totalRunoff / totalSpawned * 100)}% reached the ocean`;
+          }
+        }
+      }
+
+      function updateHUD() {
+        document.getElementById('hud-scenario').textContent = scenario.name;
+        document.getElementById('hud-count').textContent = totalSpawned;
+        if (totalSpawned > 0) {
+          document.getElementById('hud-infil-pct').textContent = Math.round(totalInfil / totalSpawned * 100) + '%';
+          document.getElementById('hud-runoff-pct').textContent = Math.round(totalRunoff / totalSpawned * 100) + '%';
+        } else {
+          document.getElementById('hud-infil-pct').textContent = '—';
+          document.getElementById('hud-runoff-pct').textContent = '—';
+        }
+        document.getElementById('hud-sat').textContent = Math.round(meanSat() * 100) + '%';
+      }
+
+      const hCanvas = document.getElementById('c-hydro');
+      const hCtx = hCanvas.getContext('2d');
+      const HW = 200, HH = 100;
+      function drawHydro() {
+        hCtx.clearRect(0, 0, HW, HH);
+        if (totalSpawned === 0) {
+          hCtx.fillStyle = 'rgba(140,180,120,0.3)';
+          hCtx.font = '10px ui-monospace, monospace';
+          hCtx.fillText('Run a storm to see data', 10, 52);
+          return;
+        }
+        hCtx.strokeStyle = 'rgba(100,140,80,0.28)'; hCtx.lineWidth = 1;
+        hCtx.beginPath(); hCtx.moveTo(28, 6); hCtx.lineTo(28, HH - 14); hCtx.lineTo(HW - 5, HH - 14); hCtx.stroke();
+        const plotLine = (data, color) => {
+          hCtx.beginPath(); hCtx.strokeStyle = color; hCtx.lineWidth = 1.6;
+          let first = true;
+          for (let k = 0; k < HY_LEN; k++) {
+            const j = (hyIdx + k) % HY_LEN;
+            const x = 28 + (k / (HY_LEN - 1)) * (HW - 33);
+            const y = (HH - 14) - (data[j] / hyMax) * (HH - 22);
+            if (first) { hCtx.moveTo(x, y); first = false; } else hCtx.lineTo(x, y);
+          }
+          hCtx.stroke();
+        };
+        plotLine(hyInfil, 'rgba(50,200,80,0.88)');
+        plotLine(hyRunoff, 'rgba(60,150,230,0.88)');
+      }
+
+      function resetSim() {
+        stormRunning = false; stormTimer = 0; spawnAccumulator = 0;
+        totalSpawned = 0; totalInfil = 0; totalRunoff = 0;
+        hyRunoff.fill(0); hyInfil.fill(0); hyIdx = 0; hyMax = 1; hyTick = 0;
+        soilWater.fill(0);
+        for (let i = 0; i < MAX_P; i++) { pstate[i] = DONE; pAlpha_[i] = 0; pPos_[i * 3 + 1] = 9999; }
+        attrPos.needsUpdate = true; attrAlpha.needsUpdate = true; attrShape.needsUpdate = true;
+        const btn = document.getElementById('btn-storm');
+        btn.disabled = false; btn.textContent = 'Run Storm'; btn.classList.remove('running');
+        document.getElementById('hud-status').textContent = 'Select a scenario and run a storm';
+        updateHUD(); drawHydro();
+      }
+
+      document.querySelectorAll('.sc-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sc-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          scenario = SCENARIOS[btn.dataset.sc];
+          updateHUD();
+        });
+      });
+      document.getElementById('btn-storm').addEventListener('click', () => {
+        if (stormRunning) return;
+        resetSim();
+        stormRunning = true;
+        const btn = document.getElementById('btn-storm');
+        btn.disabled = true; btn.textContent = 'Storm running…'; btn.classList.add('running');
+        document.getElementById('hud-status').textContent = 'Storm active…';
+      });
+      document.getElementById('btn-reset').addEventListener('click', resetSim);
+      document.getElementById('intensity').addEventListener('input', (e) => {
+        rainRate = parseFloat(e.target.value);
+        document.getElementById('intensity-val').textContent = rainRate.toFixed(1) + ' in/hr';
+      });
+      document.getElementById('duration').addEventListener('input', (e) => {
+        stormDurationHours = parseFloat(e.target.value);
+        const fmt = stormDurationHours < 1 ? stormDurationHours.toFixed(2) : stormDurationHours.toFixed(1);
+        document.getElementById('duration-val').textContent = fmt + ' hr';
+      });
+
+      const btnStorm = document.getElementById('btn-storm');
+      btnStorm.disabled = false; btnStorm.textContent = 'Run Storm';
+      document.getElementById('btn-reset').disabled = false;
+
+      updateHUD();
+      drawHydro();
+      simStep = stepSim;
+    }
+
+    build().catch(err => {
+      document.getElementById('loading').textContent = 'FAILED TO LOAD TERRAIN';
+      console.error(err);
+    });
+
+    // ── Resize ───────────────────────────────────────────────────────────
+    function onResize() {
+      const W = window.innerWidth, H = window.innerHeight;
+      renderer.setSize(W, H);
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // ── Animation loop ───────────────────────────────────────────────────
+    let prevT = 0;
+    function animate(t) {
+      requestAnimationFrame(animate);
+      const dt = Math.min((t - prevT) / 1000, 0.05) || 0;
+      prevT = t;
+      if (simStep) simStep(dt);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

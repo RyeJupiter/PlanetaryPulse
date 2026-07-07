@@ -1,0 +1,22 @@
+{
+  "elevMin": -60.0,
+  "elevMax": 986.06640625,
+  "heightmap": {
+    "w": 208,
+    "h": 320
+  },
+  "bbox": {
+    "west": -122.20988596,
+    "east": -121.95333204,
+    "south": 36.954573610000004,
+    "north": 37.269301389999995
+  },
+  "aspect": 0.6502827316224445,
+  "sourceZoom": 13,
+  "contextBufferPct": 3,
+  "watershed": {
+    "name": "San Lorenzo River",
+    "huc10": "1806001502",
+    "areaSqKm": 352.85
+  }
+}
