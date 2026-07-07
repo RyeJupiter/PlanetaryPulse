@@ -95,8 +95,15 @@
       "properties": {
         "id": "knepp-001",
         "name": "Knepp Estate Rewilding",
-        "summary": "Large-scale rewilding on former farmland in West Sussex, where free-roaming grazing animals, scrub succession, and dynamic habitat mosaics drive biodiversity recovery. Isabella Tree's book Wilding helped make Knepp one of the defining public stories of modern rewilding.",
+        "summary": "Large-scale rewilding on former farmland in West Sussex, where free-roaming grazing animals, scrub succession, and dynamic habitat mosaics drive biodiversity recovery. Isabella Tree's book Wilding helped make Knepp one of the defining public stories of modern rewilding — and its water story is as important as its wildlife one: a de-canalized, floodplain-reconnected River Adur and an enclosed beaver reintroduction now feeding England's push toward licensed wild beaver releases.",
         "size": "1,400 ha",
+        "highlights": [
+          "Environment Agency removed the river's largest weir in 2012; sea trout were migrating upstream again within about a year",
+          "From 2016, artificial banks along the River Adur were removed, letting the river reflood its natural meadows instead of staying channelized",
+          "The River Adur restoration won the UK River Prize's Innovative & Novel Project award in 2015",
+          "Beavers reintroduced into a river-corridor enclosure in February 2020 — absent from Sussex for centuries — have since bred twice, producing four kits",
+          "A 2025 UK government policy change opens the door for Knepp's beaver offspring to be released into open river catchments rather than staying enclosed"
+        ],
         "images": [
           {
             "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Free-ranging_longhorn_cattle_at_Knepp_Wildland.jpg",
@@ -123,7 +130,7 @@
             "source": "https://commons.wikimedia.org/wiki/File:Deer_grazing_at_Knepp_Wildland.jpg"
           }
         ],
-        "tags": "rewilding,biodiversity,temperate,uk,west-sussex",
+        "tags": "rewilding,biodiversity,temperate,uk,west-sussex,floodplain-reconnection,river-restoration,beaver-reintroduction",
         "links": [
           {
             "text": "Knepp",
@@ -136,6 +143,14 @@
           {
             "text": "Wilding by Isabella Tree",
             "url": "https://isabellatree.com/books/"
+          },
+          {
+            "text": "Knepp Wildland (Wikipedia — river restoration & beavers)",
+            "url": "https://en.wikipedia.org/wiki/Knepp_Wildland"
+          },
+          {
+            "text": "Knepp: Licensed Beaver Reintroductions Allowed",
+            "url": "https://knepp.co.uk/2025/02/licenced-beaver-reintroductions-allowed/"
           }
         ],
         "intervention_start": "2001-01",
@@ -490,6 +505,540 @@
         "coordinates": [
           -15.95,
           16.06
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bcr-001",
+        "name": "Bridge Creek Beaver Dam Analog Restoration",
+        "summary": "A degraded, incised tributary of Oregon's John Day River rehydrated with 120+ beaver dam analogs — simple wooden-post-and-willow structures that let real beavers take over, raising the water table and reconnecting the stream to its floodplain along a 32 km reach. NASA has used Landsat imagery to track the resulting vegetation and wetland expansion.",
+        "size": "32 km stream corridor, 120+ structures",
+        "images": [
+          {
+            "url": "https://mediasvc.eurekalert.org/Api/v1/Multimedia/579456e6-d32a-447c-99ce-89a1548e6368/Rendition/low-res/Content/Public",
+            "credit": "Utah State University",
+            "alt": "Beaver dam analog structures built to encourage beaver activity and restore stream habitat",
+            "source": "https://www.eurekalert.org/multimedia/880370"
+          }
+        ],
+        "tags": "beaver-dam-analog,check-dams,stream-restoration,oregon,usa,salmonid-habitat",
+        "links": [
+          {
+            "text": "NASA Landsat: Beaver Believers",
+            "url": "https://www.nasa.gov/missions/landsat/researchers-become-beaver-believers-after-measuring-the-impacts-of-rewilding/"
+          },
+          {
+            "text": "NOAA Fisheries: Oregon Beavers Engineer Better Fish Habitat",
+            "url": "https://www.fisheries.noaa.gov/feature-story/oregon-beavers-engineer-better-fish-habitat-more-fish"
+          },
+          {
+            "text": "USDA Forest Service Science Findings #259",
+            "url": "https://www.fs.usda.gov/pnw/sciencef/scifi259.pdf"
+          }
+        ],
+        "intervention_start": "2009-01",
+        "history_start": "2005-01",
+        "history_note": "Bridge Creek became an Intensively Monitored Watershed in 2007; BDA installation began in 2009.",
+        "pre_intervention_observable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120.1,
+          44.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tbs-001",
+        "name": "Tarun Bharat Sangh Johad Network",
+        "summary": "Rajendra Singh (the 'Waterman of India') and Tarun Bharat Sangh organized villages across Rajasthan's Alwar district to rebuild traditional johads — small earthen check dams — at enormous scale. Over 11,800 structures across 1,200+ villages raised groundwater levels an average of 6 meters and brought five rivers, including the Arvari, back to perennial flow after decades dry.",
+        "size": "11,800+ structures across 1,200+ villages",
+        "images": [
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Rajendra_Singh_Large_Image.jpg",
+            "credit": "Mullookkaaran, CC BY-SA 4.0",
+            "alt": "Portrait of Dr. Rajendra Singh, the \"Waterman of India\"",
+            "source": "https://commons.wikimedia.org/wiki/File:Rajendra_Singh_Large_Image.jpg"
+          },
+          {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Johad.JPG",
+            "credit": "LRBurdak, CC BY-SA",
+            "alt": "A johad (rainwater-harvesting check dam) in rural Rajasthan",
+            "source": "https://commons.wikimedia.org/wiki/File:Johad.JPG"
+          }
+        ],
+        "tags": "check-dams,water-harvesting,river-revival,rajasthan,india,groundwater",
+        "links": [
+          {
+            "text": "Tarun Bharat Sangh (Wikipedia)",
+            "url": "https://en.wikipedia.org/wiki/Tarun_Bharat_Sangh"
+          },
+          {
+            "text": "Rajendra Singh (Wikipedia)",
+            "url": "https://en.wikipedia.org/wiki/Rajendra_Singh"
+          },
+          {
+            "text": "CEEW: Johad Water Conservation Case Study",
+            "url": "https://www.ceew.in/sustainable-agriculture-initiatives/tarun-bharat-sangh-johad-water-conservation-harvesting-and-revitalisation"
+          },
+          {
+            "text": "EcoTippingPoints: Water Warriors",
+            "url": "https://ecotippingpoints.com/our-stories/indepth/india-rajasthan-rainwater-harvest-restoration-groundwater-johad/"
+          }
+        ],
+        "intervention_start": "1985-01",
+        "history_start": "2000-03",
+        "history_note": "Tarun Bharat Sangh's johad-building began in the mid-1980s and the Arvari river returned to perennial flow by 1995 — well before the MODIS satellite record starts (Feb 2000), so EarthPulse can only show the post-intervention trajectory.",
+        "pre_intervention_observable": false
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.6346,
+          27.553
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mri-001",
+        "name": "Mulloon Rehydration Initiative",
+        "summary": "A landscape-scale natural sequence farming project on Mulloon Creek in New South Wales, Australia, using willow-anchored 'leaky weirs' to slow, spread, and re-infiltrate flow. What began as a 3 km pilot in 2006 has grown to stream rehabilitation across 16 properties spanning roughly 23,000 hectares, with peer-reviewed monitoring showing sustained dry-season flow and major gains in soil carbon and nutrients.",
+        "size": "23,000 ha across 16 properties",
+        "images": [
+          {
+            "url": "https://everydayfutures.nma.gov.au/wp-content/uploads/2017/06/leaky-weir-mulloon.png",
+            "credit": "Mulloon Institute",
+            "alt": "Leaky weir at Mulloon Creek",
+            "source": "https://everydayfutures.nma.gov.au/project/leaky-weir/"
+          },
+          {
+            "url": "https://mullooninstitute.org/wp-content/uploads/2024/11/5_8.-Westview-Autumn-2020.jpg",
+            "credit": "The Mulloon Institute",
+            "alt": "Westview Farm, Autumn 2020, after rehydration works",
+            "source": "https://mullooninstitute.org/projects/mulloon-rehydration-initiative/"
+          }
+        ],
+        "tags": "leaky-weirs,natural-sequence-farming,stream-rehabilitation,australia,new-south-wales,drought-resilience",
+        "links": [
+          {
+            "text": "Mulloon Institute Projects",
+            "url": "https://mullooninstitute.org/projects/"
+          },
+          {
+            "text": "Mulloon Rehydration Initiative (Ecological Management & Restoration)",
+            "url": "https://onlinelibrary.wiley.com/doi/10.1111/emr.12549"
+          },
+          {
+            "text": "The Conversation: Why Is Everyone Talking About Natural Sequence Farming?",
+            "url": "https://theconversation.com/why-is-everyone-talking-about-natural-sequence-farming-106232"
+          }
+        ],
+        "intervention_start": "2006-01",
+        "history_start": "2002-01",
+        "history_note": "The Mulloon Creek leaky-weir pilot began in 2006, later scaling into the multi-property Mulloon Rehydration Initiative.",
+        "pre_intervention_observable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          149.5,
+          -35.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cvp-001",
+        "name": "Carzalia Valley Produce",
+        "summary": "Commercial-scale Pima cotton, onion, and chile operation in New Mexico using Advancing Eco Agriculture's plant-sap-analysis and biological-input program. James Johnson reported 1,490 lbs/acre cotton yield in 2020 against an 880 lbs/acre county average.",
+        "size": "~3,000-3,100 acres",
+        "images": [
+          {
+            "url": "https://onionworld.net/wp-content/uploads/2022/06/Four-guys_James-Johnson.jpg",
+            "credit": "courtesy W.R. Johnson & Sons",
+            "alt": "James Johnson with sons and father at their Columbus, NM operation",
+            "source": "https://onionworld.net/2022/06/30/on-the-cutting-edge/"
+          }
+        ],
+        "tags": "row-crop,cotton,plant-sap-analysis,new-mexico,industrial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Advancing Eco Agriculture",
+            "url": "https://advancingecoag.com"
+          }
+        ],
+        "history_note": "Exact date of regenerative transition not publicly documented; 2020 yield figure is the earliest confirmed data point from Advancing Eco Agriculture's case-study coverage.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -107.643,
+          31.826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ofo-001",
+        "name": "Omeg Family Orchards",
+        "summary": "Commercial cherry orchards in the Columbia River Gorge running Advancing Eco Agriculture's biological nutrition program. Mike Omeg's operation reported an 89% increase in trunk cross-sectional area versus a control group — the most formally-structured trial in AEA's public case-study set.",
+        "size": "~3,000-3,600 acres",
+        "images": [
+          {
+            "url": "https://images.squarespace-cdn.com/content/v1/59e469dbccc5c56363c0d9d0/1511867070592-GVP1GHI9PJWI3TB2SQ5G/Orchards-Spring-Cherry-Blossoms.jpg",
+            "credit": "Omeg Family Orchards",
+            "alt": "Cherry trees in full spring blossom",
+            "source": "https://www.omegfamilyorchards.com/orchards"
+          }
+        ],
+        "tags": "orchard,cherries,plant-sap-analysis,oregon,industrial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Advancing Eco Agriculture",
+            "url": "https://advancingecoag.com"
+          }
+        ],
+        "history_note": "Exact date of regenerative transition not publicly documented.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.179,
+          45.594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kmf-001",
+        "name": "Keith Morter Farm",
+        "summary": "Second-generation dryland wheat operation in Gilliam County, Oregon, that reduced nitrogen use and adopted holistic biological management, reporting qualitative gains in soil health, crop resilience, and pest resistance.",
+        "size": "~3,900 acres",
+        "images": [],
+        "tags": "dryland-wheat,plant-sap-analysis,oregon,industrial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "AEA Podcast Ep. 123",
+            "url": "https://advancingecoag.com/podcast/episode-123-breaking-traditions-in-dry-climates-with-keith-morter/"
+          }
+        ],
+        "history_note": "Exact date of regenerative transition not publicly documented; no yield or Brix figures were published alongside the qualitative claims.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -119.842,
+          45.503
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jew-001",
+        "name": "Jake Ewing Farm",
+        "summary": "A 1,300-acre corn operation in western Illinois that added foliar biological nutrition and cut herbicide/fungicide use, reporting yields of 275-285 bu/acre against a backdrop of large-scale commodity competition.",
+        "size": "~1,300 acres",
+        "images": [],
+        "tags": "row-crop,corn,plant-sap-analysis,illinois,industrial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "AEA Podcast Ep. 161",
+            "url": "https://advancingecoag.com/podcast/episode-161-increasing-corn-yields-with-fewer-inputs-with-jake-ewing/"
+          }
+        ],
+        "history_note": "Only a general 'western Illinois' location is publicly documented, not a specific town — this pin is an approximate regional placement, not the exact farm site.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -90.7,
+          40.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "srp-001",
+        "name": "Swift River Pecans",
+        "summary": "First-generation pecan grower Troy Swift's central Texas orchards, where a biological nutrition program is credited with up to 6x yield increases in some varieties while cutting nitrogen inputs from 80-100 lbs/acre to 2.4 lbs/acre and eliminating herbicides.",
+        "size": "126 acres",
+        "images": [
+          {
+            "url": "https://static.wixstatic.com/media/02f838_695570cf7bd04b73a646a993c5b9bff8~mv2_d_1440_1208_s_2.jpg",
+            "credit": "Swift River Pecans LLC",
+            "alt": "Swift River Pecans building exterior at sunset",
+            "source": "https://www.swiftriverpecans.com/"
+          }
+        ],
+        "tags": "orchard,pecans,plant-sap-analysis,texas,commercial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Noble Research Institute",
+            "url": "https://www.noble.org/regenerative-agriculture/producer-perspectives/swift-river-pecans-implements-regenerative-agriculture-approach-to-pecan-farming/"
+          }
+        ],
+        "history_note": "Troy Swift began farming at age 42; exact start year of the regenerative program not confirmed from public sources.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.766,
+          29.833
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "aff-001",
+        "name": "Alexandre Family Farm",
+        "summary": "Organic A2/A2 dairy on the Northern California coast — Advancing Eco Agriculture's first 'Groundwork' consulting client as of April 2025. No quantified results have been published yet.",
+        "size": "~9,000 acres (4,300 farmed)",
+        "images": [
+          {
+            "url": "https://alexandrefamilyfarm.com/cdn/shop/files/Homepage_Banner_2048x.jpg?v=1653602008",
+            "credit": "Alexandre Family Farm, LLC",
+            "alt": "Alexandre Family Farm homepage banner",
+            "source": "https://alexandrefamilyfarm.com/"
+          }
+        ],
+        "tags": "dairy,a2a2,plant-sap-analysis,california,industrial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Advancing Eco Agriculture",
+            "url": "https://advancingecoag.com"
+          }
+        ],
+        "intervention_start": "2025-04",
+        "history_note": "AEA's Groundwork consulting relationship began April 2025; too recent for any outcome data yet.",
+        "pre_intervention_observable": false,
+        "history_start": "2020-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -124.202,
+          41.756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sff-001",
+        "name": "Singing Frogs Farm",
+        "summary": "Elizabeth and Paul Kaiser's 8-acre no-till vegetable farm in Sebastopol, California — the best independently-verified case study in EarthPulse's regenerative-agriculture research. A study published in the 2022 book 'What Your Food Ate' measured water infiltration ~7x greater, soil carbon >400% higher, and soil biology ~300% higher than a neighboring tilled organic farm; a separate 10-year UC Davis study measured soil organic matter reaching 1.2%.",
+        "size": "8 acres (~3 cultivated)",
+        "images": [
+          {
+            "url": "https://images.squarespace-cdn.com/content/v1/617f462807184a6f59675174/b0f774ea-0378-4505-9106-8eaba78a41dd/P%26E+1.jpg",
+            "credit": "Singing Frogs Farm",
+            "alt": "Elizabeth and Paul Kaiser of Singing Frogs Farm",
+            "source": "https://www.singingfrogsfarm.com/about/farmers"
+          }
+        ],
+        "tags": "no-till,vegetables,independently-verified,california,water-infiltration,small-farm",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "EarthPulse: Hydrology",
+            "url": "/hydro.html"
+          },
+          {
+            "text": "Press Democrat coverage",
+            "url": "https://www.pressdemocrat.com/article/news/whistling-a-sustainable-tune-singing-frogs-farm-takes-organic-farming-to-n/"
+          }
+        ],
+        "intervention_start": "2007-01",
+        "history_start": "2000-03",
+        "history_note": "Farming since 2007; independent measurements are from a 10-year UC Davis study and a study published in the 2022 book 'What Your Food Ate.'",
+        "pre_intervention_observable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.826,
+          38.402
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "pai-001",
+        "name": "Paicines Ranch — Vineyard Grazing",
+        "summary": "Vineyard Director Kelly Mulville's sheep-integrated vineyard in San Benito County, California: an unusually tall overhead trellis keeps fruit above grazing height, letting 1,700+ sheep graze the whole vineyard in a single day year-round, eliminating tillage, mowing, herbicide, and hand-weeding. Ranch-reported gains include soil organic matter up 66% (2014-2021) and insect abundance 5x a conventional neighboring vineyard.",
+        "size": "25-acre vineyard",
+        "images": [
+          {
+            "url": "https://paicinesranch.com/wp-content/uploads/2020/09/Sheep-in-Vineyard-0058.jpg",
+            "credit": "Paicines Ranch",
+            "alt": "Sheep grazing under the tall trellis vineyard system",
+            "source": "https://paicinesranch.com/our-work/vineyard/"
+          },
+          {
+            "url": "https://paicinesranch.com/wp-content/uploads/2025/09/KellyMulville.jpg",
+            "credit": "Paicines Ranch",
+            "alt": "Portrait of Kelly Mulville, vineyard/grazing director",
+            "source": "https://paicinesranch.com/our-work/vineyard/"
+          }
+        ],
+        "tags": "vineyard,silvopasture,holistic-grazing,california,sheep-integration",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Paicines Ranch vineyard",
+            "url": "https://paicinesranch.com/our-work/vineyard/"
+          },
+          {
+            "text": "Conservation Stories Ep. 38 (Mar 2025)",
+            "url": "https://www.sara-conservation.com/podcast-episodes/episode-38"
+          }
+        ],
+        "intervention_start": "2017-01",
+        "history_start": "2013-01",
+        "history_note": "Vineyard planted in two phases (12.5 acres in 2017, 12 more in 2020); first in-season grazing summer 2021; first harvest September 2021.",
+        "pre_intervention_observable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.288,
+          36.724
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sqc-001",
+        "name": "Squeeze Citrus",
+        "summary": "Herb Young left a 36-year career in pesticide research and development at Bayer to build a regenerative citrus grove near Thomasville, Georgia. His own same-day-harvest comparison against two neighboring conventional groves, tested at a USDA-certified lab, found vitamin, flavonoid, and carotenoid levels 8x higher on average, with three flavonoids entirely absent from the conventional fruit.",
+        "size": "Small-acreage commercial grove",
+        "images": [
+          {
+            "url": "https://squeezecitrus.com/cdn/shop/files/SQUEEZE_CITRUS_VIBRANT_SYDNEY_RENEE_PHOTOS-819_websize_1.jpg?v=1725814588&width=1500",
+            "credit": "Squeeze Citrus LLC",
+            "alt": "Squeeze Citrus grove",
+            "source": "https://squeezecitrus.com/pages/about-us"
+          }
+        ],
+        "tags": "citrus,nutrient-density,cover-crops,georgia,commercial-scale",
+        "links": [
+          {
+            "text": "EarthPulse: Regenerative Agriculture at Scale",
+            "url": "/regen-ag.html"
+          },
+          {
+            "text": "Squeeze Citrus",
+            "url": "https://squeezecitrus.com/"
+          },
+          {
+            "text": "AEA Grower Spotlight",
+            "url": "https://advancingecoag.com/article/squeeze-citrus/"
+          }
+        ],
+        "intervention_start": "2021-01",
+        "history_note": "Herb Young retired after 36-40 years at Bayer and spent about a year studying regenerative agriculture before planting; exact planting year is approximate based on available interviews.",
+        "pre_intervention_observable": false,
+        "history_start": "2015-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.979,
+          30.837
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "flf-001",
+        "name": "First Light Farms",
+        "summary": "A network of nearly 200 farmers across New Zealand's North and South Islands, founded in 2006 to supply 100% grass-fed wagyu beef and venison outside the commodity meat system. Individual member farms — like the Griffin family's 4th-generation property at Rangiuru, diversified across bush, forestry, avocados, kiwifruit, and pasture — are moving away from soluble fertilizer and agrichemicals toward regenerative management.",
+        "size": "~200 farms nationwide",
+        "images": [
+          {
+            "url": "https://www.firstlight.farm/nz/wp-content/uploads/2024/05/long-grass-dusk-BGT-0-640-0-426-crop.jpg",
+            "credit": "First Light Farms",
+            "alt": "Pastoral landscape at dusk",
+            "source": "https://www.firstlight.farm/nz/about/our-farmers/wagyu/"
+          }
+        ],
+        "tags": "grass-fed,wagyu,venison,new-zealand,farmer-network,regenerative-transition",
+        "links": [
+          {
+            "text": "First Light Farms",
+            "url": "https://www.firstlight.farm/nz/about/"
+          },
+          {
+            "text": "Force of Nature Meats: Supplier Highlight",
+            "url": "https://forceofnature.com/blogs/inside-the-herd/supplier-highlight-first-light-farms"
+          }
+        ],
+        "intervention_start": "2006-01",
+        "history_start": "2002-01",
+        "history_note": "First Light was founded in 2006; the regenerative-transition timeline for individual member farms (e.g. the Griffin family at Rangiuru) is not separately documented, so this entry represents the network's founding, not a specific farm's conversion date.",
+        "pre_intervention_observable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          176.9,
+          -39.49
         ]
       }
     }

@@ -90,7 +90,25 @@
     return [];
   }
 
-  function createSproutBillboard(size, isSelected) {
+  // Twemoji's sprout (U+1F331), self-hosted as a crisp vector source instead
+  // of relying on each OS's system emoji font — which is what made the old
+  // billboards render inconsistently and look muddy at small sizes.
+  // Source: https://github.com/jdecked/twemoji (CC-BY 4.0) — credited in the
+  // page footer.
+  const SPROUT_SVG_MARKUP =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><path fill="#77B255" d="M22.911 14.398c-1.082.719-2.047 1.559-2.88 2.422-.127-4.245-1.147-9.735-6.772-12.423C12.146-1.658-.833 1.418.328 2.006c2.314 1.17 3.545 4.148 5.034 5.715 2.653 2.792 5.603 2.964 7.071.778 3.468 2.254 3.696 6.529 3.59 11.099-.012.505-.023.975-.023 1.402v14c0 1.104 4 1.104 4 0V23.51c.542-.954 2.122-3.505 4.43-5.294 1.586 1.393 4.142.948 6.463-1.495 1.489-1.567 2.293-4.544 4.607-5.715 1.221-.618-12.801-3.994-12.589 3.392z"/></svg>';
+  const SPROUT_SVG_URL = `data:image/svg+xml;utf8,${encodeURIComponent(SPROUT_SVG_MARKUP)}`;
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function createSproutBillboard(size, isSelected, sproutImg) {
     const canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
@@ -132,16 +150,18 @@
     ctx.arc(cx, cy, outerRadius + borderWidth / 2 + 0.5, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Sprout emoji with a dark stroke for legibility above the disc.
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = `${Math.round(size * 0.54)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-    ctx.lineJoin = "round";
-    ctx.lineWidth = Math.max(2.5, size * 0.05);
-    ctx.strokeStyle = "rgba(10, 16, 12, 0.9)";
-    ctx.strokeText("\uD83C\uDF31", size / 2, size * 0.56);
-    ctx.fillText("\uD83C\uDF31", size / 2, size * 0.56);
-
+    // Sprout icon — drawn from the preloaded vector source (not text), with a
+    // soft drop shadow for legibility above the disc.
+    if (sproutImg) {
+      const iconSize = size * 0.6;
+      const iconX = cx - iconSize / 2;
+      const iconY = cy - iconSize / 2 + size * 0.02;
+      ctx.save();
+      ctx.shadowColor = "rgba(6, 12, 8, 0.55)";
+      ctx.shadowBlur = size * 0.05;
+      ctx.drawImage(sproutImg, iconX, iconY, iconSize, iconSize);
+      ctx.restore();
+    }
     return canvas.toDataURL("image/png");
   }
 
@@ -513,15 +533,19 @@
       billboardScale: 1.14,
       polygonOutline: Cesium.Color.fromCssColorString("#7bdcff"),
     };
-    const sproutIcons = {
-      default: createSproutBillboard(88, false),
-      selected: createSproutBillboard(100, true),
-    };
 
-    fetch("assets/data/projects.geojson")
-      .then((response) => response.json())
-      .then((geojson) => Cesium.GeoJsonDataSource.load(geojson, { clampToGround: true }))
-      .then((dataSource) => {
+    Promise.all([
+      loadImage(SPROUT_SVG_URL),
+      fetch("assets/data/projects.geojson").then((response) => response.json()),
+    ])
+      .then(([sproutImg, geojson]) => {
+        const sproutIcons = {
+          default: createSproutBillboard(128, false, sproutImg),
+          selected: createSproutBillboard(144, true, sproutImg),
+        };
+        return Cesium.GeoJsonDataSource.load(geojson, { clampToGround: true }).then((dataSource) => [dataSource, sproutIcons]);
+      })
+      .then(([dataSource, sproutIcons]) => {
         viewer.dataSources.add(dataSource);
         viewer.zoomTo(dataSource);
 
