@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Regenerative Agriculture at Scale — EarthPulse</title>
+  <meta name="description" content="EarthPulse: how regenerative agriculture works at commercial and industrial scale — plant-health frameworks, named farm case studies, and nutrient-density research, with honest caveats." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .ragPage { display: grid; gap: 32px; }
+
+    .ragHero {
+      padding: 36px 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .ragEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      color: #4f744e;
+      margin-bottom: 12px;
+    }
+    .ragTitle {
+      font-size: clamp(32px, 5vw, 54px);
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: #1e3020;
+      line-height: 1.05;
+      margin: 0 0 16px;
+    }
+    .ragLead {
+      font-size: 17px;
+      line-height: 1.72;
+      color: #263f24;
+      max-width: 68ch;
+      margin: 0 0 22px;
+    }
+    .ragThesisBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 145, 84, 0.42);
+      background: rgba(111, 145, 84, 0.1);
+      font-size: 14px;
+      color: #2a4a2a;
+      line-height: 1.4;
+      max-width: 64ch;
+    }
+    .ragThesisBadge strong { color: #1e3a1e; }
+
+    .ragSectionTitle {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: #1e3020;
+      margin: 0 0 16px;
+    }
+    .ragSectionLabel {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #4f744e;
+      margin-bottom: 14px;
+    }
+
+    .teaserGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .teaserCard {
+      display: block;
+      padding: 20px 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+      text-decoration: none;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .teaserCard:hover {
+      transform: translateY(-2px);
+      border-color: rgba(111, 145, 84, 0.5);
+      box-shadow: 0 14px 32px rgba(117, 97, 48, 0.14);
+    }
+    .teaserIcon { font-size: 26px; margin-bottom: 8px; }
+    .teaserTitle { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: #1e3020; margin-bottom: 8px; }
+    .teaserDesc { font-size: 13px; line-height: 1.6; color: #33502f; margin: 0 0 12px; }
+    .teaserOpen { font-size: 13px; font-weight: 700; color: #3a6a3e; }
+
+    .ragCaveat {
+      padding: 16px 20px;
+      border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.12);
+      font-size: 14px;
+      color: #513a17;
+      line-height: 1.6;
+    }
+
+    .hydroCta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,145,84,0.5);
+      background: rgba(111,145,84,0.14);
+      color: #2e4e2e;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 180ms ease, transform 180ms ease;
+      margin-right: 10px;
+    }
+    .hydroCta:hover  { background: rgba(111,145,84,0.24); transform: translateY(-1px); }
+    .hydroCta.ghost  { background: transparent; }
+
+    @media (max-width: 760px) {
+      .teaserGrid { grid-template-columns: 1fr; }
+      .ragHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="regen-ag">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="ragPage">
+
+      <div class="ragHero">
+        <div class="ragEyebrow">EarthPulse · Regenerative Agriculture</div>
+        <h1 class="ragTitle">Regeneration at Commercial Scale</h1>
+        <p class="ragLead">
+          Most regenerative-agriculture stories are demonstration plots or small conservation ranches. This
+          page is about the other end of the spectrum — growers running thousands of acres of cotton,
+          cherries, corn, and wheat who've adopted biological, soil-first management and are willing to put
+          numbers behind it. We looked closely at one of the field's most visible frameworks — Advancing Eco
+          Agriculture (AEA), founded by John Kempf — plus one grower's own lab-tested results.
+        </p>
+        <div class="ragThesisBadge">
+          <span>🌾</span>
+          <span><strong>The honest framing:</strong> almost everything below is self-reported by the farms and companies involved, not independently re-measured. We say exactly where the evidence is solid and where it isn't.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ragSectionTitle">Go Deeper</div>
+        <div class="teaserGrid">
+          <a class="teaserCard" href="/regen-ag-pyramid.html">
+            <div class="teaserIcon">🧬</div>
+            <div class="teaserTitle">The Plant Health Pyramid</div>
+            <p class="teaserDesc">AEA's plant-sap-analysis diagnostic framework — a four-level model from photosynthesis to secondary metabolites.</p>
+            <span class="teaserOpen">Read more →</span>
+          </a>
+          <a class="teaserCard" href="/regen-ag-case-studies.html">
+            <div class="teaserIcon">🌾</div>
+            <div class="teaserTitle">Case Studies at Scale</div>
+            <p class="teaserDesc">Eight named, commercial farms — thousand-acre row crops down to the best-independently-verified small farm in the research.</p>
+            <span class="teaserOpen">Read more →</span>
+          </a>
+          <a class="teaserCard" href="/regen-ag-squeeze-citrus.html">
+            <div class="teaserIcon">🍊</div>
+            <div class="teaserTitle">Grower Spotlight: Squeeze Citrus</div>
+            <p class="teaserDesc">A former Bayer pesticide researcher's own lab-tested nutrient-density comparison — 8× the vitamin/flavonoid/carotenoid levels of neighboring groves.</p>
+            <span class="teaserOpen">Read more →</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ragSectionTitle">Honest Caveats</div>
+        <div style="display:grid;gap:10px;margin-top:4px;">
+          <div class="ragCaveat">No university, extension, or government trial evaluating AEA's program specifically was found — every number on this page traces back to AEA's own podcast or website, not an outside measurement.</div>
+          <div class="ragCaveat">Brix and plant-sap analysis are contested as reliable standalone indicators: University of Maryland and Mississippi State Extension both caution that readings are confounded by temperature, time of day, and plant moisture, with no reliably demonstrated correlation to nutrient density in independent testing.</div>
+          <div class="ragCaveat">AEA is a for-profit company that sells both consulting <em>and</em> the proprietary biological inputs (Spectrum, Mycogenesis, OP8) its case studies credit — a structural conflict of interest that isn't disclosed on the case-study pages themselves.</div>
+          <div class="ragCaveat">This page's methods are <strong>not</strong> the same as this site's hydrology research — searches turned up no AEA case study tying their program to measured infiltration rate, Ksat, or aquifer recharge. Their drought-resilience claims are framed theoretically (nutritionally-balanced plants supposedly need less water) rather than backed by field infiltration data.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

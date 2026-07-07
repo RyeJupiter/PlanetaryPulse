@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Case Studies at Scale — EarthPulse</title>
+  <meta name="description" content="Named, commercial-scale regenerative farms — from thousand-acre row crops to the best-verified small farm in the research." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .ragPage { display: grid; gap: 32px; }
+    .ragHero {
+      padding: 36px 32px; border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .ragEyebrow { font-family: var(--font-label, var(--font-display)); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: #4f744e; margin-bottom: 12px; }
+    .ragTitle { font-size: clamp(30px, 4.5vw, 48px); font-family: var(--font-display); font-weight: 600; color: #1e3020; line-height: 1.05; margin: 0 0 16px; }
+    .ragLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; }
+    .backLink:hover { text-decoration: underline; }
+
+    .farmGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .farmCard {
+      border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+      overflow: hidden;
+    }
+    .farmImg { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: #d8d2b8; }
+    .farmBody { padding: 18px 20px; }
+    .farmCard h4 { margin: 0 0 6px; font-family: var(--font-display); font-size: 15.5px; color: #1e3020; }
+    .farmMeta { font-size: 12px; color: #3d5c3a; margin-bottom: 8px; font-weight: 600; }
+    .farmCard p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.6; color: #33502f; }
+    .farmCard p:last-child { margin-bottom: 0; }
+    .farmVerified {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10.5px; font-weight: 700; color: #235c2d;
+      background: rgba(60, 160, 80, 0.18); border: 1px solid rgba(60, 160, 80, 0.4);
+      border-radius: 999px; padding: 3px 9px; margin-bottom: 8px;
+    }
+    .farmCard a.farmLink { font-size: 12px; color: #3d5c3a; }
+    .imgCredit { font-size: 10px; color: #5a7256; padding: 4px 20px 0; margin: 0; }
+
+    @media (max-width: 760px) { .farmGrid { grid-template-columns: 1fr; } .ragHero { padding: 24px 20px; } }
+  </style>
+</head>
+
+<body data-page="regen-ag-case-studies">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="ragPage">
+
+      <div class="ragHero">
+        <a class="backLink" href="/regen-ag.html">← Back to Regenerative Agriculture</a>
+        <div class="ragEyebrow" style="margin-top:14px;">EarthPulse · Regenerative Agriculture</div>
+        <h1 class="ragTitle">Case Studies at Scale</h1>
+        <p class="ragLead">
+          These range from thousand-acre row-crop operations to a handful of much smaller, intensively
+          managed farms — all real, named, commercial operations selling into the market, not demonstration
+          plots. Most of the numbers below are company- or farm-reported; where independent, third-party
+          measurement exists, we've flagged it explicitly.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="farmGrid">
+          <div class="farmCard">
+            <img class="farmImg" src="https://onionworld.net/wp-content/uploads/2022/06/Four-guys_James-Johnson.jpg" alt="James Johnson with sons and father at their Columbus, NM operation" loading="lazy" />
+            <p class="imgCredit">Photo: courtesy W.R. Johnson &amp; Sons</p>
+            <div class="farmBody">
+              <h4>Carzalia Valley Produce — Columbus, NM</h4>
+              <div class="farmMeta">~3,000–3,100 acres · Pima cotton, onions, chile</div>
+              <p>James Johnson reported 1,490 lbs/acre cotton yield in 2020 against an 880 lbs/acre county average.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <img class="farmImg" src="https://images.squarespace-cdn.com/content/v1/59e469dbccc5c56363c0d9d0/1511867070592-GVP1GHI9PJWI3TB2SQ5G/Orchards-Spring-Cherry-Blossoms.jpg" alt="Cherry trees in full spring blossom at Omeg Family Orchards" loading="lazy" />
+            <p class="imgCredit">Photo: Omeg Family Orchards</p>
+            <div class="farmBody">
+              <h4>Omeg Family Orchards — The Dalles, OR</h4>
+              <div class="farmMeta">~3,000–3,600 acres · Cherries</div>
+              <p>Mike Omeg's operation reported an 89% increase in trunk cross-sectional area versus a control group — the most formally-structured trial in AEA's case-study set.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <div class="farmBody">
+              <h4>Keith Morter — Eastern Oregon</h4>
+              <div class="farmMeta">~3,900 acres · Dryland wheat</div>
+              <p>Reported qualitative drought-resilience improvements; no yield or Brix figures were published alongside the claim.</p>
+              <p style="font-size:11.5px;color:#5a7256;">No independently-confirmed standalone photo found — omitted rather than use an unverified composite graphic.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <div class="farmBody">
+              <h4>Jake Ewing — Western Illinois</h4>
+              <div class="farmMeta">~1,300 acres · Corn</div>
+              <p>Reported yields of 275–285 bu/acre.</p>
+              <p style="font-size:11.5px;color:#5a7256;">No verified photo found for this operation.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <img class="farmImg" src="https://static.wixstatic.com/media/02f838_695570cf7bd04b73a646a993c5b9bff8~mv2_d_1440_1208_s_2.jpg" alt="Swift River Pecans building exterior at sunset" loading="lazy" />
+            <p class="imgCredit">Photo: Swift River Pecans LLC</p>
+            <div class="farmBody">
+              <h4>Troy Swift — Texas</h4>
+              <div class="farmMeta">126 acres · Pecans (commercial, not industrial scale)</div>
+              <p>Reported "up to 6×" yield increase while cutting nitrogen inputs from 80–100 lbs/acre down to 2.4 lbs/acre.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <img class="farmImg" src="https://alexandrefamilyfarm.com/cdn/shop/files/Homepage_Banner_2048x.jpg?v=1653602008" alt="Alexandre Family Farm homepage banner" loading="lazy" />
+            <p class="imgCredit">Photo: Alexandre Family Farm, LLC</p>
+            <div class="farmBody">
+              <h4>Alexandre Family Farm — Crescent City, CA</h4>
+              <div class="farmMeta">~9,000 acres (4,300 farmed) · Organic A2/A2 dairy</div>
+              <p>AEA's first "Groundwork" consulting client as of April 2025 — no quantified results published yet.</p>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <img class="farmImg" src="https://images.squarespace-cdn.com/content/v1/617f462807184a6f59675174/b0f774ea-0378-4505-9106-8eaba78a41dd/P%26E+1.jpg" alt="Elizabeth and Paul Kaiser of Singing Frogs Farm" loading="lazy" />
+            <p class="imgCredit">Photo: Singing Frogs Farm</p>
+            <div class="farmBody">
+              <span class="farmVerified">✓ Independently measured</span>
+              <h4>Singing Frogs Farm — Sebastopol, CA</h4>
+              <div class="farmMeta">8 acres (~3 cultivated) · No-till vegetables, since 2007</div>
+              <p>
+                Elizabeth &amp; Paul Kaiser run permanent no-till beds with continuous high-density
+                multi-cropping (5–7 harvests/bed/year) and zero herbicide, pesticide, or fungicide — fertility
+                comes entirely from compost and mulch. Far smaller than the row-crop farms above, but the
+                best-verified entry on this page.
+              </p>
+              <p>
+                An independent field study (published in the 2022 book <em>What Your Food Ate</em>) compared
+                Singing Frogs against a neighboring tilled organic farm growing the same crop and measured
+                soil carbon &gt;400% higher, <strong>water infiltration ~7× greater</strong> (the same
+                Ksat-style metric this site's <a class="farmLink" href="/hydro.html">Hydrology page</a>
+                builds its whole model around), and soil biology ~300% higher — plus produce nutrient
+                density 100–400% above a USDA organic baseline. A separate 10-year UC Davis study measured
+                soil organic matter reaching 1.2% (more conservative than the farm's own 8–10% claim).
+              </p>
+              <a class="farmLink" href="https://www.pressdemocrat.com/article/news/whistling-a-sustainable-tune-singing-frogs-farm-takes-organic-farming-to-n/" target="_blank" rel="noopener">Press Democrat coverage →</a>
+            </div>
+          </div>
+
+          <div class="farmCard">
+            <img class="farmImg" src="https://paicinesranch.com/wp-content/uploads/2020/09/Sheep-in-Vineyard-0058.jpg" alt="Sheep grazing under the tall trellis vineyard system at Paicines Ranch" loading="lazy" />
+            <p class="imgCredit">Photo: Paicines Ranch</p>
+            <div class="farmBody">
+              <h4>Paicines Ranch (Kelly Mulville) — San Benito County, CA</h4>
+              <div class="farmMeta">25-acre vineyard · Sheep-integrated viticulture</div>
+              <p>
+                Vineyard Director Kelly Mulville, applying 25+ years of Savory-style holistic grazing, designed
+                an unusually tall overhead trellis that keeps fruit and leaves above grazing height — letting
+                1,700+ sheep graze the entire vineyard in a single day, year-round, including during the
+                growing season. That eliminates tillage, mowing, herbicide, suckering, and hand-weeding.
+              </p>
+              <p>
+                Ranch-reported (not independently audited): soil organic matter up 66% (1.5%→2.5%) from
+                2014–2021, understory plant species up from 11 to 100+, insect abundance 5× a conventional
+                neighboring vineyard, and 60+ bird species recorded. Most recently featured on the
+                <em>Conservation Stories</em> podcast (Episode 38, March 2025) and earlier on AEA's
+                <em>Regenerative Agriculture Podcast</em> (Episode 80).
+              </p>
+              <a class="farmLink" href="https://paicinesranch.com/our-work/vineyard/" target="_blank" rel="noopener">Paicines Ranch vineyard →</a>
+              &nbsp;·&nbsp;
+              <a class="farmLink" href="https://www.sara-conservation.com/podcast-episodes/episode-38" target="_blank" rel="noopener">Conservation Stories Ep. 38 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

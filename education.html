@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Education — EarthPulse</title>
+  <meta name="description" content="EarthPulse Education: interactive models and research on hydrology and regenerative agriculture." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .eduPage { display: grid; gap: 32px; }
+
+    .eduHero {
+      padding: 36px 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+
+    .eduEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      color: #4f744e;
+      margin-bottom: 12px;
+    }
+
+    .eduTitle {
+      font-size: clamp(32px, 5vw, 54px);
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: #1e3020;
+      line-height: 1.05;
+      margin: 0 0 16px;
+    }
+
+    .eduLead {
+      font-size: 17px;
+      line-height: 1.72;
+      color: rgba(40, 60, 38, 0.88);
+      max-width: 68ch;
+      margin: 0;
+    }
+
+    .eduGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .eduCard {
+      display: block;
+      padding: 28px 26px;
+      border-radius: 22px;
+      border: 1px solid rgba(117, 143, 93, 0.24);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.94), rgba(236, 228, 198, 0.88));
+      box-shadow: 0 18px 44px rgba(117, 97, 48, 0.12);
+      text-decoration: none;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .eduCard:hover {
+      transform: translateY(-3px);
+      border-color: rgba(111, 145, 84, 0.5);
+      box-shadow: 0 24px 56px rgba(117, 97, 48, 0.18);
+    }
+
+    .eduCardIcon { font-size: 30px; margin-bottom: 12px; }
+    .eduCardTitle {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 21px;
+      color: #1e3020;
+      margin-bottom: 8px;
+    }
+    .eduCardDesc {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: rgba(40, 60, 38, 0.8);
+      margin: 0 0 14px;
+    }
+    .eduCardTopics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .eduCardTopic {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(111, 145, 84, 0.14);
+      border: 1px solid rgba(111, 145, 84, 0.28);
+      color: #2e4e2e;
+    }
+    .eduCardOpen {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #4f744e;
+    }
+
+    @media (max-width: 760px) {
+      .eduGrid { grid-template-columns: 1fr; }
+      .eduHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="education">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="eduPage">
+
+      <div class="eduHero">
+        <div class="eduEyebrow">EarthPulse · Education</div>
+        <h1 class="eduTitle">Learn the systems behind the land</h1>
+        <p class="eduLead">
+          Two lenses on the same underlying idea: land managed as a living system outperforms land managed
+          as an input problem. Explore the interactive models, real case studies, and honest caveats behind
+          each.
+        </p>
+      </div>
+
+      <div class="eduGrid">
+        <a class="eduCard" href="/hydro.html">
+          <div class="eduCardIcon">💧</div>
+          <div class="eduCardTitle">Hydrology</div>
+          <p class="eduCardDesc">
+            Soil as flood infrastructure. The physics of infiltration and runoff, an interactive particle
+            model, a real LiDAR-derived 3D watershed you can run storms on, and fact-checked research on
+            which regenerative techniques actually move the needle.
+          </p>
+          <div class="eduCardTopics">
+            <span class="eduCardTopic">Ksat &amp; Manning's n</span>
+            <span class="eduCardTopic">Rain In The Valley model</span>
+            <span class="eduCardTopic">San Lorenzo Watershed 3D</span>
+            <span class="eduCardTopic">Regenerative techniques</span>
+          </div>
+          <span class="eduCardOpen">Open Hydrology →</span>
+        </a>
+
+        <a class="eduCard" href="/regen-ag.html">
+          <div class="eduCardIcon">🌾</div>
+          <div class="eduCardTitle">Regenerative Agriculture</div>
+          <p class="eduCardDesc">
+            Regeneration at commercial and industrial scale — not just backyard plots. The plant-health
+            frameworks, biological inputs, and nutrient-density research behind farms measured in
+            thousands of acres, plus one grower's own lab-tested results.
+          </p>
+          <div class="eduCardTopics">
+            <span class="eduCardTopic">Plant Health Pyramid</span>
+            <span class="eduCardTopic">Large-farm case studies</span>
+            <span class="eduCardTopic">Nutrient density</span>
+            <span class="eduCardTopic">Squeeze Citrus spotlight</span>
+          </div>
+          <span class="eduCardOpen">Open Regenerative Agriculture →</span>
+        </a>
+
+        <a class="eduCard" href="/food-supply-chains.html">
+          <div class="eduCardIcon">🚚</div>
+          <div class="eduCardTitle">Food Supply Chains</div>
+          <p class="eduCardDesc">
+            Transportation, processing, and the myth of local. Why production usually swamps transport in
+            emissions math, the concentrated meatpacking industry, and the decentralized-slaughter
+            movement pushing back against it.
+          </p>
+          <div class="eduCardTopics">
+            <span class="eduCardTopic">Decentralized slaughter</span>
+            <span class="eduCardTopic">Food miles vs. production</span>
+            <span class="eduCardTopic">Cold chain</span>
+          </div>
+          <span class="eduCardOpen">Open Food Supply Chains →</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

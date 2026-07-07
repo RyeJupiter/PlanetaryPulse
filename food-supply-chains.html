@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Food Supply Chains — EarthPulse</title>
+  <meta name="description" content="Transportation, processing, and the myth of local: what actually drives food-system emissions, and the decentralized-slaughter movement working to fix a concentrated meatpacking industry." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .fscPage { display: grid; gap: 32px; }
+    .fscHero {
+      padding: 36px 32px; border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .fscEyebrow { font-family: var(--font-label, var(--font-display)); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: #4f744e; margin-bottom: 12px; }
+    .fscTitle { font-size: clamp(32px, 5vw, 54px); font-family: var(--font-display); font-weight: 600; color: #1e3020; line-height: 1.05; margin: 0 0 16px; }
+    .fscLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0 0 22px; }
+    .fscThesisBadge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 18px; border-radius: 999px;
+      border: 1px solid rgba(111, 145, 84, 0.42); background: rgba(111, 145, 84, 0.1);
+      font-size: 14px; color: #2a4a2a; line-height: 1.4; max-width: 64ch;
+    }
+    .fscThesisBadge strong { color: #1e3a1e; }
+    .fscSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 16px; }
+
+    .statSplit { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0 22px; }
+    .statCard {
+      padding: 18px 20px; border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+    }
+    .statCard h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 15px; color: #1e3020; }
+    .statCard p { margin: 0; font-size: 14px; line-height: 1.65; color: #33502f; }
+    .statCard .cite { display: block; margin-top: 10px; font-size: 11.5px; color: #3d5c3a; }
+    .statCard .cite a { color: inherit; text-decoration: underline; }
+    .statBig { font-family: var(--font-display); font-size: 34px; font-weight: 700; color: #2e4e2e; line-height: 1; margin-bottom: 6px; }
+
+    .fscCaveat {
+      padding: 16px 20px; border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.12);
+      font-size: 14px; color: #513a17; line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      .statSplit { grid-template-columns: 1fr; }
+      .fscHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="food-supply-chains">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="fscPage">
+
+      <div class="fscHero">
+        <div class="fscEyebrow">EarthPulse · Food Supply Chains</div>
+        <h1 class="fscTitle">Transportation, Processing, and the Myth of Local</h1>
+        <p class="fscLead">
+          Regenerative farms still have to get food to market — and how they process and ship it turns
+          out to matter for very different reasons than most marketing suggests. The centralized
+          meatpacking industry, the small decentralized-slaughter movement pushing back against it, and
+          the actual (often counterintuitive) emissions math of "shipped direct" vs. "grown local" are all
+          part of the same supply-chain story.
+        </p>
+        <div class="fscThesisBadge">
+          <span>🚚</span>
+          <span><strong>The counterintuitive finding:</strong> in most lifecycle studies, what a food is (its production footprint) swamps how far it traveled — and long-haul freight is often more emissions-efficient per unit than many small local delivery trips.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="fscSectionTitle">A Concentrated Industry, and One Farm's Answer</div>
+        <p style="color:#33502f;line-height:1.72;margin:0 0 6px;max-width:72ch;">
+          U.S. beef slaughter is extraordinarily concentrated: the "Big Four" packers — JBS, Tyson,
+          Cargill, and National Beef — control roughly <b>85%</b> of capacity today, up from 25% in 1971
+          and 71% by 1992. That concentration is exactly what pandemic-era supply shocks exposed, and
+          exactly what White Oak Pastures (Bluffton, GA) built its way out of.
+        </p>
+        <div class="statSplit">
+          <div class="statCard">
+            <h4>White Oak Pastures' on-site abattoir</h4>
+            <p>
+              Will Harris borrowed <b>$7.5 million</b> against the family's land to build a USDA-inspected,
+              Temple Grandin-designed red-meat abattoir (2008), followed by a poultry abattoir (2010) —
+              one of only a handful of U.S. farms with both on-site. It processes ~25 cattle/day, versus
+              6,000+/day at an industrial plant: an explicit welfare/quality tradeoff, not a
+              cost-competitive claim. Byproducts (blood, bone, viscera, hides, fat, wash water) are
+              processed on-site into fertilizer, bone meal, compost, leather, soap, and irrigation water.
+            </p>
+            <span class="cite">Bitter Southerner & White Oak Pastures — <a href="https://bittersoutherner.com/will-harris-white-oak-pastures-farm" target="_blank" rel="noopener">bittersoutherner.com</a>, <a href="https://whiteoakpastures.com/pages/on-farm-processing" target="_blank" rel="noopener">whiteoakpastures.com</a></span>
+          </div>
+          <div class="statCard">
+            <div class="statBig">85%</div>
+            <p>
+              of U.S. beef slaughter capacity controlled by four companies (JBS, Tyson, Cargill, National
+              Beef) — the concentration that federal decentralization grants (below) are explicitly
+              designed to counteract.
+            </p>
+            <span class="cite">Farm Action & High Country News — <a href="https://farmaction.us/meatpacking-four-corporations-total-control/" target="_blank" rel="noopener">farmaction.us</a>, <a href="https://www.hcn.org/issues/43-5/the-big-four-meatpackers-1/" target="_blank" rel="noopener">hcn.org</a></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="fscSectionTitle">The Decentralized-Slaughter Movement</div>
+        <p style="color:#33502f;line-height:1.72;margin:0 0 6px;max-width:72ch;">
+          The first FSIS-inspected mobile slaughter unit for red meat was developed in 2002 by the Lopez
+          Community Land Trust and Island Grown Farmers Cooperative on Lopez Island, WA, feeding a
+          permanent USDA-inspected plant in Bow, WA. The pandemic-era meatpacking bottlenecks pushed this
+          from a niche idea into federal policy: USDA announced <b>$500 million</b> (July 2021) to expand
+          independent processing capacity, plus a separate $55.2 million Meat and Poultry Inspection
+          Readiness Grants program that awarded <b>$32 million to 167 facilities</b> in November 2021.
+        </p>
+        <div class="statSplit">
+          <div class="statCard">
+            <h4>How far animals travel, conventionally</h4>
+            <p>
+              The 2016 National Beef Quality Audit found average fed-cattle loads travel <b>&gt;135 miles
+              / 2.5 hours</b> feedyard-to-plant, and cull cows/bulls <b>&gt;395 miles / 9 hours</b>. For
+              hogs, ~80% travel more than 50 miles, with 15.6% traveling over 200 miles.
+            </p>
+            <span class="cite">2016 National Beef Quality Audit; Grandin — <a href="https://www.grandin.com/behaviour/effect.of.transport.html" target="_blank" rel="noopener">grandin.com</a></span>
+          </div>
+          <div class="statCard">
+            <h4>How far animals travel, decentralized</h4>
+            <p>
+              A study of small-scale operations found <b>95% hauled animals ≤90 miles</b> to slaughter —
+              roughly a third of the conventional fed-cattle distance, and a tenth of the cull-cattle
+              distance.
+            </p>
+            <span class="cite">Renewable Agriculture and Food Systems (Cambridge Core) — <a href="https://www.cambridge.org/core/journals/renewable-agriculture-and-food-systems" target="_blank" rel="noopener">cambridge.org</a></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="fscSectionTitle">What Actually Drives Emissions</div>
+        <p style="color:#33502f;line-height:1.72;margin:0 0 6px;max-width:72ch;">
+          The most-cited peer-reviewed benchmark on this — Weber &amp; Matthews (2008, Carnegie Mellon,
+          <em>Environmental Science &amp; Technology</em>) — found that for the average U.S. household diet,
+          <b>production accounts for 83%</b> of food-related greenhouse gas emissions, wholesale/retail
+          5%, and <b>transportation only ~11%</b> — despite average food travel of 1,640 km for final
+          delivery and 6,760 km full lifecycle. Their conclusion: shifting what you eat beats "buying
+          local" for cutting emissions, because production dwarfs transport.
+        </p>
+        <div class="statSplit">
+          <div class="statCard">
+            <h4>The cold chain</h4>
+            <p>
+              Global food cold-chain refrigeration and associated spoilage losses account for roughly
+              <b>4% of total global GHG emissions</b> (UNEP). Within that, one fruit/vegetable-specific
+              lifecycle study found transport alone was <b>82%</b> of that category's cold-chain
+              emissions — a University of Michigan study estimated a full global cold-chain buildout could
+              cut food-waste-linked emissions by 41%.
+            </p>
+            <span class="cite">UNEP; PMC; Univ. of Michigan via Carrier — <a href="https://www.unep.org/news-and-stories/press-release/amid-food-and-climate-crises-investing-sustainable-food-cold-chains-crucial" target="_blank" rel="noopener">unep.org</a></span>
+          </div>
+          <div class="statCard">
+            <h4>Local isn't automatically greener</h4>
+            <p>
+              Counterintuitively, long-haul freight (rail/ship/tractor-trailer) is often <b>more
+              emissions-efficient per unit</b> than direct-to-consumer local delivery, because DTC
+              logistics involve many small, less-efficient trips. This directly complicates "shipped
+              direct = greener" marketing claims.
+            </p>
+            <span class="cite">NC State Extension — <a href="https://content.ces.ncsu.edu/local-food-systems-clarifying-current-research" target="_blank" rel="noopener">content.ces.ncsu.edu</a></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="fscSectionTitle">Honest Caveats</div>
+        <div style="display:grid;gap:10px;margin-top:4px;">
+          <div class="fscCaveat">No independent (non-company) lifecycle study was found benchmarking the shipping emissions or spoilage rates of this site's own direct-to-consumer case studies — <a href="/regen-ag-squeeze-citrus.html" style="color:inherit;text-decoration:underline;">Squeeze Citrus</a> or <a href="/regen-ag.html" style="color:inherit;text-decoration:underline;">First Light Farms</a>. Treat their DTC framing as a business-model choice, not a proven emissions win.</div>
+          <div class="fscCaveat">White Oak Pastures' on-site abattoir is an explicit welfare/quality tradeoff (25 cattle/day vs. 6,000+/day industrial) — it is not being presented here as a more cost- or throughput-efficient model, and its $7.5M capital cost is a real barrier most small farms can't clear alone (which is exactly what the federal decentralization grants target).</div>
+          <div class="fscCaveat">"Buy local" and "food miles" are popular shorthand, but the Weber &amp; Matthews finding is specifically about the average U.S. diet's emissions profile — it doesn't mean transportation is irrelevant for every food category (cold-chain-dependent perishables show a very different, transport-heavy split than the average).</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

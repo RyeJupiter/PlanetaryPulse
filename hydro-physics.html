@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>The Physics of the Soil Sponge — EarthPulse</title>
+  <meta name="description" content="How saturated hydraulic conductivity (Ksat) and Manning's roughness coefficient turn a storm into either a flood or a non-event." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .hydroPage { display: grid; gap: 32px; }
+    .hydroHero {
+      padding: 36px 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .hydroEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
+      color: #4f744e; margin-bottom: 12px;
+    }
+    .hydroTitle {
+      font-size: clamp(30px, 4.5vw, 48px);
+      font-family: var(--font-display); font-weight: 600;
+      color: #1e3020; line-height: 1.05; margin: 0 0 16px;
+    }
+    .hydroLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0 0 18px; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; }
+    .backLink:hover { text-decoration: underline; }
+    .hydroSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 16px; }
+    .physicsSplit { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0 22px; }
+    .physicsCard {
+      padding: 18px 20px; border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+    }
+    .physicsCard h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 15px; color: #1e3020; }
+    .physicsCard p { margin: 0; font-size: 14px; line-height: 1.65; color: #33502f; }
+    .hydroCta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 999px;
+      border: 1px solid rgba(111,145,84,0.5); background: rgba(111,145,84,0.14);
+      color: #2e4e2e; font-weight: 700; font-size: 14px; text-decoration: none;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+    .hydroCta:hover { background: rgba(111,145,84,0.24); transform: translateY(-1px); }
+    @media (max-width: 760px) {
+      .physicsSplit { grid-template-columns: 1fr; }
+      .hydroHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="hydro-physics">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="hydroPage">
+
+      <div class="hydroHero">
+        <a class="backLink" href="/hydro.html">← Back to Hydrology</a>
+        <div class="hydroEyebrow" style="margin-top:14px;">EarthPulse · Hydrology</div>
+        <h1 class="hydroTitle">The Physics of the Soil Sponge</h1>
+        <p class="hydroLead">
+          Flood outcomes emerge from the physical condition of the land. When a storm drops
+          millions of gallons over a watershed, the response is governed by two properties: how
+          quickly water can enter the ground, and how much resistance the surface offers to water
+          that stays on top of it.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="physicsSplit">
+          <div class="physicsCard">
+            <h4>Maximizing infiltration (Kₛₐₜ)</h4>
+            <p>
+              Living soils are laced with root channels, fungal mycelium, and macropore networks
+              that give water somewhere to go. Saturated hydraulic conductivity climbs from an
+              abysmal <b>0–10 mm/hr</b> on compacted, degraded ground to <b>50–150 mm/hr</b>
+              under regeneratively managed land. The storm quietly disappears into the ground
+              instead of racing downhill.
+            </p>
+          </div>
+          <div class="physicsCard">
+            <h4>Attenuating flow (Manning's n)</h4>
+            <p>
+              Structural roughness — dense root systems, multi-species cover crops,
+              micro-topography — dissipates the kinetic energy of moving water. Higher Manning's n
+              means slower velocities, longer travel times, and a flat runoff curve where a bare
+              landscape would produce a violent flash-flood peak.
+            </p>
+          </div>
+        </div>
+        <p style="color:#33502f;line-height:1.72;margin:0 0 22px;max-width:72ch;">
+          The three scenarios in the Rain In The Valley model share identical topography and receive
+          the same storm. Only the two soil parameters above change — and that is enough to move the
+          outlet hydrograph from catastrophe to non-event.
+        </p>
+        <a class="hydroCta" href="/rain-in-the-valley.html">See it in the model <span aria-hidden="true">→</span></a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

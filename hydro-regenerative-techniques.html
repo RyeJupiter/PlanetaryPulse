@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>The Techniques That Move The Needle — EarthPulse</title>
+  <meta name="description" content="Fact-checked research on which regenerative techniques actually move Ksat and Manning's n, and which plausible claims didn't survive verification." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .hydroPage { display: grid; gap: 32px; }
+    .hydroHero {
+      padding: 36px 32px;
+      border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .hydroEyebrow {
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px;
+      color: #4f744e; margin-bottom: 12px;
+    }
+    .hydroTitle {
+      font-size: clamp(30px, 4.5vw, 48px);
+      font-family: var(--font-display); font-weight: 600;
+      color: #1e3020; line-height: 1.05; margin: 0 0 16px;
+    }
+    .hydroLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; }
+    .backLink:hover { text-decoration: underline; }
+    .hydroSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 16px; }
+
+    .physicsCard {
+      padding: 18px 20px; border-radius: 16px;
+      border: 1px solid rgba(117, 143, 93, 0.22);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.84));
+    }
+    .physicsCard h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 15px; color: #1e3020; }
+    .physicsCard p { margin: 0; font-size: 14px; line-height: 1.65; color: #33502f; }
+    .physicsCard .regenCite { display: block; margin-top: 10px; font-size: 11.5px; color: #3d5c3a; }
+    .physicsCard .regenCite a { color: inherit; text-decoration: underline; }
+
+    .regenGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+    .regenRefuted {
+      padding: 16px 20px; border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.12);
+      font-size: 13.5px; color: #513a17; line-height: 1.65;
+    }
+    .regenRefuted ul { margin: 8px 0 0; padding-left: 20px; }
+    .regenRefuted li { margin-bottom: 6px; }
+
+    .regenOpenQ { font-size: 14px; color: #33502f; line-height: 1.7; margin: 0; padding-left: 20px; }
+    .regenOpenQ li { margin-bottom: 6px; }
+
+    @media (max-width: 760px) {
+      .regenGrid { grid-template-columns: 1fr; }
+      .hydroHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="hydro-regenerative-techniques">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="hydroPage">
+
+      <div class="hydroHero">
+        <a class="backLink" href="/hydro.html">← Back to Hydrology</a>
+        <div class="hydroEyebrow" style="margin-top:14px;">EarthPulse · Hydrology</div>
+        <h1 class="hydroTitle">The Techniques That Move The Needle</h1>
+        <p class="hydroLead">
+          "Regenerative land management" isn't one thing — it's a set of specific interventions with
+          very different levels of evidence behind them. We ran a fact-checked research pass (multi-source
+          search, then adversarial verification of every claim) to find out which practices actually move
+          Ksat and Manning's n, by how much, and where the evidence gets thin. Six findings survived
+          verification; several plausible-sounding claims did not (see below).
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="regenGrid">
+          <div class="physicsCard">
+            <h4>Vegetation &amp; soil structure move the needle the most</h4>
+            <p>
+              Converting annual cropland or continuously-grazed pasture to perennials, agroforestry, or
+              grass buffers gave the largest measured infiltration gains of anything studied — average
+              <b>+59.2%</b> over annual cropping across a 89-study meta-analysis. A Missouri field study
+              found agroforestry buffers raised Ksat <b>16.7×</b> and macroporosity <b>5.7×</b> over
+              continuously-grazed pasture. No-till alone was a coin flip (non-significant overall, but
+              +55.6% in wetter climates) — structure and cover matter more than tillage alone.
+            </p>
+            <span class="regenCite">Meta-analysis (89 studies) & Missouri pasture study — <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6752860/" target="_blank" rel="noopener">PMC6752860</a>, <a href="https://www.researchgate.net/publication/200750916_Soil_Hydraulic_Properties_Influenced_by_Agroforestry_and_Grass_Buffers_for_Grazed_Pasture_Systems" target="_blank" rel="noopener">ResearchGate</a></span>
+          </div>
+
+          <div class="physicsCard">
+            <h4>Earthworks are situational, not universal</h4>
+            <p>
+              Infiltration swales need native soil infiltration above roughly <b>10 mm/hr</b> to work
+              without an underdrain — squarely at the boundary of this site's "degraded" band. Check dams
+              are sized with simple ponding-drawdown physics (pond depth ÷ infiltration rate = drain
+              time); a real design example drains a 0.6m pond in 37.5 hours at 16 mm/hr. Translation:
+              measure native infiltration before sizing any earthwork — degraded soil needs amendment or
+              underdrains first.
+            </p>
+            <span class="regenCite">PLOS Water & STEP/Ontario LID guide — <a href="https://journals.plos.org/water/article?id=10.1371%2Fjournal.pwat.0000228" target="_blank" rel="noopener">journals.plos.org</a>, <a href="https://wiki.sustainabletechnologies.ca/wiki/Check_dams" target="_blank" rel="noopener">sustainabletechnologies.ca</a></span>
+          </div>
+
+          <div class="physicsCard">
+            <h4>Beaver dam analogs help locally — don't oversell them</h4>
+            <p>
+              Beaver dam analogs (leaky dams) increased mean water residence time <b>+230%</b> and shifted
+              a stream reach from "losing" to "gaining" groundwater in a Utah study. But a separate
+              2-year, 17-structure trial found <b>no statistically significant change</b> in downstream
+              streamflow at 8 weeks or 1 year — the paper's own conclusion: effects are short-term and
+              confined to within ~7m of the stream. Great for riparian soil moisture and drought
+              buffering near the corridor; not a substitute for watershed-scale land-cover change.
+            </p>
+            <span class="regenCite">Majerova et al. 2015 (HESS) & Bosworth et al. 2025 (JAWRA) — <a href="https://hess.copernicus.org/articles/19/3541/2015/hess-19-3541-2015.pdf" target="_blank" rel="noopener">hess.copernicus.org</a>, <a href="https://sagelandcollaborative.org/s/Bosworth-2025-Streamflow-and-Groundwater-Response-to-Stream-Restoration-Using-Beaver-1.pdf" target="_blank" rel="noopener">sagelandcollaborative.org</a></span>
+            <p style="margin-top:10px; font-size:12.5px; color:#4c6849; font-style:italic;">
+              Real-world illustration, not a peer-reviewed measurement: Knepp Estate in West Sussex, UK
+              (subject of Isabella Tree's book <em>Wilding</em>) de-canalized the River Adur and reconnected
+              it to its floodplain starting in 2012, then added an enclosed beaver reintroduction in 2020.
+              Knepp and press coverage credit the combination with reduced downstream flooding — but unlike
+              the Utah studies above, that specific claim hasn't gone through this page's adversarial
+              verification process, so treat it as a documented case, not a confirmed number.
+            </p>
+          </div>
+
+          <div class="physicsCard">
+            <h4>Surface Ksat can lie about the subsurface</h4>
+            <p>
+              One watershed study measured Ksat from 0–387 mm/hr, always highest at the surface — but
+              found <b>near-zero subsurface Ksat</b> at both upper-slope and toeslope positions even
+              where the surface exceeded 100 mm/hr. A hardpan or lithologic discontinuity a foot down
+              can throttle aquifer recharge no matter how spongy the topsoil looks. Surface infiltration
+              tests alone can't confirm deep percolation — profile-scale data matters.
+            </p>
+            <span class="regenCite">Nature Scientific Reports — <a href="https://www.nature.com/articles/s41598-026-46420-1" target="_blank" rel="noopener">nature.com</a></span>
+          </div>
+
+          <div class="physicsCard">
+            <h4>This model's Manning's n range is now cited</h4>
+            <p>
+              USGS and FHWA reference tables (the standard hydraulic-engineering source) give Manning's n
+              from <b>≈0.02–0.04</b> for bare/cultivated ground up to <b>0.07–0.20</b> for dense
+              shrub/willow/heavy timber where flow reaches the branches. That's the empirical backing for
+              this page's n = 0.012 (concrete) to n = 0.08 (regenerative) range, with room for finer
+              intermediate steps as land recovers from bare soil → grass → shrub → riparian forest.
+            </p>
+            <span class="regenCite">USGS SIR 2006-5108 & FHWA/USGS WSP 2339 — <a href="https://pubs.usgs.gov/sir/2006/5108/pdf/sir20065108.pdf" target="_blank" rel="noopener">pubs.usgs.gov</a>, <a href="https://www.fhwa.dot.gov/bridge/wsp2339.pdf" target="_blank" rel="noopener">fhwa.dot.gov</a></span>
+          </div>
+
+          <div class="physicsCard">
+            <h4>The degraded baseline is real, not a strawman</h4>
+            <p>
+              A documented keyline-design restoration case (C-B Ranch, northern New Mexico) measured up
+              to <b>80% of rainfall running off a mere 3% slope</b> on degraded pasture before treatment.
+              That's this page's "Degraded Farmland" scenario, measured on real ground — the problem
+              regenerative earthworks are meant to correct is not hypothetical.
+            </p>
+            <span class="regenCite">US Fish & Wildlife Service project page — <a href="https://www.fws.gov/project/nature-based-solutions-restoring-rangelands-keyline-design" target="_blank" rel="noopener">fws.gov</a></span>
+          </div>
+        </div>
+
+        <div class="regenRefuted" style="margin-top:18px;">
+          <strong>Checked and did not hold up</strong> — plausible-sounding claims that failed adversarial
+          verification during this research pass. Noted here so they don't quietly get reintroduced later:
+          <ul>
+            <li>That grazing intensity has a clear negative relationship with infiltration (the source data didn't back this as stated).</li>
+            <li>That check-dam/swale systems retain roughly double their nominal design volume via an "infiltration credit."</li>
+            <li>Specific beaver-dam-analog groundwater-rise figures of 18–30cm extending 135m upstream (the real, sourced figure is smaller and more local: ~12–14cm within 7m).</li>
+            <li>That cover-cropping benefits compound to +30% or more after 4+ years of use.</li>
+            <li>The specific mechanistic claim that keyline design "works by using natural ridges and contours to slow, spread, and sink water" (the ranch-scale runoff data held up; this specific mechanism claim did not).</li>
+          </ul>
+        </div>
+
+        <p style="color:#33502f;line-height:1.7;margin:18px 0 0;max-width:72ch;font-size:13.5px;">
+          <strong>Open questions this research couldn't answer:</strong>
+        </p>
+        <ul class="regenOpenQ">
+          <li>Realistic capital/labor cost per acre or per structure for swales, keyline plowing, check dams, BDAs, and riparian buffers — and the install sequence with the fastest payoff.</li>
+          <li>Whether any of this evidence comes from a Mediterranean climate (winter-wet/summer-dry) watershed like the Santa Cruz Mountains, rather than semi-arid Utah, sub-Saharan Africa, or the Midwest US.</li>
+          <li>Actual verified hydrological measurements from White Oak Pastures, GA — named in our original research question, but no quantitative claims about it survived fact-checking. Treat any numbers you see elsewhere about it as unverified.</li>
+          <li>At what scale (number of structures, % of watershed treated) point interventions like BDAs and check dams stop being "short-term and local" and start moving watershed-level streamflow.</li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

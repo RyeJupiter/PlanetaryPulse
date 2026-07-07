@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>The Plant Health Pyramid — EarthPulse</title>
+  <meta name="description" content="Advancing Eco Agriculture's plant-sap-analysis diagnostic framework and its four-level Plant Health Pyramid." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .ragPage { display: grid; gap: 32px; }
+    .ragHero {
+      padding: 36px 32px; border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .ragEyebrow { font-family: var(--font-label, var(--font-display)); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: #4f744e; margin-bottom: 12px; }
+    .ragTitle { font-size: clamp(30px, 4.5vw, 48px); font-family: var(--font-display); font-weight: 600; color: #1e3020; line-height: 1.05; margin: 0 0 16px; }
+    .ragLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; }
+    .backLink:hover { text-decoration: underline; }
+    .ragSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 16px; }
+    .pyramidList { display: grid; gap: 12px; margin: 0 0 18px; }
+    .pyramidLevel {
+      display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+      padding: 16px 18px; border-radius: 14px;
+      border: 1px solid rgba(117, 143, 93, 0.2);
+      background: linear-gradient(160deg, rgba(249, 244, 225, 0.9), rgba(236, 228, 198, 0.86));
+    }
+    .pyramidTag {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(111, 145, 84, 0.16); border: 1px solid rgba(111, 145, 84, 0.3);
+      font-size: 13px; font-weight: 700; color: #3a5c3e; font-family: var(--font-display);
+    }
+    .pyramidName { font-weight: 600; color: #1e3020; margin-bottom: 4px; }
+    .pyramidDesc { font-size: 14px; color: #33502f; line-height: 1.6; margin: 0; }
+    @media (max-width: 760px) { .ragHero { padding: 24px 20px; } }
+  </style>
+</head>
+
+<body data-page="regen-ag-pyramid">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="ragPage">
+
+      <div class="ragHero">
+        <a class="backLink" href="/regen-ag.html">← Back to Regenerative Agriculture</a>
+        <div class="ragEyebrow" style="margin-top:14px;">EarthPulse · Regenerative Agriculture</div>
+        <h1 class="ragTitle">The Plant Health Pyramid</h1>
+        <p class="ragLead">
+          Advancing Eco Agriculture (AEA)'s diagnostic tool is plant sap analysis — what they call
+          "a blood test for crops": 23 data points per sample, paired with soil geochemical testing.
+          Their stated rationale is that they found "very little correlation between the presence of
+          nutrients in the soil and actual absorption by the crop" — so they measure the plant
+          directly rather than only the soil.
+        </p>
+      </div>
+
+      <div class="panel">
+        <p style="color:#33502f;line-height:1.72;margin:0 0 18px;max-width:72ch;">
+          Brix (a sugar/photosynthesis proxy) and sap pH are read together diagnostically; low pH with
+          moderate Brix, for example, is read as a calcium deficiency. Their framework stacks four levels:
+        </p>
+        <div class="pyramidList">
+          <div class="pyramidLevel">
+            <div class="pyramidTag">1</div>
+            <div>
+              <div class="pyramidName">Complete Photosynthesis</div>
+              <p class="pyramidDesc">Correcting Mg/N/Fe/Mn/P — AEA claims this alone can drive a 3–4× Brix increase and improved fungal-pathogen resistance.</p>
+            </div>
+          </div>
+          <div class="pyramidLevel">
+            <div class="pyramidTag">2</div>
+            <div>
+              <div class="pyramidName">Complete Protein Synthesis</div>
+              <p class="pyramidDesc">Correcting Mg/S/Mo/B — claimed to build insect resistance within 24–48 hours by eliminating the free amino acids that attract pests.</p>
+            </div>
+          </div>
+          <div class="pyramidLevel">
+            <div class="pyramidTag">3</div>
+            <div>
+              <div class="pyramidName">Lipid Synthesis</div>
+              <p class="pyramidDesc">A waxy leaf cuticle "shield" intended to physically block airborne fungal and bacterial pathogens.</p>
+            </div>
+          </div>
+          <div class="pyramidLevel">
+            <div class="pyramidTag">4</div>
+            <div>
+              <div class="pyramidName">Secondary Metabolites</div>
+              <p class="pyramidDesc">Driven by soil microbiome diversity — the level AEA ties to flavor, aroma, and nutrient density compounds.</p>
+            </div>
+          </div>
+        </div>
+        <p style="color:#33502f;line-height:1.72;margin:0;max-width:72ch;">
+          AEA reports that on a grower's first sap test, "greater than 95%" show a manganese or iron
+          deficiency. Correction happens through proprietary biological/mineral foliar products and
+          soil inputs, timed to specific points in the crop's growth cycle.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
