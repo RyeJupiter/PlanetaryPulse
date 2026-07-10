@@ -22,18 +22,19 @@
     /* ── HUD ── */
     #hud {
       position: absolute;
-      top: 62px;
-      left: 14px;
+      top: clamp(48px, 8vh, 62px);
+      left: clamp(10px, 2.5vw, 14px);
       background: rgba(8, 18, 8, 0.86);
       border: 1px solid rgba(90, 140, 70, 0.32);
       border-radius: 14px;
-      padding: 13px 16px;
+      padding: clamp(10px, 1.6vw, 13px) clamp(12px, 2vw, 16px);
       color: #c4ddb4;
       font-family: ui-monospace, 'Cascadia Code', monospace;
-      font-size: 12px;
+      font-size: clamp(10.5px, 1.3vw, 12px);
       line-height: 1.72;
       backdrop-filter: blur(12px);
-      min-width: 200px;
+      min-width: clamp(160px, 20vw, 200px);
+      max-width: 42vw;
       pointer-events: none;
     }
     #hud-title { font-weight: 700; letter-spacing: 0.1em; color: #8fd89a; font-size: 10px; margin-bottom: 5px; }
@@ -48,15 +49,15 @@
     /* ── Hydrograph ── */
     #hydro-wrap {
       position: absolute;
-      bottom: 76px;
-      right: 14px;
+      bottom: clamp(64px, 11vh, 76px);
+      right: clamp(10px, 2.5vw, 14px);
       background: rgba(8, 18, 8, 0.86);
       border: 1px solid rgba(90, 140, 70, 0.28);
       border-radius: 12px;
       padding: 10px 10px 6px;
       backdrop-filter: blur(12px);
     }
-    #c-hydro { display: block; }
+    #c-hydro { display: block; width: clamp(150px, 20vw, 220px); height: auto; aspect-ratio: 2 / 1; }
     #hydro-legend {
       display: flex;
       gap: 12px;
@@ -71,9 +72,10 @@
     /* ── Controls ── */
     #controls {
       position: absolute;
-      bottom: 14px;
+      bottom: clamp(10px, 2.5vh, 14px);
       left: 50%;
       transform: translateX(-50%);
+      width: min(94vw, 640px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -116,6 +118,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
       background: rgba(8,18,8,0.82);
       border: 1px solid rgba(80,120,60,0.4);
       border-radius: 999px;
@@ -125,11 +129,13 @@
       color: rgba(180,215,150,0.85);
       font-size: 11px;
     }
-    .int-row label { letter-spacing: 0.06em; }
+    .int-row label { letter-spacing: 0.06em; white-space: nowrap; }
     .int-row input[type=range] {
       -webkit-appearance: none;
       appearance: none;
-      width: 180px;
+      flex: 1 1 auto;
+      min-width: 60px;
+      width: auto;
       height: 4px;
       background: rgba(90,140,70,0.35);
       border-radius: 999px;
@@ -163,9 +169,9 @@
     /* ── Info banner ── */
     #info-banner {
       position: absolute;
-      top: 62px;
-      right: 14px;
-      max-width: 210px;
+      top: clamp(48px, 8vh, 62px);
+      right: clamp(10px, 2.5vw, 14px);
+      max-width: clamp(170px, 22vw, 210px);
       background: rgba(6,14,7,0.93);
       border: 1px solid rgba(90,140,70,0.3);
       border-radius: 12px;
@@ -187,6 +193,30 @@
     body.embed #hud       { top: 12px; left: 12px; font-size: 10px; padding: 9px 11px; min-width: 0; }
     body.embed #hud-title { font-size: 8px; }
     body.embed #hydro-wrap { bottom: 10px; right: 10px; padding: 6px 6px 3px; }
+
+    /* Phone viewport — the interactive storm simulator (canvas + controls)
+       is the point; drop the explainer banner and the hydrograph chart so
+       there's room to actually use the sliders and buttons. */
+    @media (max-width: 700px) {
+      #info-banner, #hydro-wrap { display: none; }
+      #hud {
+        top: auto;
+        bottom: clamp(150px, 26vh, 190px);
+        left: 8px;
+        right: 8px;
+        max-width: none;
+        min-width: 0;
+        width: auto;
+        padding: 8px 12px;
+        font-size: 10px;
+      }
+      #hud-title { display: none; }
+      .hud-status { display: none; }
+      #controls { width: 94vw; gap: 7px; }
+      .sc-btn { font-size: 11px; padding: 6px 11px; }
+      .int-row { padding: 6px 12px; font-size: 10px; }
+      .act-btn { padding: 8px 18px; font-size: 12px; }
+    }
   </style>
 </head>
 
@@ -520,16 +550,19 @@
     controls.maxDistance    = 40;
     camera.lookAt(controls.target);
 
-    // Lighting — warm sun, cool sky rim, subtle ambient
-    scene.add(new THREE.AmbientLight(0x8098a0, 0.55));
-    const sun = new THREE.DirectionalLight(0xffeacc, 1.35);
-    sun.position.set(6, 14, -5);
+    // Lighting — a strong, even base (ambient + sky-rim + hemisphere) keeps
+    // every part of the model clearly readable; the low western sun is
+    // layered on top purely as a warm golden-hour accent, not the thing
+    // doing the actual illumination.
+    scene.add(new THREE.AmbientLight(0x8098a0, 0.68));
+    const sun = new THREE.DirectionalLight(0xffc98a, 0.9);
+    sun.position.set(9, 3.2, -9);
     scene.add(sun);
-    const skyRim = new THREE.DirectionalLight(0x5088b0, 0.65);
-    skyRim.position.set(-6, 5, 8);
+    const skyRim = new THREE.DirectionalLight(0x5088b0, 0.6);
+    skyRim.position.set(-6, 8, 6);
     scene.add(skyRim);
     // Storm underlight (subtle bluish glow from below)
-    const underLight = new THREE.HemisphereLight(0x1a3040, 0x0a1608, 0.3);
+    const underLight = new THREE.HemisphereLight(0x3a4a30, 0x142010, 0.4);
     scene.add(underLight);
 
     // ── Terrain mesh with elevation-and-slope-based coloring ─────────────
@@ -862,11 +895,22 @@
               pCol_.set(C_INFIL, i * 3);
             }
             // Ponded too long to still be absorbing — spill toward the outlet
-            // as saturation-excess overland flow.
+            // as saturation-excess overland flow. A velocity kick alone
+            // isn't enough here: if the spot is genuinely flat, next frame's
+            // gradient read is still ~0 and the FLOWING branch immediately
+            // re-classifies it as POOLED before it has actually moved,
+            // trapping it in an infinite pool<->kick loop forever (this is
+            // why degraded farmland specifically never produced runoff —
+            // it's the one scenario slow/sticky enough to fall into this).
+            // Force a real displacement toward the known flow direction
+            // (+z, same as the terrain's own "flow direction" axis) so the
+            // particle actually escapes the flat spot immediately.
             else if (ppool[i] > 2.4) {
               pstate[i] = FLOWING;
               ppool[i]  = 0;
               pvz_[i]   = 0.9;  // kick downstream
+              pz_[i]   += 0.35;
+              py_[i]    = heightAt(px_[i], pz_[i]) + 0.02;
               pCol_.set(C_FLOW, i * 3);
             }
           } else {
@@ -1013,7 +1057,23 @@
     // ── Hydrograph ───────────────────────────────────────────────────────
     const hCanvas = document.getElementById('c-hydro');
     const hCtx    = hCanvas.getContext('2d');
-    const HW = 220, HH = 110;
+    let HW = 220, HH = 110;
+
+    // The canvas is CSS-sized (see #c-hydro's clamp()-based width in the
+    // <style> block) — read the actual displayed size and match the
+    // internal pixel buffer to it (at devicePixelRatio for crispness)
+    // instead of a fixed 220x110 buffer that just stretched/blurred.
+    function resizeHydroCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = hCanvas.getBoundingClientRect();
+      HW = Math.max(1, Math.round(rect.width));
+      HH = Math.max(1, Math.round(rect.height));
+      hCanvas.width  = Math.round(HW * dpr);
+      hCanvas.height = Math.round(HH * dpr);
+      hCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawHydro();
+    }
+    window.addEventListener('resize', resizeHydroCanvas);
 
     function drawHydro() {
       hCtx.clearRect(0, 0, HW, HH);
@@ -1201,7 +1261,7 @@
     requestAnimationFrame(animate);
 
     updateHUD();
-    drawHydro();
+    resizeHydroCanvas();
   </script>
 </body>
 </html>
