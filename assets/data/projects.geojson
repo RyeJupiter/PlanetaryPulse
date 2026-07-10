@@ -750,7 +750,8 @@
         ],
         "history_note": "Exact date of regenerative transition not publicly documented; no yield or Brix figures were published alongside the qualitative claims.",
         "pre_intervention_observable": false,
-        "history_start": "2015-01"
+        "history_start": "2015-01",
+        "hidden": true
       },
       "geometry": {
         "type": "Point",

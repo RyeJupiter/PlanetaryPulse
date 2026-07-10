@@ -543,6 +543,12 @@
           default: createSproutBillboard(128, false, sproutImg),
           selected: createSproutBillboard(144, true, sproutImg),
         };
+        // Hidden entries stay in the data file (still being verified/
+        // researched) but shouldn't render on the public globe yet.
+        geojson = {
+          ...geojson,
+          features: geojson.features.filter((f) => !f.properties?.hidden),
+        };
         return Cesium.GeoJsonDataSource.load(geojson, { clampToGround: true }).then((dataSource) => [dataSource, sproutIcons]);
       })
       .then(([dataSource, sproutIcons]) => {
