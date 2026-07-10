@@ -15,8 +15,8 @@
 
     #back-btn {
       position: absolute;
-      top: 16px;
-      left: 16px;
+      top: clamp(10px, 2.5vh, 16px);
+      left: clamp(10px, 2.5vw, 16px);
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -38,9 +38,9 @@
 
     #right-panel {
       position: absolute;
-      top: 16px;
-      right: 14px;
-      max-width: 250px;
+      top: clamp(10px, 2.5vh, 16px);
+      right: clamp(10px, 2.5vw, 14px);
+      max-width: clamp(200px, 24vw, 250px);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -51,10 +51,10 @@
       background: rgba(6, 14, 7, 0.93);
       border: 1px solid rgba(90, 140, 70, 0.3);
       border-radius: 14px;
-      padding: 13px 16px;
+      padding: clamp(10px, 1.6vw, 13px) clamp(12px, 2vw, 16px);
       color: #d4e8c4;
       font-family: ui-monospace, 'Cascadia Code', monospace;
-      font-size: 11px;
+      font-size: clamp(10px, 1.2vw, 11px);
       line-height: 1.65;
       backdrop-filter: blur(12px);
       text-shadow: 0 1px 3px rgba(0,0,0,0.6);
@@ -122,9 +122,10 @@
     /* ── Storm controls ── */
     #controls {
       position: absolute;
-      bottom: 14px;
+      bottom: clamp(10px, 2.5vh, 14px);
       left: 50%;
       transform: translateX(-50%);
+      width: min(94vw, 640px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -148,6 +149,8 @@
     .sc-btn.active { background: rgba(30,90,30,0.85); border-color: #4da860; color: #a8f0b0; font-weight: 600; }
     .int-row {
       display: flex; align-items: center; gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
       background: rgba(8,18,8,0.82);
       border: 1px solid rgba(80,120,60,0.4);
       border-radius: 999px;
@@ -157,10 +160,10 @@
       color: rgba(180,215,150,0.85);
       font-size: 11px;
     }
-    .int-row label { letter-spacing: 0.06em; }
+    .int-row label { letter-spacing: 0.06em; white-space: nowrap; }
     .int-row input[type=range] {
       -webkit-appearance: none; appearance: none;
-      width: 180px; height: 4px;
+      flex: 1 1 auto; min-width: 60px; width: auto; height: 4px;
       background: rgba(90,140,70,0.35);
       border-radius: 999px; outline: none; cursor: pointer;
     }
@@ -193,8 +196,8 @@
     /* ── Hydrograph ── */
     #hydro-wrap {
       position: absolute;
-      bottom: 76px;
-      left: 14px;
+      bottom: clamp(64px, 11vh, 76px);
+      left: clamp(10px, 2.5vw, 14px);
       background: rgba(8, 18, 8, 0.86);
       border: 1px solid rgba(90, 140, 70, 0.28);
       border-radius: 12px;
@@ -202,13 +205,27 @@
       backdrop-filter: blur(12px);
       z-index: 10;
     }
-    #c-hydro { display: block; }
+    #c-hydro { display: block; width: clamp(150px, 20vw, 200px); height: auto; aspect-ratio: 2 / 1; }
     #hydro-legend {
       display: flex; gap: 12px; margin-top: 5px; justify-content: center;
       font-family: ui-monospace, monospace; font-size: 9px;
     }
     .leg-infil  { color: rgba(60,200,90,0.8);  }
     .leg-runoff { color: rgba(70,150,230,0.8); }
+
+    /* Phone viewport — same priority as Rain In The Valley: keep the
+       interactive controls, drop the supplementary reading material. */
+    @media (max-width: 700px) {
+      #hydro-wrap, #geology-card { display: none; }
+      #right-panel { top: 8px; right: 8px; max-width: 46vw; }
+      #hud { padding: 8px 11px; font-size: 9.5px; }
+      #hud-caveat { display: none; }
+      #back-btn { padding: 8px 14px 8px 11px; font-size: 12px; }
+      #controls { width: 94vw; gap: 7px; }
+      .sc-btn { font-size: 11px; padding: 6px 11px; }
+      .int-row { padding: 6px 12px; font-size: 10px; }
+      .act-btn { padding: 8px 18px; font-size: 12px; }
+    }
   </style>
 </head>
 
@@ -348,8 +365,8 @@
     renderer.toneMappingExposure = 1.05;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0b1610);
-    scene.fog = new THREE.FogExp2(0x0b1712, 0.018);
+    scene.background = new THREE.Color(0xcfe3ee);
+    scene.fog = new THREE.FogExp2(0xcfe3ee, 0.018);
 
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 300);
     camera.position.set(9, 8, -11);
@@ -697,6 +714,14 @@
                 const escMag = Math.sqrt(esc.dx * esc.dx + esc.dz * esc.dz) + 1e-5;
                 pstate[i] = FLOWING; ppool[i] = 0;
                 pvx_[i] = -(esc.dx / escMag) * 0.7; pvz_[i] = -(esc.dz / escMag) * 0.7;
+                // A velocity kick alone risks an infinite pool<->kick loop:
+                // if the spot is genuinely flat, next frame's slope/wideSlope
+                // read is unchanged (position hasn't moved yet) and this
+                // whole branch re-fires, re-pooling before the particle ever
+                // actually moves (see rain-in-the-valley.html's identical
+                // 2026-07-08 fix). Force real displacement now.
+                px_[i] += pvx_[i] * dt * 6.0; pz_[i] += pvz_[i] * dt * 6.0;
+                py_[i] = heightAt(px_[i], pz_[i]) + 0.01;
                 pCol_.set(C_FLOW, i * 3);
               }
             } else {
@@ -786,7 +811,18 @@
 
       const hCanvas = document.getElementById('c-hydro');
       const hCtx = hCanvas.getContext('2d');
-      const HW = 200, HH = 100;
+      let HW = 200, HH = 100;
+      function resizeHydroCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const rect = hCanvas.getBoundingClientRect();
+        HW = Math.max(1, Math.round(rect.width));
+        HH = Math.max(1, Math.round(rect.height));
+        hCanvas.width  = Math.round(HW * dpr);
+        hCanvas.height = Math.round(HH * dpr);
+        hCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawHydro();
+      }
+      window.addEventListener('resize', resizeHydroCanvas);
       function drawHydro() {
         hCtx.clearRect(0, 0, HW, HH);
         if (totalSpawned === 0) {
@@ -857,7 +893,7 @@
       document.getElementById('btn-reset').disabled = false;
 
       updateHUD();
-      drawHydro();
+      resizeHydroCanvas();
       simStep = stepSim;
     }
 
