@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>Seeing Infiltration: The Slake Test & Rainfall Simulator — EarthPulse</title>
+  <meta name="description" content="How soil-health educators actually show water infiltration in the field — the slake test and the side-by-side rainfall simulator, with real NRCS photos." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .siPage { display: grid; gap: 32px; }
+    .siHero {
+      padding: 36px 32px; border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .siEyebrow { font-family: var(--font-label, var(--font-display)); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: #4f744e; margin-bottom: 12px; }
+    .siTitle { font-size: clamp(30px, 4.5vw, 48px); font-family: var(--font-display); font-weight: 600; color: #1e3020; line-height: 1.05; margin: 0 0 16px; }
+    .siLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 68ch; margin: 0; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; }
+    .backLink:hover { text-decoration: underline; }
+    .siSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 16px; }
+
+    .demoSplit { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .demoImg { width: 100%; border-radius: 14px; display: block; aspect-ratio: 4/3; object-fit: cover; box-shadow: 0 14px 32px rgba(69,59,30,0.18); }
+    .demoCredit { font-size: 10.5px; color: #5a7256; margin-top: 6px; }
+    .demoText p { color: #33502f; line-height: 1.72; font-size: 15px; margin: 0 0 12px; }
+    .demoText p:last-child { margin-bottom: 0; }
+
+    .siCaveat {
+      padding: 16px 20px; border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.12);
+      font-size: 14px; color: #513a17; line-height: 1.6;
+    }
+    .hydroCta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 999px;
+      border: 1px solid rgba(111,145,84,0.5); background: rgba(111,145,84,0.14);
+      color: #2e4e2e; font-weight: 700; font-size: 14px; text-decoration: none;
+      transition: background 180ms ease, transform 180ms ease; margin-right: 10px;
+    }
+    .hydroCta:hover { background: rgba(111,145,84,0.24); transform: translateY(-1px); }
+    .hydroCta.ghost { background: transparent; }
+
+    @media (max-width: 760px) {
+      .demoSplit { grid-template-columns: 1fr; }
+      .siHero { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body data-page="soil-infiltration">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="siPage">
+
+      <div class="siHero">
+        <a class="backLink" href="/hydro.html">← Back to Hydrology</a>
+        <div class="siEyebrow" style="margin-top:14px;">EarthPulse · Hydrology</div>
+        <h1 class="siTitle">Seeing Infiltration: The Slake Test &amp; Rainfall Simulator</h1>
+        <p class="siLead">
+          Ksat — the infiltration number this site's model runs on — sounds abstract until you watch it happen.
+          Soil-health educators have been demonstrating it in the field for years with two simple, standardized
+          tests. Here's what's actually going on in the photos you've probably seen.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="siSectionTitle">The Slake Test</div>
+        <div class="demoSplit">
+          <div>
+            <img class="demoImg" src="https://live.staticflickr.com/4604/25690688697_a8d03859d3.jpg" alt="Side-by-side slake test comparing a no-till soil clod that holds together in water versus a tilled soil clod that disintegrates" loading="lazy" />
+            <div class="demoCredit">Photo: Jason Johnson, USDA/NRCS Iowa — public domain</div>
+          </div>
+          <div class="demoText">
+            <p>
+              Take two air-dried soil clods — one from tilled ground, one from no-till or cover-cropped ground
+              — and drop them into wire-mesh baskets, submerged in clear jars of water at the same moment.
+            </p>
+            <p>
+              The tilled clod has weak aggregation: without living roots and fungal networks binding particles
+              together, water rushes into every crack and the whole thing collapses, clouding the jar. The
+              healthy clod holds its shape — its aggregates are strong enough to resist slaking apart, so the
+              water around it stays clear.
+            </p>
+            <p>
+              This is a direct, visible proxy for aggregate stability — the same soil structure that determines
+              Ksat. Soil that survives the slake test is the same soil that lets a storm disappear into the
+              ground instead of running off.
+            </p>
+          </div>
+        </div>
+        <p style="margin-top:18px;">
+          <a class="hydroCta" href="https://www.nrcs.usda.gov/sites/default/files/2022-10/Slaking.pdf" target="_blank" rel="noopener">NRCS Slaking fact sheet <span aria-hidden="true">→</span></a>
+          <a class="hydroCta ghost" href="https://www.nrcs.usda.gov/sites/default/files/2022-10/South_Dakota_Slake_Test_SD-FS-107.pdf" target="_blank" rel="noopener">NRCS slake test procedure <span aria-hidden="true">→</span></a>
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="siSectionTitle">The Rainfall Simulator</div>
+        <div class="demoSplit">
+          <div>
+            <img class="demoImg" src="https://upload.wikimedia.org/wikipedia/commons/0/03/The_Bundled_Benefits_of_Soil_Health_37.jpg" alt="Rainfall simulator rig applying water simultaneously to five side-by-side soil trays representing different land management types, with clear collection jars showing runoff differences" loading="lazy" />
+            <div class="demoCredit">Photo: Lance Cheung, USDA — public domain (USDA "Bundled Benefits of Soil Health" event, 2014)</div>
+          </div>
+          <div class="demoText">
+            <p>
+              NRCS's traveling rainfall simulator rains on several soil trays at once — usually tilled cropland,
+              no-till with a cover crop, overgrazed grassland, well-managed grazing land, and sometimes bare
+              pavement — side by side, under identical "rainfall." Clear jars catch what runs off each tray
+              versus what soaks in.
+            </p>
+            <p>
+              The tilled and overgrazed trays produce fast, muddy runoff — you can watch their jars fill almost
+              immediately. The cover-cropped and well-managed trays barely produce runoff at all; nearly
+              everything infiltrates. It's this site's three-scenario thesis, played out on an actual table.
+            </p>
+          </div>
+        </div>
+        <img class="demoImg" style="margin-top:18px; aspect-ratio:16/7;" src="https://live.staticflickr.com/3888/15288092801_91b378db48.jpg" alt="Close-up of dry, dusty tilled soil after simulated rainfall, showing lack of water retention" loading="lazy" />
+        <div class="demoCredit">Dry, dusty tilled soil 20 minutes after 2 inches of simulated rainfall — Photo: Lance Cheung, USDA, public domain</div>
+        <p style="margin-top:18px;">
+          <a class="hydroCta" href="https://www.nrcs.usda.gov/sites/default/files/2022-10/Infiltration.pdf" target="_blank" rel="noopener">NRCS Infiltration fact sheet <span aria-hidden="true">→</span></a>
+          <a class="hydroCta ghost" href="https://directives.nrcs.usda.gov/sites/default/files2/1746452696/TN%20470-13%20Full-Scale%20Rainfall%20Simulator%20User%20Guide%20Version%202.pdf" target="_blank" rel="noopener">NRCS Rainfall Simulator User Guide (2025) <span aria-hidden="true">→</span></a>
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="siSectionTitle">Honest Caveats</div>
+        <div style="display:grid;gap:10px;margin-top:4px;">
+          <div class="siCaveat">These are field demonstrations, not laboratory Ksat measurements — they show the right relative ordering (degraded &lt; regenerative) vividly, but the exact numbers depend on which soil, which storm, and which day.</div>
+          <div class="siCaveat">Gabe Brown's own infiltration story (0.5 in/hr on his North Dakota cropland in 1991, rising after switching to no-till/cover crops/diverse rotations) gets quoted with different "after" numbers across different talks — some say 8 in/hr, others ~30 in/hr or "1 inch in 9 seconds." Treat these as retold field anecdotes from his talks, not a single fixed, replicated measurement.</div>
+          <div class="siCaveat">Both tests <em>are</em> standardized by NRCS for consistent field use (see the fact sheets above) — they're legitimate, official soil-health-education methodology, just not substitutes for a certified soil lab test.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

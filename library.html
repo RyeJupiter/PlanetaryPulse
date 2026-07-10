@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>The Library — EarthPulse</title>
+  <meta name="description" content="The books behind EarthPulse's case studies — Wilding, Dirt to Soil, Grain by Grain, What Your Food Ate, and Holistic Management." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .libPage { display: grid; gap: 32px; }
+
+    .libBanner {
+      position: relative;
+      padding: 56px 40px;
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(212, 170, 101, 0.22), transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(111, 145, 84, 0.2), transparent 38%),
+        linear-gradient(160deg, #1c140c 0%, #2a1d10 55%, #1c140c 100%);
+      box-shadow: 0 24px 60px rgba(20, 14, 6, 0.35);
+      text-align: center;
+    }
+    .libBanner::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 40px);
+      opacity: 0.5;
+    }
+    .libEyebrow {
+      position: relative;
+      font-family: var(--font-label, var(--font-display));
+      text-transform: uppercase; letter-spacing: 0.22em; font-size: 12px;
+      color: #d4b878; margin-bottom: 14px;
+    }
+    .libTitle {
+      position: relative;
+      font-size: clamp(36px, 6vw, 62px);
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: #f5ead2;
+      margin: 0 0 16px;
+      letter-spacing: 0.01em;
+    }
+    .libLead {
+      position: relative;
+      font-size: 16.5px; line-height: 1.7;
+      color: rgba(245, 234, 210, 0.78);
+      max-width: 62ch; margin: 0 auto;
+    }
+
+    .shelfWrap { display: grid; gap: 10px; }
+    .shelfLabel {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+      color: #4f744e; margin-bottom: 4px;
+    }
+    .shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 22px;
+      padding: 22px 20px 30px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(90, 60, 30, 0.08), rgba(90, 60, 30, 0.16));
+      border-bottom: 6px solid rgba(90, 60, 30, 0.35);
+      box-shadow: inset 0 -4px 10px rgba(90,60,30,0.15);
+    }
+    .bookCard {
+      display: block;
+      text-decoration: none;
+      transition: transform 220ms ease;
+    }
+    .bookCard:hover { transform: translateY(-8px) rotate(-1deg); }
+    .bookCover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 3px 6px 16px rgba(20,14,6,0.45), 0 0 0 1px rgba(0,0,0,0.15);
+      display: block;
+      background: #d8d2b8;
+    }
+    .bookMeta { margin-top: 10px; }
+    .bookTitle { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: #1e3020; line-height: 1.3; }
+    .bookAuthor { font-size: 11.5px; color: #4f744e; margin-top: 2px; }
+    .bookConnect { font-size: 11px; color: #5a7256; margin-top: 6px; line-height: 1.5; }
+
+    @media (max-width: 700px) {
+      .libBanner { padding: 40px 22px; }
+    }
+  </style>
+</head>
+
+<body data-page="library">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="libPage">
+
+      <div class="libBanner">
+        <div class="libEyebrow">EarthPulse · Education</div>
+        <h1 class="libTitle">Enter the Library</h1>
+        <p class="libLead">
+          Behind every case study on this site is a book someone wrote after actually doing the work.
+          These are the ones we keep coming back to — click any cover to see how it connects to what's
+          already here.
+        </p>
+      </div>
+
+      <div class="shelfWrap">
+        <div class="shelfLabel">On the shelf</div>
+        <div class="shelf">
+
+          <a class="bookCard" href="/regen-registry.html">
+            <img class="bookCover" src="https://covers.openlibrary.org/b/id/10539098-L.jpg" alt="Wilding by Isabella Tree — book cover" loading="lazy" />
+            <div class="bookMeta">
+              <div class="bookTitle">Wilding</div>
+              <div class="bookAuthor">Isabella Tree · Picador, 2018</div>
+              <div class="bookConnect">The Knepp Estate story — already in our Regen Registry, including its River Adur floodplain reconnection and beaver reintroduction.</div>
+            </div>
+          </a>
+
+          <a class="bookCard" href="/regen-ag-case-studies.html">
+            <img class="bookCover" src="https://covers.openlibrary.org/b/id/8817749-L.jpg" alt="Dirt to Soil by Gabe Brown — book cover" loading="lazy" />
+            <div class="bookMeta">
+              <div class="bookTitle">Dirt to Soil</div>
+              <div class="bookAuthor">Gabe Brown · Chelsea Green, 2018</div>
+              <div class="bookConnect">Brown's own regenerative-transition story — the source of the infiltration numbers discussed (and caveated) in our soil infiltration post.</div>
+            </div>
+          </a>
+
+          <a class="bookCard" href="/regen-ag-squeeze-citrus.html">
+            <img class="bookCover" src="https://covers.openlibrary.org/b/id/8800037-L.jpg" alt="Grain by Grain by Bob Quinn and Liz Carlisle — book cover" loading="lazy" />
+            <div class="bookMeta">
+              <div class="bookTitle">Grain by Grain</div>
+              <div class="bookAuthor">Bob Quinn &amp; Liz Carlisle · Island Press, 2019</div>
+              <div class="bookConnect">Quinn's Kamut wheat story — same nutrient-density/health-outcomes territory as our Squeeze Citrus spotlight.</div>
+            </div>
+          </a>
+
+          <a class="bookCard" href="/regen-ag-case-studies.html">
+            <img class="bookCover" src="https://covers.openlibrary.org/b/id/14622349-L.jpg" alt="What Your Food Ate by David R. Montgomery and Anne Bikle — book cover" loading="lazy" />
+            <div class="bookMeta">
+              <div class="bookTitle">What Your Food Ate</div>
+              <div class="bookAuthor">David R. Montgomery &amp; Anne Biklé · Norton, 2022</div>
+              <div class="bookConnect">The independent field study behind our best-verified case study — Singing Frogs Farm's 7× water infiltration measurement.</div>
+            </div>
+          </a>
+
+          <a class="bookCard" href="/regen-registry.html">
+            <img class="bookCover" src="https://covers.openlibrary.org/b/id/8891853-L.jpg" alt="Holistic Management by Allan Savory — book cover" loading="lazy" />
+            <div class="bookMeta">
+              <div class="bookTitle">Holistic Management</div>
+              <div class="bookAuthor">Allan Savory &amp; Jody Butterfield · Island Press, 2016</div>
+              <div class="bookConnect">Savory's planned-grazing framework, carried forward at the Africa Centre for Holistic Management — already in our Regen Registry.</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
