@@ -1,0 +1,78 @@
+{
+  "_purpose": "Ground-truth, independently-verifiable facts backing the Pajaro River counterfactual model. Every field here traces to a live public source fetched or checked directly — this file exists so the model's claims can be audited, not just trusted.",
+  "watershed": {
+    "name": "Pajaro River",
+    "huc8": "18060002",
+    "area_km2": 3368.62,
+    "source": "USGS Watershed Boundary Dataset, WBD MapServer layer 4 (8-digit HU / Subbasin), queried live 2026-07-20",
+    "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/4"
+  },
+  "gauge": {
+    "usgs_site_no": "11159000",
+    "name": "PAJARO R A CHITTENDEN CA",
+    "lat": 36.90019209,
+    "lon": -121.5976778,
+    "gauge_datum": "NAVD88",
+    "gauge_elevation_ft": 85.28,
+    "drainage_area_sq_mi": 1186,
+    "note_on_area_discrepancy": "1186 sq mi (3071 km2) is the gauge's own contributing drainage area, measured at Chittenden — upstream of the full HUC8 basin (3368.62 km2), since Chittenden is not at the river mouth.",
+    "source": "USGS NWIS site service (waterservices.usgs.gov/nwis/site), queried live 2026-07-20",
+    "source_url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=11159000&siteOutput=expanded"
+  },
+  "march_2023_event": {
+    "peak_discharge_cfs": 13200,
+    "peak_discharge_datetime_local": "2023-03-10T23:30:00-08:00",
+    "peak_gage_height_ft": 29.11,
+    "peak_gage_height_datetime_local": "2023-03-11T04:00:00-08:00",
+    "nws_flood_stage_ft": 32,
+    "nws_major_flood_stage_ft": 33,
+    "note": "This is the observed discharge/stage at the Chittenden gauge, not measured at the levee breach itself (breach was near River Mile 10, downstream of Chittenden). It is the model's primary hindcast-calibration target.",
+    "important_methodological_caveat": "The Chittenden gauge's OWN peak stage (29.11 ft) did NOT exceed its own NWS flood stage (32 ft) during this event. The levee breach happened downstream at ~River Mile 10, where additional tributary inflow (e.g. Corralitos/Salsipuedes Creeks) and the specific levee's local condition — not the Chittenden gauge reading — determined the outcome. This means the model can rigorously validate against Chittenden (the only long-record real-time gauge on the mainstem) and speak to upstream-watershed peak-flow reduction, but should NOT claim to directly simulate the breach mechanics at the actual failure location — that is a distinct, localized levee-engineering question this model does not have the data or scope to answer.",
+    "levee_breach": {
+      "date_local": "2023-03-10 evening / 2023-03-11 early morning",
+      "location": "Pajaro River left-bank levee, approximately River Mile 10, flooding the unincorporated community of Pajaro",
+      "source_note": "Corroborated by USACE Sacramento District project page and multiple news reports; exact breach time not independently timestamped in sources found so far — flagged as a fact still needing a firmer citation before the pitch deck cites it precisely."
+    },
+    "source": "USGS NWIS instantaneous values service (waterservices.usgs.gov/nwis/iv), queried live 2026-07-20, parameters 00060 (discharge, cfs) and 00065 (gage height, ft)",
+    "source_url": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=11159000&startDT=2023-03-08&endDT=2023-03-14&parameterCd=00060,00065"
+  },
+  "storm_precipitation": {
+    "event_dates": "2023-03-09 to 2023-03-11",
+    "reported_range_inches": [5, 13],
+    "reported_area": "parts of Monterey County",
+    "confidence": "medium — a credible reported range from news/NOAA-adjacent coverage of this specific atmospheric river, not yet a single station-level precipitation time series. Good enough to characterize storm magnitude; not yet precise enough to be the model's literal rainfall input without picking a specific station or gridded product (e.g. PRISM) and justifying the choice.",
+    "next_step": "Pull an actual station time series (NOAA CDO needs an API token; CNRFC or a specific ASOS/COOP station near Corralitos/Watsonville would give an hourly curve instead of just a storm-total range) before this becomes the model's literal input rather than a calibration sanity-check."
+  },
+  "levee_protection_level": {
+    "historical_level_of_protection_years": 8,
+    "characterization": "Widely reported as one of the lowest levels of protection of any federal flood control levee system in California",
+    "known_deficiency_since": 1955,
+    "original_1998_usace_design_capacity_cfs": {
+      "upstream_of_salsipuedes_confluence": 19000,
+      "downstream_of_salsipuedes_confluence": 22000,
+      "source": "1998 USACE study, cited via USACE San Francisco District GRR (General Reevaluation Report) pre-conference materials, Nov 2000",
+      "important_note": "The 2023 peak at Chittenden (13,200 cfs) was BELOW this original 1998 design capacity, yet the levee still breached downstream. This means the '8-year protection' figure describes the levee's DEGRADED/effective capacity by 2023 (sedimentation, vegetation, deferred maintenance), not the original design capacity — the two numbers are not directly comparable and the model must not conflate them."
+    },
+    "current_project": {
+      "name": "Pajaro Regional Flood Risk Management Project",
+      "lead_agencies": ["USACE", "Pajaro Regional Flood Management Agency (PRFMA)", "California DWR"],
+      "cost_usd": 599000000,
+      "target_protection": "Mix of 100-year and 25-year flood protection for Watsonville, Pajaro, and surrounding agricultural areas"
+    },
+    "environmental_justice_note": "Multiple sources report that levee funding/reconstruction was delayed for decades in part because low-income and agricultural communities were not prioritized in cost-benefit analyses — this is documented public-record reporting, not this project's own characterization.",
+    "status": "Have the original 1998 design capacity (19,000-22,000 cfs) but NOT a specific effective/degraded capacity number matching the '8-year' figure — that would need a primary USACE risk-assessment document, not yet located.",
+    "confidence": "medium — sourced from news/advocacy reporting and secondary citation of a USACE report, not yet cross-checked against the primary document itself."
+  },
+  "land_use_and_infiltration_baseline": {
+    "actual_dominant_crops": ["strawberries", "bushberries (blueberries/blackberries/raspberries)", "vegetable row crops"],
+    "source": "USGS Pajaro Valley Hydrologic Model (PVHM) summary via pvwater.org — 'since about 1993, growers in the Pajaro Valley have shifted to more water intensive crops, such as strawberries, bushberries, and vegetable row crops'",
+    "source_url": "https://www.pvwater.org/hydrologic-modeling",
+    "note": "PVHM is a real, peer-reviewed USGS MODFLOW groundwater model (1964-2009) for this valley — a credibility anchor to cite ('a rigorous USGS groundwater model already exists for this valley; this project is a complementary surface-infiltration/flood tool, not a competitor') — but it does not itself publish a simple Ksat/soil-infiltration number usable directly as a model input.",
+    "counterfactual_infiltration_assumption": {
+      "approach": "Rather than inventing a Pajaro-specific improvement percentage, borrow the strongest INDEPENDENTLY-MEASURED comparison already vetted on this site: Singing Frogs Farm (Sebastopol, CA) measured ~7x greater water infiltration versus a neighboring tilled organic farm growing the same crop.",
+      "source": "regen-ag-case-studies.html on this site, itself sourced to Singing Frogs Farm's own published on-farm comparison",
+      "honesty_requirement": "Must be presented explicitly as an ANALOGY/scenario assumption applied to Pajaro (i.e. 'if upstream ag land achieved an infiltration improvement of the magnitude independently measured at Singing Frogs Farm elsewhere in California') — not as a Pajaro-specific soil study finding. This is the single most important place in the whole model where overclaiming would be easy and must be avoided."
+    },
+    "still_needed_for_full_rigor": "An actual NRCS SSURGO/gSSURGO soil-series pull for the HUC8 to replace the current illustrative Ksat values with soil-series-specific ones — flagged as a Should-have, not blocking the first defensible version."
+  }
+}

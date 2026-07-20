@@ -1,0 +1,13 @@
+{
+  "elevMin": -1.40906822681427,
+  "elevMax": 1567.9609375,
+  "bbox": {
+    "west": -121.85327463894254,
+    "east": -120.58228517167352,
+    "south": 36.26745774832655,
+    "north": 37.231585933911745
+  },
+  "source": "AWS Terrarium elevation tiles (zoom 12), USGS WBD HUC8 18060002 boundary, priority-flood depression-filled",
+  "generated": "2026-07-20",
+  "void_cells_clipped": 59
+}

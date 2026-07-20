@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <title>The Pajaro River: A Real Flood, A Real Counterfactual — EarthPulse</title>
+  <meta name="description" content="Real USGS gauge data, a real watershed boundary, and a real documented levee failure — the evidence base for a flood-resilience counterfactual, presented with its actual limitations." />
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/js/nav.js" defer></script>
+  <style>
+    .prPage { display: grid; gap: 32px; }
+    .prHero {
+      padding: 36px 32px; border-radius: 24px;
+      border: 1px solid rgba(117, 143, 93, 0.28);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(126, 158, 96, 0.18), transparent 34%),
+        radial-gradient(circle at 82% 80%, rgba(212, 170, 101, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(249, 245, 229, 0.97), rgba(236, 228, 198, 0.92));
+      box-shadow: 0 22px 56px rgba(69, 59, 30, 0.12);
+    }
+    .prEyebrow { font-family: var(--font-label, var(--font-display)); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: #4f744e; margin-bottom: 12px; }
+    .prTitle { font-size: clamp(30px, 4.5vw, 48px); font-family: var(--font-display); font-weight: 600; color: #1e3020; line-height: 1.08; margin: 0 0 16px; }
+    .prLead { font-size: 17px; line-height: 1.72; color: #263f24; max-width: 72ch; margin: 0; }
+    .backLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4f744e; text-decoration: none; margin-bottom: 14px; }
+    .backLink:hover { text-decoration: underline; }
+    .prSectionTitle { font-family: var(--font-display); font-size: 22px; color: #1e3020; margin: 0 0 6px; }
+    .prSectionSub { font-size: 13.5px; color: #4f744e; margin: 0 0 18px; }
+
+    .factRow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 18px 0; }
+    .factCard {
+      padding: 14px 16px; border-radius: 14px;
+      background: rgba(111, 145, 84, 0.1); border: 1px solid rgba(111, 145, 84, 0.24);
+    }
+    .factVal { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: #1e3020; line-height: 1.1; }
+    .factLabel { font-size: 11.5px; color: #4f744e; margin-top: 4px; line-height: 1.4; }
+
+    #hydroChartWrap { position: relative; background: rgba(255,255,255,0.4); border-radius: 14px; padding: 14px; }
+    #hydroChart { display: block; width: 100%; height: 320px; }
+    .chartLegend { display: flex; gap: 18px; margin-top: 8px; font-size: 12px; color: #33502f; flex-wrap: wrap; }
+    .legDot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+
+    /* ── Terrain viewer ── */
+    #terrainWrap {
+      position: relative; height: 480px; border-radius: 18px; overflow: hidden;
+      background: #d8dcd9;
+    }
+    #terrainCanvas { display: block; width: 100%; height: 100%; }
+    #terrainLoading {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: #d8dcd9; color: #4f744e; font-family: ui-monospace, monospace; font-size: 12px;
+      letter-spacing: 0.08em; transition: opacity 300ms ease;
+    }
+    #terrainLoading.hidden { opacity: 0; pointer-events: none; }
+    #terrainLegend {
+      position: absolute; bottom: 12px; left: 12px;
+      background: rgba(255,255,255,0.88); border-radius: 10px; padding: 8px 12px;
+      font-size: 11px; color: #33502f; line-height: 1.6;
+    }
+    .markerDot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+
+    .prCaveat {
+      padding: 16px 20px; border-radius: 14px;
+      border-left: 3px solid rgba(181, 125, 56, 0.6);
+      background: rgba(212, 170, 101, 0.12);
+      font-size: 14px; color: #513a17; line-height: 1.62;
+    }
+    .prCaveat.strong { border-left-color: rgba(196, 60, 60, 0.6); background: rgba(212, 101, 101, 0.1); }
+    .sourceList { font-size: 12.5px; color: #4a5d46; line-height: 1.8; }
+    .sourceList a { color: #35592f; }
+
+    @media (max-width: 760px) {
+      .prHero { padding: 24px 20px; }
+      #terrainWrap { height: 340px; }
+    }
+  </style>
+</head>
+
+<body data-page="watershed-pajaro">
+  <div id="site-nav"></div>
+
+  <main class="page">
+    <div class="prPage">
+
+      <div class="prHero">
+        <a class="backLink" href="/hydro.html">← Back to Hydrology</a>
+        <div class="prEyebrow">EarthPulse · Hydrology · Case Study</div>
+        <h1 class="prTitle">The Pajaro River: A Real Flood, A Real Counterfactual</h1>
+        <p class="prLead">
+          On the night of March 10, 2023, the Pajaro River's levee failed and flooded the town of Pajaro. The
+          levee's inadequacy had been known and documented since 1955. Everything below is built from real,
+          independently-checkable data — a real USGS gauge, a real watershed boundary, real reporting on the
+          levee's history — presented alongside exactly what it can and cannot tell us yet.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">What Actually Happened</div>
+        <div class="prSectionSub">USGS gauge 11159000, Pajaro River at Chittenden — the only long-record real-time streamflow gauge on the mainstem.</div>
+
+        <div class="factRow">
+          <div class="factCard"><div class="factVal">13,200 cfs</div><div class="factLabel">Peak discharge at Chittenden, 11:30pm Mar 10, 2023</div></div>
+          <div class="factCard"><div class="factVal">29.1 ft</div><div class="factLabel">Peak gage height (flood stage at this gauge is 32 ft)</div></div>
+          <div class="factCard"><div class="factVal">~15×</div><div class="factLabel">Discharge increase from pre-storm baseline (~880 cfs)</div></div>
+          <div class="factCard"><div class="factVal">1,186 mi²</div><div class="factLabel">Drainage area contributing to this gauge</div></div>
+        </div>
+
+        <div id="hydroChartWrap">
+          <canvas id="hydroChart"></canvas>
+          <div class="chartLegend">
+            <span><span class="legDot" style="background:#3a7fd6;"></span>Observed discharge (cfs)</span>
+            <span><span class="legDot" style="background:#c9862f;"></span>NWS flood stage equivalent</span>
+          </div>
+        </div>
+
+        <div class="prCaveat" style="margin-top:16px;">
+          The gauge's own peak stage (29.1 ft) did <em>not</em> exceed its flood stage (32 ft). The levee breach
+          happened downstream, near the town of Pajaro, where additional tributary inflow and the levee's own
+          local condition — not this gauge reading — determined the outcome. This gauge is the best real
+          validation target available; it is not a direct measurement of the breach itself.
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">See the Real Watershed</div>
+        <div class="prSectionSub">Real LiDAR-derived terrain (AWS Terrarium elevation data), masked to the actual USGS-defined drainage divide (HUC8 18060002).</div>
+        <div id="terrainWrap">
+          <canvas id="terrainCanvas"></canvas>
+          <div id="terrainLoading">LOADING TERRAIN…</div>
+          <div id="terrainLegend">
+            <div><span class="markerDot" style="background:#3a7fd6;"></span>USGS gauge (Chittenden)</div>
+            <div><span class="markerDot" style="background:#c9432f;"></span>Town of Pajaro (approx. — near the 2023 breach)</div>
+          </div>
+        </div>
+        <p style="margin-top:14px; font-size:13px; color:#4a5d46; line-height:1.6;">
+          Drag to orbit, scroll to zoom. This watershed (3,369 km²) is about 9.5× larger than the San Lorenzo
+          watershed modeled elsewhere on this site, and spans parts of Santa Cruz, Monterey, San Benito, and
+          Santa Clara counties.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">The Levee's Known Problem</div>
+        <p style="color:#33502f; line-height:1.72; font-size:15px;">
+          The Pajaro River's levees provided just an <strong>8-year level of flood protection</strong> — among
+          the lowest of any federal flood-control system in California. The deficiency was first documented
+          after flood damage in 1955. The Army Corps found the project inadequate again in 1963; Congress
+          authorized reconstruction in 1966, and again in 1986; proposed designs repeatedly stalled on funding
+          and land agreements. A <strong>$599 million</strong> project — led by USACE, the Pajaro Regional
+          Flood Management Agency, and California DWR — is now underway, targeting 100-year and 25-year
+          protection for Watsonville, Pajaro, and the surrounding farmland.
+        </p>
+        <div class="prCaveat" style="margin-top:8px;">
+          The levee's <em>original 1998 design capacity</em> was 19,000–22,000 cfs — well above the 13,200 cfs
+          observed at Chittenden in 2023. The "8-year protection" figure describes the levee's <em>degraded,
+          effective</em> capacity by 2023 (decades of sedimentation, vegetation, deferred maintenance), not
+          its original design. These are two different numbers and should not be conflated.
+        </div>
+        <p style="color:#33502f; line-height:1.72; font-size:14.5px; margin-top:14px;">
+          Multiple public reports attribute the decades of delay in part to a federal cost-benefit framework
+          that undervalued the agricultural land and lower-income communities the levee was meant to protect.
+          That is documented public-record reporting, not this project's own characterization — but it is the
+          reason this specific flood, and not a more famous one, is this project's anchor case.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">An Illustrative Counterfactual — Not a Simulation</div>
+        <p style="color:#33502f; line-height:1.72; font-size:15px;">
+          It is tempting to ask: "if upstream farmland had better infiltration capacity, would the levee have
+          held?" We can't answer that yet with a calibrated model of this watershed — that requires the same
+          hindcast-validation step described in the caveats below. What we can do honestly, right now, is a
+          much smaller claim:
+        </p>
+        <div class="factRow">
+          <div class="factCard" style="grid-column: span 2;">
+            <div class="factVal">~7× measured</div>
+            <div class="factLabel">Independently-measured water infiltration improvement at Singing Frogs Farm (Sebastopol, CA) vs. a neighboring tilled farm — the strongest verified comparison already on this site.</div>
+          </div>
+        </div>
+        <p style="color:#33502f; line-height:1.72; font-size:14.5px;">
+          Applying an improvement of that magnitude as a scenario assumption — not a Pajaro-specific soil
+          finding — to a simplified peak-attenuation estimate suggests the kind of relative reduction in
+          runoff-driven peak flow this site's Rain In The Valley and San Lorenzo models already illustrate for
+          smaller watersheds. We are not publishing a specific cfs number for Pajaro here, because doing so
+          without the gauge-calibration step below would dress up a guess as a finding.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">Honest Caveats</div>
+        <div style="display:grid; gap:10px; margin-top:4px;">
+          <div class="prCaveat strong">This is not a certified engineering flood study. It does not simulate the physical breach at the actual failure location, and it should not be used for design, permitting, or underwriting decisions.</div>
+          <div class="prCaveat">The terrain and watershed boundary are real (USGS WBD + LiDAR-derived elevation). The March 2023 hydrograph is real (USGS gauge 11159000). The storm-total precipitation figure (5–13 in. over parts of Monterey County) is a credible reported range, not yet a station-level time series suitable as a direct model input.</div>
+          <div class="prCaveat">The counterfactual infiltration assumption borrows an independently-measured number from a different California farm (Singing Frogs Farm) as a scenario analogy — it is not a Pajaro Valley soil survey finding.</div>
+          <div class="prCaveat">Before this model can support a real institutional claim (to a funder, an agency, or eventually an insurer), it needs to reproduce the observed 13,200 cfs peak at Chittenden from real storm input and real land-cover data — the hindcast-calibration step described in the project requirements. That has not been done yet.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="prSectionTitle">Sources</div>
+        <div class="sourceList">
+          <p>USGS NWIS — <a href="https://waterdata.usgs.gov/monitoring-location/USGS-11159000/" target="_blank" rel="noopener">Pajaro River at Chittenden, gauge 11159000</a> (discharge &amp; gage height, March 2023)</p>
+          <p>USGS Watershed Boundary Dataset — <a href="https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer" target="_blank" rel="noopener">HUC8 18060002 (Pajaro)</a></p>
+          <p>USACE San Francisco District, Pajaro River General Reevaluation Report pre-conference materials (Nov. 2000) — original 1998 design capacity figures</p>
+          <p><a href="https://www.prfma.org/risk-management" target="_blank" rel="noopener">Pajaro Regional Flood Management Agency</a> — current $599M flood risk management project</p>
+          <p><a href="https://www.pvwater.org/hydrologic-modeling" target="_blank" rel="noopener">Pajaro Valley Water Management Agency — Pajaro Valley Hydrologic Model (PVHM)</a> — real USGS groundwater model for this valley; land-use characterization source</p>
+          <p><a href="/regen-ag-case-studies.html">Singing Frogs Farm case study on this site</a> — source of the ~7× infiltration comparison used above</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; <span id="year"></span> EarthPulse</span>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ── Real hydrograph (observed, not simulated) ───────────────────────
+    fetch('assets/data/pajaro/hydrograph-march2023.json')
+      .then(r => r.json())
+      .then(data => drawHydrograph(data.series))
+      .catch(() => {});
+
+    function drawHydrograph(series) {
+      const canvas = document.getElementById('hydroChart');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const qs = series.map(p => p.q);
+      const qMax = Math.max(...qs) * 1.08;
+      const padL = 46, padB = 26, padT = 12, padR = 10;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(80,110,60,0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH); ctx.lineTo(padL + plotW, padT + plotH);
+      ctx.stroke();
+
+      // gridlines + y labels
+      ctx.font = '11px ui-monospace, monospace';
+      ctx.fillStyle = 'rgba(51,80,47,0.7)';
+      for (let f = 0; f <= 1; f += 0.25) {
+        const y = padT + plotH - f * plotH;
+        ctx.strokeStyle = 'rgba(80,110,60,0.1)';
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+        ctx.fillText(Math.round(f * qMax).toLocaleString(), 2, y + 4);
+      }
+
+      // NWS flood-stage-equivalent reference line: 32ft gage height ~ scale
+      // proportionally against observed peak (29.1ft -> 13200cfs) as a
+      // rough visual reference, not a precise rating-curve conversion.
+      const floodStageApproxQ = 13200 * (32 / 29.11);
+      const fy = padT + plotH - Math.min(1, floodStageApproxQ / qMax) * plotH;
+      ctx.strokeStyle = 'rgba(201,134,47,0.7)';
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(padL, fy); ctx.lineTo(padL + plotW, fy); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // discharge line
+      ctx.strokeStyle = '#3a7fd6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      series.forEach((p, i) => {
+        const x = padL + (i / (series.length - 1)) * plotW;
+        const y = padT + plotH - (p.q / qMax) * plotH;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // peak marker
+      let peakI = 0;
+      for (let i = 1; i < series.length; i++) if (series[i].q > series[peakI].q) peakI = i;
+      const px = padL + (peakI / (series.length - 1)) * plotW;
+      const py = padT + plotH - (series[peakI].q / qMax) * plotH;
+      ctx.fillStyle = '#1e3020';
+      ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.font = '11px ui-monospace, monospace';
+      ctx.fillText(`peak: ${series[peakI].q.toLocaleString()} cfs (Mar 10, 11:30pm)`, Math.max(padL, px - 90), py - 10);
+
+      // x labels (dates)
+      ctx.fillStyle = 'rgba(51,80,47,0.7)';
+      const dayTicks = [0, Math.floor(series.length/6), Math.floor(series.length*2/6), Math.floor(series.length*3/6), Math.floor(series.length*4/6), Math.floor(series.length*5/6), series.length-1];
+      dayTicks.forEach(i => {
+        const x = padL + (i / (series.length - 1)) * plotW;
+        const d = new Date(series[i].t);
+        ctx.fillText(`${d.getMonth()+1}/${d.getDate()}`, x - 10, H - 6);
+      });
+    }
+
+    // ── Real terrain viewer (static explorable, no unvalidated storm sim) ──
+    const canvas3d = document.getElementById('terrainCanvas');
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xd8dcd9);
+    scene.fog = new THREE.FogExp2(0xd8dcd9, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
+    camera.position.set(12, 11, -14);
+
+    const controls = new OrbitControls(camera, canvas3d);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 4;
+    controls.maxDistance = 50;
+
+    // This viewer is user-orbited (unlike the fixed-camera storm
+    // simulators elsewhere on the site), so no fixed sun direction can
+    // stay matched to whatever face happens to be camera-facing. A strong
+    // hemisphere light (sky/ground bounce, omnidirectional by design) is
+    // the robust choice here — it keeps every surface orientation
+    // reasonably lit regardless of orbit angle, which plain ambient +
+    // directional turned out not to do (verified empirically: the far
+    // side of the watershed still read as near-black silhouette).
+    scene.add(new THREE.HemisphereLight(0xfff6e6, 0x6b7a63, 1.3));
+    const sun = new THREE.DirectionalLight(0xffc98a, 0.55);
+    sun.position.set(9, 3.2, -9);
+    scene.add(sun);
+
+    function onResize() {
+      const rect = canvas3d.getBoundingClientRect();
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', onResize);
+
+    const WIDTH = 14; // world X extent, arbitrary scale unit
+
+    function loadImageData(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const cnv = document.createElement('canvas');
+          cnv.width = img.naturalWidth; cnv.height = img.naturalHeight;
+          const ctx = cnv.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve({ data: ctx.getImageData(0, 0, cnv.width, cnv.height), w: cnv.width, h: cnv.height });
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    async function build() {
+      const [meta, hmap, maskmap] = await Promise.all([
+        fetch('assets/terrain/pajaro/meta.json').then(r => r.json()),
+        loadImageData('assets/terrain/pajaro/heightmap.png'),
+        loadImageData('assets/terrain/pajaro/heightmask.png'),
+      ]);
+      const { elevMin, elevMax, bbox } = meta;
+      const latMid = (bbox.north + bbox.south) / 2;
+      const lonKm = (bbox.east - bbox.west) * 111.32 * Math.cos(latMid * Math.PI / 180);
+      const latKm = (bbox.north - bbox.south) * 111.32;
+      const DEPTH = WIDTH * (latKm / lonKm);
+      const VERT_EXAGGERATION = 1.6;
+
+      const HM_W = hmap.w, HM_H = hmap.h;
+      const hd = hmap.data.data;
+      function sampleHeight01(u, v) {
+        const fx = u * (HM_W - 1), fy = v * (HM_H - 1);
+        const x0 = Math.max(0, Math.min(HM_W - 2, Math.floor(fx)));
+        const y0 = Math.max(0, Math.min(HM_H - 2, Math.floor(fy)));
+        const tx = fx - x0, ty = fy - y0;
+        const p = (x, y) => hd[(y * HM_W + x) * 4] / 255;
+        const h00 = p(x0, y0), h10 = p(x0 + 1, y0), h01 = p(x0, y0 + 1), h11 = p(x0 + 1, y0 + 1);
+        return (h00 * (1 - tx) + h10 * tx) * (1 - ty) + (h01 * (1 - tx) + h11 * tx) * ty;
+      }
+      function heightAt01(u, v) {
+        const h01 = sampleHeight01(u, v);
+        const elevM = elevMin + h01 * (elevMax - elevMin);
+        return (elevM / 1000) * VERT_EXAGGERATION;
+      }
+
+      const MK_W = maskmap.w, MK_H = maskmap.h;
+      const md = maskmap.data.data;
+      function sampleMask01(u, v) {
+        const fx = u * (MK_W - 1), fy = v * (MK_H - 1);
+        const x0 = Math.max(0, Math.min(MK_W - 2, Math.floor(fx)));
+        const y0 = Math.max(0, Math.min(MK_H - 2, Math.floor(fy)));
+        const tx = fx - x0, ty = fy - y0;
+        const p = (x, y) => md[(y * MK_W + x) * 4] / 255;
+        const m00 = p(x0, y0), m10 = p(x0 + 1, y0), m01 = p(x0, y0 + 1), m11 = p(x0 + 1, y0 + 1);
+        return (m00 * (1 - tx) + m10 * tx) * (1 - ty) + (m01 * (1 - tx) + m11 * tx) * ty;
+      }
+      function lonLatToWorld(lon, lat) {
+        const u = (lon - bbox.west) / (bbox.east - bbox.west);
+        const v = (bbox.north - lat) / (bbox.north - bbox.south);
+        const wx = (u - 0.5) * WIDTH;
+        const wz = (v - 0.5) * DEPTH;
+        const wy = heightAt01(u, v);
+        return new THREE.Vector3(wx, wy + 0.05, wz);
+      }
+
+      const GX = 220;
+      const gz = Math.round(GX * (DEPTH / WIDTH));
+      const pos = [], uv = [], vmask = [];
+      for (let r = 0; r <= gz; r++) {
+        for (let c = 0; c <= GX; c++) {
+          const u = c / GX, v = r / gz;
+          const wy = heightAt01(u, v);
+          pos.push((u - 0.5) * WIDTH, wy, (v - 0.5) * DEPTH);
+          uv.push(u, 1 - v);
+          vmask.push(sampleMask01(u, v));
+        }
+      }
+      // Only emit triangles substantially inside the real watershed
+      // boundary — without this, the full rectangular height-sample grid
+      // renders (a "torn paper" rectangular slab visible at any angle
+      // other than near-top-down), even though the basecolor texture's
+      // fade-to-background masks it visually from directly overhead.
+      const idx = [];
+      for (let r = 0; r < gz; r++) {
+        for (let c = 0; c < GX; c++) {
+          const a = r * (GX + 1) + c, b = a + 1;
+          const d = a + (GX + 1), e = d + 1;
+          const avg = (vmask[a] + vmask[b] + vmask[d] + vmask[e]) / 4;
+          if (avg >= 0.06) idx.push(a, d, b, b, d, e);
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      geo.setIndex(idx);
+      geo.computeVertexNormals();
+
+      const texLoader = new THREE.TextureLoader();
+      const colorTex = texLoader.load('assets/terrain/pajaro/basecolor.png');
+      colorTex.colorSpace = THREE.SRGBColorSpace;
+      const normalTex = texLoader.load('assets/terrain/pajaro/normal.png');
+      const mat = new THREE.MeshStandardMaterial({
+        map: colorTex, normalMap: normalTex,
+        normalScale: new THREE.Vector2(0.7, 0.7),
+        roughness: 0.92, metalness: 0.0,
+      });
+      scene.add(new THREE.Mesh(geo, mat));
+
+      controls.target.set(0, (elevMin + (elevMax - elevMin) * 0.2) / 1000 * VERT_EXAGGERATION, 0);
+      camera.lookAt(controls.target);
+
+      // Markers: real gauge location, approximate breach-adjacent town.
+      function addMarker(lon, lat, color) {
+        const p = lonLatToWorld(lon, lat);
+        const geo = new THREE.SphereGeometry(0.09, 16, 16);
+        const mat = new THREE.MeshBasicMaterial({ color });
+        const m = new THREE.Mesh(geo, mat);
+        m.position.copy(p);
+        scene.add(m);
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.13, 0.17, 24), new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
+        ring.position.copy(p);
+        ring.rotation.x = -Math.PI / 2;
+        scene.add(ring);
+      }
+      addMarker(-121.5976778, 36.90019209, 0x3a7fd6);  // USGS gauge 11159000
+      addMarker(-121.7486, 36.9041, 0xc9432f);          // Town of Pajaro (approx.)
+
+      onResize();
+      document.getElementById('terrainLoading').classList.add('hidden');
+    }
+    build().catch(err => {
+      document.getElementById('terrainLoading').textContent = 'Terrain failed to load — ' + err.message;
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    onResize();
+    animate();
+  </script>
+</body>
+</html>
